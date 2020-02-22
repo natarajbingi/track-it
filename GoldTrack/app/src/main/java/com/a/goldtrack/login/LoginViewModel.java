@@ -56,7 +56,7 @@ public class LoginViewModel extends ViewModel {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                email.set(charSequence.toString());
             }
 
             @Override
@@ -75,7 +75,7 @@ public class LoginViewModel extends ViewModel {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                pwd.set(charSequence.toString());
             }
 
             @Override

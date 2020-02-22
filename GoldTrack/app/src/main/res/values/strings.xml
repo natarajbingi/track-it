@@ -17,6 +17,18 @@
     <string name="linear_layout_manager">Lines</string>
     <string name="grid_layout_manager">Grid</string>
 
+    <string-array name="roles">
+        <item>Select</item>
+        <item>ADMIN</item>
+        <item>USER</item>
+        <item>MANAGER</item>
+        <item>MARKETING</item>
+    </string-array>
+    <string-array name="gender">
+        <item>Select</item>
+        <item>MALE</item>
+        <item>FEMALE</item>
+    </string-array>
     <string name="intro_message">
         <![CDATA[
 

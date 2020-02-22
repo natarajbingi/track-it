@@ -95,10 +95,14 @@
 
     <style name="Theme.Sample" parent="Theme.Base" />
 
-<!--    <style name="AppTheme" parent="Theme.Sample" />-->
+    <!--    <style name="AppTheme" parent="Theme.Sample" />-->
     <!-- Widget styling -->
 
     <style name="Widget" />
+
+    <style name="Spinner.Underlined" parent="Widget.AppCompat.Spinner.Underlined">
+        <item name="android:textColor">@color/oil</item>
+    </style>
 
     <style name="Widget.SampleMessage">
         <item name="android:textAppearance">?android:textAppearanceMedium</item>

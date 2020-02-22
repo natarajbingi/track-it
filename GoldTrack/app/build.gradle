@@ -30,9 +30,11 @@ android {
     }
 }
 
+
 dependencies {
     def lifecycle_version = "2.2.0"
     def room_version = "2.2.3"
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -58,4 +60,21 @@ dependencies {
 
 //    implementation 'com.jakewharton:butterknife:10.1.0'
 //    annotationProcessor "com.jakewharton:butterknife-compiler:${var}"
+    // reactive
+    implementation "io.reactivex.rxjava2:rxjava:2.1.9"
+    implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
+    implementation('com.github.bumptech.glide:glide:4.7.1@aar') {
+        transitive = true
+    }
+/**
+ * For managing request permission
+ */
+    implementation 'com.karumi:dexter:4.2.0'
+
+    // Retrofit Lib
+    implementation 'com.squareup.retrofit2:retrofit:2.0.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.0.2'
+//    implementation 'com.squareup.okhttp3:logging-interceptor:3.2.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }
