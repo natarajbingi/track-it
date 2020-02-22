@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height"
+    android:gravity="center_vertical"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingBottom="6dp">
+
+    <ImageView
+        android:id="@+id/logo_id"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/logo" />
+
+
+    <TextView
+        android:id="@+id/text_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_medium"
+        android:layout_marginTop="20dp"
+        android:layout_toRightOf="@+id/logo_id"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/element_text"
+        android:textAllCaps="true"
+        android:textColor="@color/jet"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/text_sub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_header"
+        android:layout_marginLeft="@dimen/margin_medium"
+        android:layout_marginTop="6dp"
+        android:layout_toRightOf="@+id/logo_id"
+        android:ellipsize="end"
+        android:maxLines="3"
+        android:text="@string/element_text"
+        android:textColor="@color/monsoon"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/text_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/text_sub"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="5dp"
+        android:text="Date: 12-06-2019"
+        android:textColor="@color/jet"
+        android:textSize="12sp" />
+
+</RelativeLayout>

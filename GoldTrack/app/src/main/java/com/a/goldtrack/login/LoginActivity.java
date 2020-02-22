@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.a.goldtrack.HomeActivity;
 import com.a.goldtrack.MainActivity;
 import com.a.goldtrack.R;
 import com.a.goldtrack.register.RegistrationActivity;
@@ -24,6 +25,7 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
 
     LoginViewModel loginViewModel;
     ActivityLoginBinding binding;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,7 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
         loginViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
         loginViewModel.SetView(this);
+        progressDialog = new ProgressDialog(LoginActivity.this, R.style.AppTheme_Dark_Dialog);
         binding.setViewModel(loginViewModel);
 
 
@@ -100,8 +103,6 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
 
         // _loginButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
-                R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
@@ -120,30 +121,10 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
                 }, 3000);
     }
 
-
-   /* @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_SIGNUP) {
-            if (resultCode == RESULT_OK) {
-
-                // TODO: Implement successful signup logic here
-                // By default we just finish the Activity and log them in automatically
-                this.finish();
-            }
-        }
-    }*/
-
-    /*@Override
-    public void onBackPressed() {
-        // Disable going back to the MainActivity
-        moveTaskToBack(true);
-    }*/
-
     public void onLoginSuccess() {
         binding.btnLogin.setEnabled(true);
 
-        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
         startActivity(i);
     }
 
@@ -188,6 +169,11 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
     @Override
     public void onClickLoginBtn() {
         login();
+    }
+
+    @Override
+    public void onClickLoginFailed() {
+        onLoginFailed();
     }
 
     @Override

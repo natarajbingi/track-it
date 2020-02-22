@@ -2,8 +2,6 @@ package com.a.goldtrack.login;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.View;
 
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.ViewModel;
@@ -44,6 +42,8 @@ public class LoginViewModel extends ViewModel {
 
         if (valid) {
             view.onClickLoginBtn();
+        } else {
+            view.onClickLoginFailed();
         }
     }
 
