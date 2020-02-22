@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#76A5EE</color>
+    <color name="colorPrimaryDark">#387DE6</color>
+    <color name="colorAccent">#FEBAD6</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="text_color">#7EA4DE</color>
+    <color name="button_danger_text">#EA7D97</color>
+    <color name="button_danger">#FEBAD6</color>
+    <color name="button_default">#FEE9A5</color>
+    <color name="button_default_text">#EBBB42</color>
+    <color name="button_success">#7CF184</color>
+    <color name="button_success_text">#44B451</color>
+    <color name="button_red">#F44336</color>
+
+
+    <color name="colorPrimary1">#008577</color>
+    <color name="colorPrimaryDark1">#00574B</color>
+    <color name="colorAccent1">#D81B60</color>
+
+
+    <color name="primary">#E43F3F</color>
+    <color name="primary_dark">#E12929</color>
+    <color name="primary_darker">#CC1D1D</color>
+    <color name="accent">#FFFFFF</color>
+
+    <color name="black">#000000</color>
+    <color name="jet">#222222</color>
+    <color name="oil">#333333</color>
+    <color name="monsoon">#777777</color>
+    <color name="jumbo">#888888</color>
+    <color name="aluminum">#999999</color>
+    <color name="base">#AAAAAA</color>
+    <color name="iron">#CCCCCC</color>
+</resources>
