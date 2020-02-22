@@ -75,7 +75,7 @@
                         android:layout_height="wrap_content"
                         android:ems="10"
                         android:inputType="textEmailAddress"
-                        android:text="test@gmail.com"
+                        android:text="darshanraykar1@gmail.com"
                         app:addTextChangedListener="@{viewModel.emailWatcher()}"
                         android:hint="Email" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -90,12 +90,18 @@
                         android:layout_width="match_parent"
                         android:layout_height="42dp"
                         android:ems="10"
-                        android:text="123456"
+                        android:text="demo123"
                         app:addTextChangedListener="@{viewModel.pwdWatcher()}"
                         android:hint="Password"
                         android:inputType="textPassword" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+
+                <CheckBox
+                    android:id="@+id/keepMeSigned"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=" Keep me signed " />
 
                 <Button
                     android:id="@+id/btn_login"

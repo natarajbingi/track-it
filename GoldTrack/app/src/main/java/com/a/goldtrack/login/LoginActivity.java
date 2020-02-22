@@ -5,6 +5,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,11 +14,23 @@ import android.widget.Toast;
 
 import com.a.goldtrack.HomeActivity;
 import com.a.goldtrack.MainActivity;
+import com.a.goldtrack.Model.TeacherLoginReq;
+import com.a.goldtrack.Model.TeacherLoginRes;
 import com.a.goldtrack.R;
+import com.a.goldtrack.company.CompanyActivity;
+import com.a.goldtrack.network.APIService;
+import com.a.goldtrack.network.RetrofitClient;
 import com.a.goldtrack.register.RegistrationActivity;
 import com.a.goldtrack.databinding.ActivityLoginBinding;
+import com.a.goldtrack.users.UserForCompanyActivity;
+import com.a.goldtrack.utils.Constants;
+import com.a.goldtrack.utils.Sessions;
 
 import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class LoginActivity extends AppCompatActivity implements LoginDataHandler {
 
@@ -26,6 +40,8 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
     LoginViewModel loginViewModel;
     ActivityLoginBinding binding;
     ProgressDialog progressDialog;
+    Context context;
+    boolean keepMeSignedStr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +49,21 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
         loginViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
         loginViewModel.SetView(this);
-        progressDialog = new ProgressDialog(LoginActivity.this, R.style.AppTheme_Dark_Dialog);
+        context = LoginActivity.this;
+        progressDialog = new ProgressDialog(context, R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Authenticating...");
         binding.setViewModel(loginViewModel);
 
+        loginViewModel.email.set(binding.edEmail.getText().toString());
+        loginViewModel.pwd.set(binding.edPassword.getText().toString());
+
+        String LogInDirect = Sessions.getUserString(context, Constants.keepMeSignedStr);
+        if (LogInDirect != null) {
+            if (LogInDirect.equals("TRUE")) {
+                onLoginSuccess();
+            }
+        }
 
         /*binding.edEmail.addTextChangedListener(new TextWatcher() {
             @Override
@@ -95,36 +123,64 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
 
     public void login() {
         Log.d(TAG, "Login");
-
-        /*if (!validate()) {
-            onLoginFailed();
-            return;
-        }*/
-
-        // _loginButton.setEnabled(false);
-
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
-
-
         // TODO: Implement your own authentication logic here.
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
-                        onLoginSuccess();
-                        // onLoginFailed();
-                        progressDialog.dismiss();
+        TeacherLoginReq req = new TeacherLoginReq();
+        req.appVersion = "1.0.1";
+        req.deviceName = "Testing";
+        req.imeiNumber = "1.0.1";
+        req.registrationID = "1.0.1";
+        req.password = "darshanraykar1@gmail.com";
+        req.userName = "demo123";
+        keepMeSignedStr = binding.keepMeSigned.isChecked();
+
+        RetrofitClient retrofitSet = new RetrofitClient();
+        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrlTT);
+        APIService apiService = retrofit.create(APIService.class);
+        Call<TeacherLoginRes> call = apiService.TEACHER_LOGIN_RES_CALL(req);
+
+
+        progressDialog.show();
+        call.enqueue(new Callback<TeacherLoginRes>() {
+            @Override
+            public void onResponse(Call<TeacherLoginRes> call, Response<TeacherLoginRes> response) {
+                progressDialog.dismiss();
+                Constants.logPrint(call.request().toString(), req, response.body());
+                try {
+                    if (response.isSuccessful()) {
+                        if (response.body().success) {
+                            if (keepMeSignedStr) {
+                                Sessions.setUserString(context, "TRUE", Constants.keepMeSignedStr);
+                            } else {
+                                Sessions.setUserString(context, "FALSE", Constants.keepMeSignedStr);
+                            }
+                            onLoginSuccess();
+                        } else {
+                            Constants.alertDialogShow(context, response.body().response);
+                        }
                     }
-                }, 3000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TeacherLoginRes> call, Throwable t) {
+                progressDialog.dismiss();
+                Log.d("Response:", "" + t);
+                Constants.alertDialogShow(context, "Something went wrong, please try again");
+                t.printStackTrace();
+            }
+        });
+
     }
 
     public void onLoginSuccess() {
         binding.btnLogin.setEnabled(true);
 
-        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+//        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+//        Intent i = new Intent(LoginActivity.this, UserForCompanyActivity.class);
+        Intent i = new Intent(LoginActivity.this, CompanyActivity.class);
         startActivity(i);
     }
 
@@ -162,13 +218,13 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
         // Start the Signup activity
         Intent intent = new Intent(getApplicationContext(), RegistrationActivity.class);
         startActivityForResult(intent, REQUEST_SIGNUP);
-        finish();
         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
     @Override
     public void onClickLoginBtn() {
-        login();
+//        login();
+        onLoginSuccess();
     }
 
     @Override

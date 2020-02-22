@@ -1,24 +1,19 @@
 package com.a.goldtrack.Model;
 
 public class AddCompany {
-    // company/addUserForCompany
-    public String id;
-    public String user_UID;
-    public String companyId;
-    public String userName;
-    public String passWord;
-    public String firstName;
-    public String lastName;
-    public String gender;
+    // company/addCompany
+    public String name;
+    public String desc;
     public String mobileNo;
-    public String dob;
+    public String landline;
     public String emailID;
-    public String mobileRegId;
-    public String mobileIMEINo;
-    public String mobileDevName;
-    public String mobileAppType;
-    public String mobileAppVersion;
-    public String loginAttempts;
-    public String roles;
-    public String profilePicU;
+    public String website;
+    public String address1;
+    public String address2;
+    public String city;
+    public String district;
+    public String state;
+    public String pin;
+    public String logoImageData;
+    public String logoImagePath;
 }

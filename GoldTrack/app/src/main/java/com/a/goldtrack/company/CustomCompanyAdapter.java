@@ -1,4 +1,4 @@
-package com.a.goldtrack.ui.home;
+package com.a.goldtrack.company;
 
 
 import android.util.Log;
@@ -18,16 +18,17 @@ import java.util.List;
 /**
  * Provide views to RecyclerView with data from mDataSet.
  */
-public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
+public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdapter.ViewHolder> {
     private static final String TAG = "CustomAdapter";
 
     private List<GetCompanyRes.ResList> mDataSet;
+    CompanyClicked companyClicked;
 
-    public CustomAdapter(List<GetCompanyRes.ResList> dataSet) {
+    public CustomCompanyAdapter(List<GetCompanyRes.ResList> dataSet) {
         mDataSet = dataSet;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final TextView textView, text_sub, text_date;
         private final ImageView logo_id;
 
@@ -37,10 +38,19 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             textView = (TextView) v.findViewById(R.id.text_header);
             text_date = (TextView) v.findViewById(R.id.text_date);
             text_sub = (TextView) v.findViewById(R.id.text_sub);
+
+            v.setOnClickListener(this);
         }
 
         public TextView getTextView() {
             return textView;
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (companyClicked != null) {
+                companyClicked.oncItemClicked(view, getAdapterPosition());
+            }
         }
     }
 
@@ -61,5 +71,14 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     @Override
     public int getItemCount() {
         return mDataSet.size();
+    }
+
+    // allows clicks events to be caught
+    public void setClickListener(CompanyClicked companyClicked) {
+        this.companyClicked = companyClicked;
+    }
+
+    interface CompanyClicked {
+        void oncItemClicked(View view, int position);
     }
 }

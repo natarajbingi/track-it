@@ -4,31 +4,61 @@
     <data>
 
         <variable
-            name="cmdRagesModel"
-            type="com.a.goldtrack.addcommodityrates.AddCommodityRatesViewModel" />
+            name="cmpBrnchModel"
+            type="com.a.goldtrack.companybranche.CompanyBranchesViewModel" />
     </data>
 
     <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".addcommodityrates.AddCommodityRatesActivity">
+        tools:context=".companybranche.CompanyBranchesActivity">
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_commodity"
+        <LinearLayout
+            android:id="@+id/list_details_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:paddingLeft="@dimen/recycle_padding"
-            android:paddingRight="@dimen/recycle_padding"
-            app:layout_constraintTop_toBottomOf="@+id/radioGrp" />
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Branches"
+                    android:textColor="@android:color/black"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="4dp"
+                    android:text=""
+                    android:textColor="#9C27B0"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_branches"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:paddingLeft="@dimen/recycle_padding"
+                android:paddingRight="@dimen/recycle_padding" />
+        </LinearLayout>
 
         <ScrollView
             android:id="@+id/add_details_holder"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:layout_height="wrap_content">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -52,7 +82,7 @@
                             android:id="@+id/textView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Add Commodity Rates"
+                            android:text="Add Branch"
                             android:textColor="@android:color/black"
                             android:textSize="28sp"
                             android:textStyle="bold" />
@@ -83,8 +113,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="commodity"
-                            android:inputType="textPersonName"
-                            app:addTextChangedListener="@{cmdRagesModel.commodityWatcher()}" />
+                            android:inputType="textPersonName" />
                     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -98,8 +127,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="rate"
-                            android:inputType="textPersonName"
-                            app:addTextChangedListener="@{cmdRagesModel.rateWatcher()}" />
+                            android:inputType="textPersonName" />
                     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -113,8 +141,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Start Date"
-                            android:inputType="textPersonName"
-                            app:addTextChangedListener="@{cmdRagesModel.startDateWatcher()}" />
+                            android:inputType="textPersonName" />
                     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -128,8 +155,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="End Date"
-                            android:inputType="textPersonName"
-                            app:addTextChangedListener="@{cmdRagesModel.endDateWatcher()}" />
+                            android:inputType="textPersonName" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <Button
