@@ -12,9 +12,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".HomeActivity"
+            android:label="@string/title_activity_home"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".addcommodityrates.AddCommodityRatesActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".NotesActivity" />
-
         <activity android:name=".register.RegistrationActivity" />
         <activity android:name=".login.LoginActivity">
             <intent-filter>
