@@ -1,5 +1,6 @@
 package com.a.goldtrack.users;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -22,6 +23,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -135,6 +138,10 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
 
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        final ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+
         binding.btnAddUser.setOnClickListener(this);
         binding.triggImgGet.setOnClickListener(this);
         binding.addSignalUserForCmpy.setOnClickListener(this);
@@ -154,6 +161,22 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         getUserForCompany(user);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.home_none, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (android.R.id.home == item.getItemId()) // API 5+ solution
+        {
+            finish();//  onBackPressed();
+        }
+        return true;
+    }
     private void setValidNcall() {
         AddUserForCompany req = new AddUserForCompany();
         req.companyId = Sessions.getUserString(context, Constants.companyId);

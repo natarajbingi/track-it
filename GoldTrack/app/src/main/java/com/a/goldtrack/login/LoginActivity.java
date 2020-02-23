@@ -99,6 +99,7 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
                             Sessions.setUserObj(context, response.body().data, Constants.userLogin);
                             Sessions.setUserString(context, response.body().data.companyId, Constants.companyId);
                             Sessions.setUserString(context, response.body().data.userName, Constants.userId);
+                            Sessions.setUserString(context, response.body().data.firstName + " " + response.body().data.lastName, Constants.userName);
                             Sessions.setUserString(context, req.password, Constants.pwdId);
                             onLoginSuccess();
                         } else {

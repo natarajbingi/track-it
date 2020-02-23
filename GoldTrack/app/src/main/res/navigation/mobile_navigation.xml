@@ -11,33 +11,20 @@
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
-    <fragment
+    <activity
         android:id="@+id/nav_gallery"
-        android:name="com.a.goldtrack.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:name="com.a.goldtrack.company.CompanyActivity"  />
 
-    <fragment
+    <activity
         android:id="@+id/nav_slideshow"
-        android:name="com.a.goldtrack.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:name="com.a.goldtrack.companybranche.CompanyBranchesActivity" />
 
-    <fragment
+    <activity
         android:id="@+id/nav_tools"
-        android:name="com.a.goldtrack.ui.tools.ToolsFragment"
-        android:label="@string/menu_tools"
-        tools:layout="@layout/fragment_tools" />
+        android:name="com.a.goldtrack.items.ItemsActivity" />
 
-    <fragment
+    <activity
         android:id="@+id/nav_share"
-        android:name="com.a.goldtrack.ui.share.ShareFragment"
-        android:label="@string/menu_share"
-        tools:layout="@layout/fragment_share" />
+        android:name="com.a.goldtrack.users.UserForCompanyActivity" />
 
-    <fragment
-        android:id="@+id/nav_commodity"
-        android:name="com.a.goldtrack.ui.commodity.CommodityRatesFragment"
-        android:label="@string/menu_commodity"
-        tools:layout="@layout/fragment_send" />
 </navigation>
