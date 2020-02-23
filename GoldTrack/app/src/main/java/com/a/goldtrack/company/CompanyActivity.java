@@ -1,5 +1,6 @@
 package com.a.goldtrack.company;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
@@ -11,6 +12,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.a.goldtrack.Model.AddCompany;
@@ -67,6 +70,10 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         binding = DataBindingUtil.setContentView(this, R.layout.activity_company);
         binding.setCmpModel(viewModel);
 
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        final ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+
         context = CompanyActivity.this;
         progressDialog = new ProgressDialog(context, R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
@@ -79,6 +86,24 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
           reqGet = new GetCompany();
         reqGet.companyId = "0";
         getCompany(reqGet);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.home_none, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (android.R.id.home == item.getItemId()) // API 5+ solution
+        {
+            finish();//  onBackPressed();
+        }
+        return true;
     }
 
     private void setValidateAdd() {

@@ -1,5 +1,6 @@
 package com.a.goldtrack.items;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
@@ -11,6 +12,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.a.goldtrack.Model.AddCompany;
@@ -72,6 +75,10 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
 
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        final ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+
         binding.addSignalItem.setOnClickListener(this);
         binding.btnAddItem.setOnClickListener(this);
         reqGet = new GetItemsReq();
@@ -80,6 +87,22 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
         getItemsForCompany(reqGet);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.home_none, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (android.R.id.home == item.getItemId()) // API 5+ solution
+        {
+            finish();//  onBackPressed();
+        }
+        return true;
+    }
     private void addItem(AddItemReq req) {
         Log.d(TAG, "addCompany");
         RetrofitClient retrofitSet = new RetrofitClient();

@@ -14,8 +14,12 @@
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_commodity">Commodity Rates</string>
+    <string name="menu_logout">LOG OUT</string>
     <string name="linear_layout_manager">Lines</string>
     <string name="grid_layout_manager">Grid</string>
+    <string name="logout_confirm">Are you sure you want to Logout?</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
 
     <string-array name="roles">
         <item>Select</item>

@@ -41,6 +41,7 @@ public class Constants {
 
     public static final String companyId = "companyId";
     public static final String userLogin = "userLogin";
+    public static final String userName = "userName";
     public static final String userId = "userId";
     public static final String pwdId = "pwdId";
     public static final int error = 0;
