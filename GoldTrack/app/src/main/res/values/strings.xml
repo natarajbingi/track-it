@@ -29,6 +29,12 @@
         <item>MALE</item>
         <item>FEMALE</item>
     </string-array>
+    <string-array name="commodity">
+        <item>Select</item>
+        <item>PLATINUM</item>
+        <item>GOLD</item>
+        <item>SILVER</item>
+    </string-array>
     <string name="intro_message">
         <![CDATA[
 

@@ -109,11 +109,11 @@
 
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/commodity"
+                            android:id="@+id/branchName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="commodity"
-                            android:inputType="textPersonName" />
+                            android:hint="Branch Name *"
+                            android:inputType="text" />
                     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -123,11 +123,11 @@
 
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/rate"
+                            android:id="@+id/branchDesc"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="rate"
-                            android:inputType="textPersonName" />
+                            android:hint="branch Description"
+                            android:inputType="text" />
                     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -137,11 +137,11 @@
 
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/start_date"
+                            android:id="@+id/branchAddress1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Start Date"
-                            android:inputType="textPersonName" />
+                            android:hint="Branch Address 1"
+                            android:inputType="text" />
                     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -151,21 +151,51 @@
 
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/end_date"
+                            android:id="@+id/branchCity"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="End Date"
-                            android:inputType="textPersonName" />
+                            android:hint="Branch City"
+                            android:inputType="text" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/branchPhNumber"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Branch Phone No *"
+                            android:maxLength="10"
+                            android:inputType="numberDecimal" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/branchPin"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Branch Pincode *"
+                            android:maxLength="6"
+                            android:inputType="numberDecimal" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <Button
-                        android:id="@+id/btn_add_commodity_rates"
+                        android:id="@+id/btn_add_branch"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="32dp"
                         android:backgroundTint="#9C27B0"
                         android:padding="15dp"
-                        android:text="Add Commodity"
+                        android:text="Add Branch"
                         android:textColor="@android:color/white"
                         android:textSize="20dp" />
                 </LinearLayout>
@@ -173,14 +203,14 @@
         </ScrollView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_signal_commodity"
+            android:id="@+id/add_signal_branch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
             android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@android:drawable/ic_input_add" />
+            android:layout_margin="@dimen/nav_header_vertical_spacing"
+            android:src="@drawable/ic_add" />
 
     </RelativeLayout>
 </layout>

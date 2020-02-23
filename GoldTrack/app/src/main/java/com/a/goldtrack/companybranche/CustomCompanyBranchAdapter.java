@@ -1,4 +1,4 @@
-package com.a.goldtrack.company;
+package com.a.goldtrack.companybranche;
 
 
 import android.util.Log;
@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.a.goldtrack.Model.GetCompanyRes;
+import com.a.goldtrack.Model.GetCompanyBranchesRes;
 import com.a.goldtrack.R;
 
 import java.util.List;
@@ -18,13 +18,13 @@ import java.util.List;
 /**
  * Provide views to RecyclerView with data from mDataSet.
  */
-public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdapter.ViewHolder> {
-    private static final String TAG = "CustomCompanyAdapter";
+public class CustomCompanyBranchAdapter extends RecyclerView.Adapter<CustomCompanyBranchAdapter.ViewHolder> {
+    private static final String TAG = "CustomBranchAdapter";
 
-    private List<GetCompanyRes.ResList> mDataSet;
+    private List<GetCompanyBranchesRes.ResList> mDataSet;
     CompanyClicked companyClicked;
 
-    public CustomCompanyAdapter(List<GetCompanyRes.ResList> dataSet) {
+    public CustomCompanyBranchAdapter(List<GetCompanyBranchesRes.ResList> dataSet) {
         mDataSet = dataSet;
     }
 
@@ -42,9 +42,10 @@ public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdap
             v.setOnClickListener(this);
         }
 
-        public TextView getTextView() {
+        /*public TextView getTextView() {
             return textView;
-        }
+        }*/
+
 
         @Override
         public void onClick(View view) {
@@ -65,7 +66,8 @@ public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdap
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Log.d(TAG, "Element " + position + " set.");
-        viewHolder.getTextView().setText(mDataSet.get(position).name);
+        viewHolder.textView.setText(mDataSet.get(position).branchName);
+        viewHolder.text_sub.setText(mDataSet.get(position).branchDesc);
     }
 
     @Override

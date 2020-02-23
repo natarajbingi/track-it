@@ -75,7 +75,7 @@
                         android:layout_height="wrap_content"
                         android:ems="10"
                         android:inputType="textEmailAddress"
-                        android:text="darshanraykar1@gmail.com"
+                        android:text="abd@gmail.com"
                         app:addTextChangedListener="@{viewModel.emailWatcher()}"
                         android:hint="Email" />
                 </com.google.android.material.textfield.TextInputLayout>

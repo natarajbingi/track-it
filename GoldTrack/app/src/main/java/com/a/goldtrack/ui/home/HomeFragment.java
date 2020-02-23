@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -22,13 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetCompanyRes;
-import com.a.goldtrack.Model.TeacherLoginReq;
-import com.a.goldtrack.Model.TeacherLoginRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.network.APIService;
 import com.a.goldtrack.network.RetrofitClient;
 import com.a.goldtrack.utils.Constants;
-import com.a.goldtrack.utils.Sessions;
 
 import java.util.List;
 

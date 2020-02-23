@@ -8,9 +8,11 @@ import retrofit2.http.POST;
 
 public interface APIService {
 
-    @POST("teacher/teacherLogin")
-    Call<TeacherLoginRes> TEACHER_LOGIN_RES_CALL(@Body TeacherLoginReq signUpReq);
+    @POST("user/userLogin")
+    Call<UserLoginRes> userLogin(@Body UserLoginReq signUpReq);
 
+    /*Company
+     * */
     @POST("company/addCompany")
     Call<AddCompanyRes> addCompany(@Body AddCompany getCompany);
 
@@ -21,18 +23,37 @@ public interface APIService {
     Call<UpdateCompanyDetailsRes> updateCompanyDetails(@Body UpdateCompanyDetails updateCompanyDetails);
 
 
+    /*Users
+     * */
+
     @POST("user/addUserForCompany")
     Call<AddUserForCompanyRes> addUserForCompany(@Body AddUserForCompany userForCompany);
 
     @POST("user/updateUserDetails")
-    Call<AddUserForCompanyRes> updateUserDetails(@Body UpdateUserCompany userForCompany);
+    Call<AddUserForCompanyRes> updateUserDetails(@Body UpdateUserDetails userForCompany);
 
-    @POST("company/addUserForCompany")
+    @POST("user/getUserForCompany")
     Call<GetUserForCompanyRes> getUserForCompany(@Body GetUserForCompany userForCompany);
 
 
-    @POST("user/addUserForCompany")
-    Call<UpdateCompanyDetailsRes> addUserForCompany(@Body UpdateCompanyDetails updateCompanyDetails);
+    /*Branches
+     * */
+    @POST("companybranches/getCompanyBranches")
+    Call<GetCompanyBranchesRes> getCompanyBranches(@Body GetCompanyBranches getCompanyBranches);
 
+
+    @POST("companybranches/addCompanyBranches")
+    Call<AddCompanyBranchesRes> addCompanyBranches(@Body AddCompanyBranchesReq companyBranchesReq);
+
+    /*Items
+     * */
+    @POST("items/addItem")
+    Call<AddItemRes> addItem(@Body AddItemReq companyBranchesReq);
+
+    @POST("items/getItemsForCompany")
+    Call<GetItemsRes> getItemsForCompany(@Body GetItemsReq companyBranchesReq);
+
+    @POST("items/updateItemDetails")
+    Call<UpdateItemRes> updateItemDetails(@Body UpdateItemReq companyBranchesReq);
 
 }

@@ -19,8 +19,7 @@
             android:id="@+id/list_details_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -108,7 +107,7 @@
                             android:id="@+id/emailID"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Email ID"
+                            android:hint="Email ID *"
                             android:inputType="textEmailAddress" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -122,7 +121,7 @@
                             android:id="@+id/firstName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="First Name"
+                            android:hint="First Name *"
                             android:inputType="text" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -164,7 +163,7 @@
                             android:id="@+id/mobileNo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Mobile No"
+                            android:hint="Mobile No *"
                             android:inputType="numberDecimal"
                             android:maxLength="10" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -188,7 +187,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingLeft="5dp"
-                        android:text="Role"
+                        android:text="Role *"
                         android:textSize="12sp" />
 
                     <Spinner
@@ -197,6 +196,19 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:entries="@array/roles" />
+
+                    <TextView
+                        android:id="@+id/companyId"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+                    <TextView
+                        android:id="@+id/roleListEditTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="16sp"
+                        android:textColor="@color/start_color"
+                        android:visibility="gone" />
 
                     <LinearLayout
                         android:id="@+id/take_img_profile"
@@ -253,8 +265,8 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@android:drawable/ic_input_add" />
+            android:layout_margin="@dimen/nav_header_vertical_spacing"
+            android:src="@drawable/ic_add" />
 
     </RelativeLayout>
 </layout>

@@ -1,7 +1,6 @@
 package com.a.goldtrack.Model;
 
-public class AddCompanyBranches {
-    // /companybranches/addCompanyBranches
+public class AddCompanyBranchesReq {
     public String companyId;
     public String branchCode;
     public String branchName;
