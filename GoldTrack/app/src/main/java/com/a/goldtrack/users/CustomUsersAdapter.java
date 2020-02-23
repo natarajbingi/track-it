@@ -1,4 +1,4 @@
-package com.a.goldtrack.company;
+package com.a.goldtrack.users;
 
 
 import android.util.Log;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.a.goldtrack.Model.GetCompanyRes;
+import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.R;
 
 import java.util.List;
@@ -18,13 +19,13 @@ import java.util.List;
 /**
  * Provide views to RecyclerView with data from mDataSet.
  */
-public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdapter.ViewHolder> {
+public class CustomUsersAdapter extends RecyclerView.Adapter<CustomUsersAdapter.ViewHolder> {
     private static final String TAG = "CustomCompanyAdapter";
 
-    private List<GetCompanyRes.ResList> mDataSet;
+    private List<GetUserForCompanyRes.ResList> mDataSet;
     CompanyClicked companyClicked;
 
-    public CustomCompanyAdapter(List<GetCompanyRes.ResList> dataSet) {
+    public CustomUsersAdapter(List<GetUserForCompanyRes.ResList> dataSet) {
         mDataSet = dataSet;
     }
 
@@ -65,7 +66,11 @@ public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdap
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Log.d(TAG, "Element " + position + " set.");
-        viewHolder.getTextView().setText(mDataSet.get(position).name);
+        viewHolder.textView.setText(mDataSet.get(position).firstName + " " + mDataSet.get(position).lastName);
+        viewHolder.text_sub.setText("Gender: " + mDataSet.get(position).gender
+                + "\t\t\tEmail: " + mDataSet.get(position).emailID
+                + "\nMobile: " + mDataSet.get(position).mobileNo);
+        viewHolder.text_date.setText("DOB: " + mDataSet.get(position).dob);
     }
 
     @Override

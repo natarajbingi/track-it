@@ -37,8 +37,12 @@ public class Constants {
     public static final String BaseUrlTT = "http://13.59.10.105:8080/campusquo_services/api/";
     public static final String BaseUrl = BaseUrlTesting;
     public static final String keepMeSignedStr = "keepMeSignedStr";
+    public static final String appVersion = "1.0.1";
 
     public static final String companyId = "companyId";
+    public static final String userLogin = "userLogin";
+    public static final String userId = "userId";
+    public static final String pwdId = "pwdId";
     public static final int error = 0;
     public static final int success = 1;
     public static final int info = 2;
@@ -98,9 +102,23 @@ public class Constants {
         Log.d("LogRes-", g.toJson(res));
     }
 
-    public static String    getDateNowyyyymmmdd() {
+    public static String getDateyyyymmmdd(String dte) {
+        Date date1 = new Date(dte);
+        SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+
+        return s.format(date1);
+    }
+
+    public static String getDateNowyyyymmmdd() {
         Date date1 = new Date();
         SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+
+        return s.format(date1);
+    }
+
+    public static String getDateNowAll() {
+        Date date1 = new Date();
+        SimpleDateFormat s = new SimpleDateFormat("yyyyMMddHHmmss");
 
         return s.format(date1);
     }

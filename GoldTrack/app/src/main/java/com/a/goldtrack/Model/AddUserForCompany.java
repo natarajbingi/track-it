@@ -1,7 +1,9 @@
 package com.a.goldtrack.Model;
 
+import java.util.List;
+
 public class AddUserForCompany {
-//    user/addUserForCompany
+    //    user/addUserForCompany
     public String id;
     public String user_UID;
     public String companyId;
@@ -19,6 +21,7 @@ public class AddUserForCompany {
     public String mobileAppType;
     public String mobileAppVersion;
     public String loginAttempts;
-    public String roles;
-    public String profilePicU;
+    public List<String> roles;
+    public String profilePicUrl;
+    public String createdBy;
 }

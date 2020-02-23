@@ -48,6 +48,7 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
     ProgressDialog progressDialog;
     Context context;
     boolean viewOrEdit = true;
+    GetCompany reqGet;
     private static final String TAG = "CompanyActivity";
     protected CustomCompanyAdapter mAdapter;
 
@@ -75,7 +76,7 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
 
         binding.addSignalCompany.setOnClickListener(this);
         binding.btnAddCompany.setOnClickListener(this);
-        GetCompany reqGet = new GetCompany();
+          reqGet = new GetCompany();
         reqGet.companyId = "0";
         getCompany(reqGet);
     }
@@ -278,8 +279,6 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
                             Constants.Toasty(context, "Company Updated successfully", Constants.success);
                             resetAll();
                             viewOrEdit = true;
-                            GetCompany reqGet = new GetCompany();
-                            reqGet.companyId = "0";
                             getCompany(reqGet);
                         } else {
                             Constants.alertDialogShow(context, response.body().response);

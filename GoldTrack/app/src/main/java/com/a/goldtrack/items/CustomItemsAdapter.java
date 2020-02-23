@@ -1,4 +1,4 @@
-package com.a.goldtrack.company;
+package com.a.goldtrack.items;
 
 
 import android.util.Log;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.a.goldtrack.Model.GetCompanyRes;
+import com.a.goldtrack.Model.GetItemsRes;
 import com.a.goldtrack.R;
 
 import java.util.List;
@@ -18,13 +19,13 @@ import java.util.List;
 /**
  * Provide views to RecyclerView with data from mDataSet.
  */
-public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdapter.ViewHolder> {
-    private static final String TAG = "CustomCompanyAdapter";
+public class CustomItemsAdapter extends RecyclerView.Adapter<CustomItemsAdapter.ViewHolder> {
+    private static final String TAG = "CustomItemsAdapter";
 
-    private List<GetCompanyRes.ResList> mDataSet;
+    private List<GetItemsRes.ResList> mDataSet;
     CompanyClicked companyClicked;
 
-    public CustomCompanyAdapter(List<GetCompanyRes.ResList> dataSet) {
+    public CustomItemsAdapter(List<GetItemsRes.ResList> dataSet) {
         mDataSet = dataSet;
     }
 
@@ -65,7 +66,9 @@ public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdap
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Log.d(TAG, "Element " + position + " set.");
-        viewHolder.getTextView().setText(mDataSet.get(position).name);
+        viewHolder.textView.setText(mDataSet.get(position).itemName);
+        viewHolder.text_sub.setText(mDataSet.get(position).itemDesc + "\nCommodity: " + mDataSet.get(position).commodity);
+        viewHolder.text_date.setText("");
     }
 
     @Override

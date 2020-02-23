@@ -6,18 +6,17 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.a.goldtrack.HomeActivity;
-import com.a.goldtrack.MainActivity;
-import com.a.goldtrack.Model.TeacherLoginReq;
-import com.a.goldtrack.Model.TeacherLoginRes;
+import com.a.goldtrack.Model.UserLoginReq;
+import com.a.goldtrack.Model.UserLoginRes;
 import com.a.goldtrack.R;
-import com.a.goldtrack.company.CompanyActivity;
+import com.a.goldtrack.companybranche.CompanyBranchesActivity;
+import com.a.goldtrack.items.ItemsActivity;
 import com.a.goldtrack.network.APIService;
 import com.a.goldtrack.network.RetrofitClient;
 import com.a.goldtrack.register.RegistrationActivity;
@@ -25,6 +24,8 @@ import com.a.goldtrack.databinding.ActivityLoginBinding;
 import com.a.goldtrack.users.UserForCompanyActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
+
+import java.util.UUID;
 
 import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
@@ -43,13 +44,18 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
     Context context;
     boolean keepMeSignedStr;
 
+    String deviceName = android.os.Build.MANUFACTURER + " " + android.os.Build.MODEL;
+    String imeiNumber = UUID.randomUUID().toString();
+    String appVersion = Constants.appVersion;
+    String registrationID = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = LoginActivity.this;
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
         loginViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
         loginViewModel.SetView(this);
-        context = LoginActivity.this;
         progressDialog = new ProgressDialog(context, R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
@@ -64,86 +70,22 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
                 onLoginSuccess();
             }
         }
-
-        /*binding.edEmail.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                loginViewModel.email.set(s.toString());
-            }
-        });*/
-
-
-        /*binding.edPassword.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                loginViewModel.pwd.set(s.toString());
-            }
-        });*/
-
-        /*binding.btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                login();
-            }
-        });*/
-
-//        _signupLink.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                // Start the Signup activity
-//                Intent intent = new Intent(getApplicationContext(), RegistrationActivity.class);
-//                startActivityForResult(intent, REQUEST_SIGNUP);
-//                finish();
-//                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-//            }
-//        });
     }
 
 
-    public void login() {
+    public void login(UserLoginReq req) {
         Log.d(TAG, "Login");
-        // TODO: Implement your own authentication logic here.
-
-        TeacherLoginReq req = new TeacherLoginReq();
-        req.appVersion = "1.0.1";
-        req.deviceName = "Testing";
-        req.imeiNumber = "1.0.1";
-        req.registrationID = "1.0.1";
-        req.password = "darshanraykar1@gmail.com";
-        req.userName = "demo123";
         keepMeSignedStr = binding.keepMeSigned.isChecked();
 
         RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrlTT);
+        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
         APIService apiService = retrofit.create(APIService.class);
-        Call<TeacherLoginRes> call = apiService.TEACHER_LOGIN_RES_CALL(req);
-
+        Call<UserLoginRes> call = apiService.userLogin(req);
 
         progressDialog.show();
-        call.enqueue(new Callback<TeacherLoginRes>() {
+        call.enqueue(new Callback<UserLoginRes>() {
             @Override
-            public void onResponse(Call<TeacherLoginRes> call, Response<TeacherLoginRes> response) {
+            public void onResponse(Call<UserLoginRes> call, Response<UserLoginRes> response) {
                 progressDialog.dismiss();
                 Constants.logPrint(call.request().toString(), req, response.body());
                 try {
@@ -154,6 +96,10 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
                             } else {
                                 Sessions.setUserString(context, "FALSE", Constants.keepMeSignedStr);
                             }
+                            Sessions.setUserObj(context, response.body().data, Constants.userLogin);
+                            Sessions.setUserString(context, response.body().data.companyId, Constants.companyId);
+                            Sessions.setUserString(context, response.body().data.userName, Constants.userId);
+                            Sessions.setUserString(context, req.password, Constants.pwdId);
                             onLoginSuccess();
                         } else {
                             Constants.alertDialogShow(context, response.body().response);
@@ -165,7 +111,7 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
             }
 
             @Override
-            public void onFailure(Call<TeacherLoginRes> call, Throwable t) {
+            public void onFailure(Call<UserLoginRes> call, Throwable t) {
                 progressDialog.dismiss();
                 Log.d("Response:", "" + t);
                 Constants.alertDialogShow(context, "Something went wrong, please try again");
@@ -178,10 +124,13 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
     public void onLoginSuccess() {
         binding.btnLogin.setEnabled(true);
 
-//        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+//        Intent i = new Intent(LoginActivity.this, CompanyActivity.class);
 //        Intent i = new Intent(LoginActivity.this, UserForCompanyActivity.class);
-        Intent i = new Intent(LoginActivity.this, CompanyActivity.class);
+//        Intent i = new Intent(LoginActivity.this, CompanyBranchesActivity.class);
+//        Intent i = new Intent(LoginActivity.this, ItemsActivity.class);
         startActivity(i);
+        finish();
     }
 
     public void onLoginFailed() {
@@ -190,28 +139,6 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
         binding.btnLogin.setEnabled(true);
     }
 
-    /*public boolean validate() {
-        boolean valid = true;
-
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
-
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _emailText.setError("enter a valid email address");
-            valid = false;
-        } else {
-            _emailText.setError(null);
-        }
-
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            _passwordText.setError("between 4 and 10 alphanumeric characters");
-            valid = false;
-        } else {
-            _passwordText.setError(null);
-        }
-
-        return valid;
-    }*/
 
     @Override
     public void onClickTextView() {
@@ -223,8 +150,15 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
 
     @Override
     public void onClickLoginBtn() {
-//        login();
-        onLoginSuccess();
+
+        UserLoginReq req = new UserLoginReq();
+        req.appVersion = appVersion;
+        req.deviceName = deviceName;
+        req.imeiNumber = imeiNumber;
+        req.registrationID = registrationID;
+        req.userName = binding.edEmail.getText().toString().trim();
+        req.password = binding.edPassword.getText().toString().trim();
+        login(req);
     }
 
     @Override

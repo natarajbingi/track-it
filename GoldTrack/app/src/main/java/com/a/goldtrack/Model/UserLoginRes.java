@@ -2,38 +2,37 @@ package com.a.goldtrack.Model;
 
 import java.util.List;
 
-public class GetUserForCompanyRes {
-    public List<ResList> resList;
-    public boolean success;
+/**
+ * Created by nataraj-pc on 15-Mar-18.
+ */
+
+public class UserLoginRes {
+    public Data data;
     public String response;
+    public Boolean success;
 
-    public class ResList {
 
+    public class Data {
+        public String id;
         public String userName;
         public String mobileNo;
         public String firstName;
         public String lastName;
         public String gender;
-        public String loginAttempts;
+        public int loginAttempts;
         public String emailID;
         public String dob;
         public String companyId;
         public String user_UID;
-        public String mobileRegId;
         public String passWord;
+        public String mobileRegId;
         public String mobileAppType;
         public String mobileAppVersion;
         public String mobileDevName;
         public String mobileIMEINo;
         public String profilePicUrl;
+        public String sessionID;
         public List<String> roles;
-        public String id;
-        public boolean modify;
-        public boolean add;
-        public String createdBy;
-        public String updatedBy;
-        public String createdDt;
-        public String updatedDt;
-        public boolean delete;
     }
+
 }

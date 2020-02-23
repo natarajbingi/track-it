@@ -352,7 +352,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
+            android:layout_margin="@dimen/nav_header_vertical_spacing"
             android:src="@drawable/ic_add" />
 
     </RelativeLayout>
