@@ -15,6 +15,7 @@ import com.a.goldtrack.HomeActivity;
 import com.a.goldtrack.Model.UserLoginReq;
 import com.a.goldtrack.Model.UserLoginRes;
 import com.a.goldtrack.R;
+import com.a.goldtrack.company.CompanyActivity;
 import com.a.goldtrack.companybranche.CompanyBranchesActivity;
 import com.a.goldtrack.items.ItemsActivity;
 import com.a.goldtrack.network.APIService;
@@ -125,8 +126,8 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
     public void onLoginSuccess() {
         binding.btnLogin.setEnabled(true);
 
-        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-//        Intent i = new Intent(LoginActivity.this, CompanyActivity.class);
+//        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+        Intent i = new Intent(LoginActivity.this, CompanyActivity.class);
 //        Intent i = new Intent(LoginActivity.this, UserForCompanyActivity.class);
 //        Intent i = new Intent(LoginActivity.this, CompanyBranchesActivity.class);
 //        Intent i = new Intent(LoginActivity.this, ItemsActivity.class);
