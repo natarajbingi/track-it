@@ -1,5 +1,7 @@
 package com.a.goldtrack.company;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -11,13 +13,13 @@ import com.a.goldtrack.Model.UpdateCompanyDetails;
 import com.a.goldtrack.Model.UpdateCompanyDetailsRes;
 import com.a.goldtrack.network.RestFullServices;
 
-public class  CompanyViewModel extends ViewModel implements ICallBacks {
+public class CompanyViewModel extends ViewModel implements ICallBacks {
 
     MutableLiveData<GetCompanyRes> list = null;
     ICompanyView view;
 
     public void getCompany(GetCompany model) {
-        if(list == null) {
+        if (list == null) {
             list = new MutableLiveData<>();
         }
         RestFullServices.getCompanyList(model, this);
@@ -36,8 +38,6 @@ public class  CompanyViewModel extends ViewModel implements ICallBacks {
     }
 
 
-
-
     @Override
     protected void onCleared() {
         super.onCleared();
@@ -46,11 +46,12 @@ public class  CompanyViewModel extends ViewModel implements ICallBacks {
     @Override
     public void onSuccess(GetCompanyRes model) {
         list.postValue(model);
+        view.onSuccessGetCompany(model);
     }
 
     @Override
     public void onSuccessAddCompany(AddCompanyRes model) {
-        if(model.success){
+        if (model.success) {
             view.addCompanyDetailes();
         }
     }
@@ -62,6 +63,7 @@ public class  CompanyViewModel extends ViewModel implements ICallBacks {
 
     @Override
     public void onError(String msg) {
-
+        Log.e("CompanyReqError", msg);
+        view.onErrorSpread(msg);
     }
 }

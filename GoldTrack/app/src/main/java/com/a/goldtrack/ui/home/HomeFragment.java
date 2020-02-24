@@ -22,16 +22,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetCompanyRes;
 import com.a.goldtrack.R;
-import com.a.goldtrack.network.APIService;
-import com.a.goldtrack.network.RetrofitClient;
 import com.a.goldtrack.utils.Constants;
 
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class HomeFragment extends Fragment {
 
@@ -57,7 +51,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         context = getContext();
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        progressDialog = new ProgressDialog(context, R.style.AppTheme_Dark_Dialog);
+        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
 
@@ -93,7 +87,7 @@ public class HomeFragment extends Fragment {
 
         GetCompany req = new GetCompany();
         req.companyId = "0";
-        getListCompany(req);
+        //getListCompany(req);
 
 
         return root;
@@ -135,7 +129,7 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private void getListCompany(GetCompany req) {
+    /*private void getListCompany(GetCompany req) {
         Log.d(TAG, "GetCompany");
         RetrofitClient retrofitSet = new RetrofitClient();
         Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
@@ -172,5 +166,5 @@ public class HomeFragment extends Fragment {
             }
         });
 
-    }
+    }*/
 }

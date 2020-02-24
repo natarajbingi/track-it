@@ -35,7 +35,6 @@ public class AddCommodityRatesActivity extends AppCompatActivity implements AddC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = AddCommodityRatesActivity.this;
-        // setContentView(R.layout.activity_add_commodity_rates);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_add_commodity_rates);
         viewModel = ViewModelProviders.of(this).get(AddCommodityRatesViewModel.class);
         binding.setCmdRagesModel(viewModel);

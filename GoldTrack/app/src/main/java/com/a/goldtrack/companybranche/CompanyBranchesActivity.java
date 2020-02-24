@@ -3,48 +3,40 @@ package com.a.goldtrack.companybranche;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddCompanyBranchesReq;
 import com.a.goldtrack.Model.AddCompanyBranchesRes;
-import com.a.goldtrack.Model.AddCompanyRes;
-import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetCompanyBranches;
 import com.a.goldtrack.Model.GetCompanyBranchesRes;
-import com.a.goldtrack.Model.GetCompanyRes;
-import com.a.goldtrack.Model.UpdateCompanyDetails;
-import com.a.goldtrack.Model.UpdateCompanyDetailsRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityCompanyBranchesBinding;
-import com.a.goldtrack.network.APIService;
-import com.a.goldtrack.network.RetrofitClient;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
 
-public class CompanyBranchesActivity extends AppCompatActivity implements View.OnClickListener, CustomCompanyBranchAdapter.CompanyClicked {
+public class CompanyBranchesActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, IBranchView {
 
     CompanyBranchesViewModel viewModel;
     ActivityCompanyBranchesBinding binding;
 
     ProgressDialog progressDialog;
+
     Context context;
     boolean viewOrEdit = true;
     private static final String TAG = "CompanyBranchesActivity";
@@ -55,17 +47,22 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
 
     protected RecyclerView.LayoutManager mLayoutManager;
     protected List<GetCompanyBranchesRes.ResList> mDataset;
+    GetCompanyBranches reqGet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //        setContentView(R.layout.activity_company_branches);
+
         viewModel = ViewModelProviders.of(this).get(CompanyBranchesViewModel.class);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_company_branches);
         binding.setCmpBrnchModel(viewModel);
-
         context = CompanyBranchesActivity.this;
-        progressDialog = new ProgressDialog(context, R.style.AppTheme_Dark_Dialog);
+
+        init();
+    }
+
+    private void init() {
+        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("in Progress...");
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
@@ -77,12 +74,22 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
 
         binding.addSignalBranch.setOnClickListener(this);
         binding.btnAddBranch.setOnClickListener(this);
-        GetCompanyBranches reqGet = new GetCompanyBranches();
-        reqGet.companyId = Sessions.getUserString(context,Constants.companyId);
-        reqGet.branchId = "0";
-        getCompanyBranches(reqGet);
-    }
 
+        reqGet = new GetCompanyBranches();
+        reqGet.companyId = Sessions.getUserString(context, Constants.companyId);
+        reqGet.branchId = "0";
+        progressDialog.show();
+        viewModel.onGetBranch(reqGet);
+        viewModel.onViewAvailable(this);
+        viewModel.list.observe(this, new Observer<GetCompanyBranchesRes>() {
+            @Override
+            public void onChanged(GetCompanyBranchesRes getCompanyBranchesRes) {
+                mDataset = getCompanyBranchesRes.resList;
+                progressDialog.dismiss();
+                setmRecyclerView();
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -100,91 +107,7 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
         }
         return true;
     }
-    private void addCompanyBranches(AddCompanyBranchesReq req) {
-        Log.d(TAG, "addCompanyBranches");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<AddCompanyBranchesRes> call = apiService.addCompanyBranches(req);
 
-
-        progressDialog.show();
-        call.enqueue(new Callback<AddCompanyBranchesRes>() {
-            @Override
-            public void onResponse(Call<AddCompanyBranchesRes> call, Response<AddCompanyBranchesRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            Constants.Toasty(context, "Branch Added successfully", Constants.success);
-                            resetAll();
-                            GetCompanyBranches reqGet = new GetCompanyBranches();
-                            reqGet.companyId = Sessions.getUserString(context, Constants.companyId);
-                            reqGet.branchId = "0";
-                            getCompanyBranches(reqGet);
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AddCompanyBranchesRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }
-
-    private void getCompanyBranches(GetCompanyBranches req) {
-        Log.d(TAG, "getUserForCompany");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<GetCompanyBranchesRes> call = apiService.getCompanyBranches(req);
-
-
-        progressDialog.show();
-        call.enqueue(new Callback<GetCompanyBranchesRes>() {
-            @Override
-            public void onResponse(Call<GetCompanyBranchesRes> call, Response<GetCompanyBranchesRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            mDataset = response.body().resList;
-                            setmRecyclerView();
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GetCompanyBranchesRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }
-
-    private void updateCompanyDetails(UpdateCompanyDetails req) {
-
-    }
 
     private void resetAll() {
         binding.branchName.setText("");
@@ -248,7 +171,7 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
             Constants.Toasty(context, "Please Enter mandatory Fields", Constants.warning);
             return;
         }
-        addCompanyBranches(req);
+        viewModel.onAddBranch(req);
     }
 
     private void setValidateUpdate() {
@@ -259,9 +182,11 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
         mLayoutManager = new LinearLayoutManager(this);
         mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
-        mAdapter = new CustomCompanyBranchAdapter(mDataset);
-        mAdapter.setClickListener(this);
-        binding.recyclerBranches.setAdapter(mAdapter);
+        if (mAdapter == null) {
+            mAdapter = new CustomCompanyBranchAdapter(mDataset);
+            mAdapter.setClickListener(this);
+            binding.recyclerBranches.setAdapter(mAdapter);
+        } else mAdapter.notifyDataSetChanged();
     }
 
     public void setRecyclerViewLayoutManager(Constants.LayoutManagerType layoutManagerType) {
@@ -297,4 +222,116 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
 
         Constants.Toasty(context, "Edit " + mDataset.get(position).branchName, Constants.info);
     }
+
+    @Override
+    public void onSuccessGetBranch() {
+        progressDialog.dismiss();
+    }
+
+    @Override
+    public void onSuccessAddBranch(AddCompanyBranchesRes branchesRes) {
+        if (branchesRes.success) {
+            Constants.Toasty(context, "Branch Added successfully", Constants.success);
+            resetAll();
+            viewModel.onGetBranch(reqGet);
+        } else {
+            Constants.alertDialogShow(context, branchesRes.response);
+        }
+    }
+
+    @Override
+    public void onSuccessUpdateBranch() {
+        // progressDialog.dismiss();
+        Constants.Toasty(context, "Branch Updated successfully", Constants.success);
+        resetAll();
+        viewModel.onGetBranch(reqGet);
+    }
+
+    @Override
+    public void onErrorBranch(String msg) {
+        progressDialog.dismiss();
+    }
+
+    /*private void addCompanyBranches(AddCompanyBranchesReq req) {
+        Log.d(TAG, "addCompanyBranches");
+        RetrofitClient retrofitSet = new RetrofitClient();
+        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
+        APIService apiService = retrofit.create(APIService.class);
+        Call<AddCompanyBranchesRes> call = apiService.addCompanyBranches(req);
+
+
+        progressDialog.show();
+        call.enqueue(new Callback<AddCompanyBranchesRes>() {
+            @Override
+            public void onResponse(Call<AddCompanyBranchesRes> call, Response<AddCompanyBranchesRes> response) {
+                progressDialog.dismiss();
+                Constants.logPrint(call.request().toString(), req, response.body());
+                try {
+                    if (response.isSuccessful()) {
+                        if (response.body().success) {
+                            Constants.Toasty(context, "Branch Added successfully", Constants.success);
+                            resetAll();
+                            //getCompanyBranches(reqGet);
+                        } else {
+                            Constants.alertDialogShow(context, response.body().response);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddCompanyBranchesRes> call, Throwable t) {
+                progressDialog.dismiss();
+                Log.d("Response:", "" + t);
+                Constants.alertDialogShow(context, "Something went wrong, please try again");
+                t.printStackTrace();
+            }
+        });
+
+    }
+
+    private void getCompanyBranches(GetCompanyBranches req) {
+        Log.d(TAG, "getUserForCompany");
+        RetrofitClient retrofitSet = new RetrofitClient();
+        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
+        APIService apiService = retrofit.create(APIService.class);
+        Call<GetCompanyBranchesRes> call = apiService.getCompanyBranches(req);
+
+
+        progressDialog.show();
+        call.enqueue(new Callback<GetCompanyBranchesRes>() {
+            @Override
+            public void onResponse(Call<GetCompanyBranchesRes> call, Response<GetCompanyBranchesRes> response) {
+                progressDialog.dismiss();
+                Constants.logPrint(call.request().toString(), req, response.body());
+                try {
+                    if (response.isSuccessful()) {
+                        if (response.body().success) {
+                            mDataset = response.body().resList;
+                            setmRecyclerView();
+                        } else {
+                            Constants.alertDialogShow(context, response.body().response);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetCompanyBranchesRes> call, Throwable t) {
+                progressDialog.dismiss();
+                Log.d("Response:", "" + t);
+                Constants.alertDialogShow(context, "Something went wrong, please try again");
+                t.printStackTrace();
+            }
+        });
+
+    }
+
+    private void updateCompanyDetails(UpdateCompanyDetails req) {
+
+    }*/
 }

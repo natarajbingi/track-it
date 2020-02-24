@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.a.goldtrack.BuildConfig;
+import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddUserForCompany;
 import com.a.goldtrack.Model.AddUserForCompanyRes;
 import com.a.goldtrack.Model.GetUserForCompany;
@@ -62,7 +63,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class UserForCompanyActivity extends AppCompatActivity implements View.OnClickListener, CustomUsersAdapter.CompanyClicked {
+public class UserForCompanyActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked {
 
     ActivityUserForCompanyBinding binding;
     UserForCompanyViewModel viewModel;
@@ -130,7 +131,7 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         binding = DataBindingUtil.setContentView(this, R.layout.activity_user_for_company);
         binding.setUserCmpModel(viewModel);
         context = UserForCompanyActivity.this;
-        progressDialog = new ProgressDialog(context, R.style.AppTheme_Dark_Dialog);
+        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("in Progress...");
         mCompressor = new FileCompressor(this);

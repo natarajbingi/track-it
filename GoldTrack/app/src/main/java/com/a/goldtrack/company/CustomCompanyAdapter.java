@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.GetCompanyRes;
 import com.a.goldtrack.R;
 
@@ -22,7 +23,7 @@ public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdap
     private static final String TAG = "CustomCompanyAdapter";
 
     private List<GetCompanyRes.ResList> mDataSet;
-    CompanyClicked companyClicked;
+    RecycleItemClicked companyClicked;
 
     public CustomCompanyAdapter(List<GetCompanyRes.ResList> dataSet) {
         mDataSet = dataSet;
@@ -65,7 +66,9 @@ public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdap
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Log.d(TAG, "Element " + position + " set.");
-        viewHolder.getTextView().setText(mDataSet.get(position).name);
+        viewHolder.textView.setText(mDataSet.get(position).name);
+        viewHolder.text_sub.setText(mDataSet.get(position).desc);
+        viewHolder.text_date.setText("");
     }
 
     @Override
@@ -74,11 +77,8 @@ public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdap
     }
 
     // allows clicks events to be caught
-    public void setClickListener(CompanyClicked companyClicked) {
+    public void setClickListener(RecycleItemClicked companyClicked) {
         this.companyClicked = companyClicked;
     }
 
-    interface CompanyClicked {
-        void oncItemClicked(View view, int position);
-    }
 }

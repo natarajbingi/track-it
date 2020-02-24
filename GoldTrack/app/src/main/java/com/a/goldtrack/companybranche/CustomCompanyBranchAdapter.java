@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.GetCompanyBranchesRes;
 import com.a.goldtrack.R;
 
@@ -22,7 +23,7 @@ public class CustomCompanyBranchAdapter extends RecyclerView.Adapter<CustomCompa
     private static final String TAG = "CustomBranchAdapter";
 
     private List<GetCompanyBranchesRes.ResList> mDataSet;
-    CompanyClicked companyClicked;
+    RecycleItemClicked companyClicked;
 
     public CustomCompanyBranchAdapter(List<GetCompanyBranchesRes.ResList> dataSet) {
         mDataSet = dataSet;
@@ -76,11 +77,8 @@ public class CustomCompanyBranchAdapter extends RecyclerView.Adapter<CustomCompa
     }
 
     // allows clicks events to be caught
-    public void setClickListener(CompanyClicked companyClicked) {
+    public void setClickListener(RecycleItemClicked companyClicked) {
         this.companyClicked = companyClicked;
     }
 
-    interface CompanyClicked {
-        void oncItemClicked(View view, int position);
-    }
 }

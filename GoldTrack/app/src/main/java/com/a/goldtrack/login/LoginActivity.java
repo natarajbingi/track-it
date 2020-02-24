@@ -15,24 +15,14 @@ import com.a.goldtrack.HomeActivity;
 import com.a.goldtrack.Model.UserLoginReq;
 import com.a.goldtrack.Model.UserLoginRes;
 import com.a.goldtrack.R;
-import com.a.goldtrack.company.CompanyActivity;
-import com.a.goldtrack.companybranche.CompanyBranchesActivity;
-import com.a.goldtrack.items.ItemsActivity;
-import com.a.goldtrack.network.APIService;
-import com.a.goldtrack.network.RetrofitClient;
 import com.a.goldtrack.register.RegistrationActivity;
 import com.a.goldtrack.databinding.ActivityLoginBinding;
-import com.a.goldtrack.users.UserForCompanyActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
 import java.util.UUID;
 
 import es.dmoral.toasty.Toasty;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class LoginActivity extends AppCompatActivity implements LoginDataHandler {
 
@@ -57,7 +47,7 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
         loginViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
         loginViewModel.SetView(this);
-        progressDialog = new ProgressDialog(context, R.style.AppTheme_Dark_Dialog);
+        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
         binding.setViewModel(loginViewModel);
@@ -74,7 +64,97 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
     }
 
 
-    public void login(UserLoginReq req) {
+    public void onLoginSuccess() {
+        binding.btnLogin.setEnabled(true);
+
+        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+//        Intent i = new Intent(LoginActivity.this, CompanyActivity.class);
+//        Intent i = new Intent(LoginActivity.this, UserForCompanyActivity.class);
+//        Intent i = new Intent(LoginActivity.this, CompanyBranchesActivity.class);
+//        Intent i = new Intent(LoginActivity.this, ItemsActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+    public void onLoginFailed() {
+        Toasty.error(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        binding.btnLogin.setEnabled(true);
+    }
+
+    @Override
+    public void onClickTextView() {
+        // Start the Signup activity
+        Intent intent = new Intent(getApplicationContext(), RegistrationActivity.class);
+        startActivityForResult(intent, REQUEST_SIGNUP);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+    }
+
+    @Override
+    public void onClickLoginBtn() {
+
+        UserLoginReq req = new UserLoginReq();
+        req.appVersion = appVersion;
+        req.deviceName = deviceName;
+        req.imeiNumber = imeiNumber;
+        req.registrationID = registrationID;
+        req.userName = binding.edEmail.getText().toString().trim();
+        req.password = binding.edPassword.getText().toString().trim();
+        keepMeSignedStr = binding.keepMeSigned.isChecked();
+
+        progressDialog.show();
+        loginViewModel.loginCall(req);
+    }
+
+    @Override
+    public void onClickLoginFailed() {
+        onLoginFailed();
+    }
+
+    @Override
+    public void onSetEmailError(boolean bool) {
+        if (bool)
+            binding.edEmail.setError("enter a valid email address");
+        else
+            binding.edEmail.setError(null);
+
+    }
+
+    @Override
+    public void onSetPwdError(boolean bool) {
+        if (bool)
+            binding.edPassword.setError("between 4 and 10 alphanumeric characters");
+        else
+            binding.edPassword.setError(null);
+
+    }
+
+    @Override
+    public void onLoginCallSuccess(UserLoginRes loginRes) {
+        progressDialog.dismiss();
+        if (loginRes.success) {
+            if (keepMeSignedStr) {
+                Sessions.setUserString(context, "TRUE", Constants.keepMeSignedStr);
+            } else {
+                Sessions.setUserString(context, "FALSE", Constants.keepMeSignedStr);
+            }
+            Sessions.setUserObj(context, loginRes.data, Constants.userLogin);
+            Sessions.setUserString(context, loginRes.data.companyId, Constants.companyId);
+            Sessions.setUserString(context, loginRes.data.userName, Constants.userId);
+            Sessions.setUserString(context, loginRes.data.firstName + " " + loginRes.data.lastName, Constants.userName);
+            Sessions.setUserString(context, binding.edPassword.getText().toString(), Constants.pwdId);
+            onLoginSuccess();
+        } else {
+            Constants.alertDialogShow(context, loginRes.response);
+        }
+    }
+
+    @Override
+    public void onLoginError(String msg) {
+        progressDialog.dismiss();
+        Log.e(TAG, msg);
+        Constants.alertDialogShow(context, "Something went wrong, please try again");
+    }
+    /* public void login(UserLoginReq req) {
         Log.d(TAG, "Login");
         keepMeSignedStr = binding.keepMeSigned.isChecked();
 
@@ -121,68 +201,5 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
             }
         });
 
-    }
-
-    public void onLoginSuccess() {
-        binding.btnLogin.setEnabled(true);
-
-//        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-        Intent i = new Intent(LoginActivity.this, CompanyActivity.class);
-//        Intent i = new Intent(LoginActivity.this, UserForCompanyActivity.class);
-//        Intent i = new Intent(LoginActivity.this, CompanyBranchesActivity.class);
-//        Intent i = new Intent(LoginActivity.this, ItemsActivity.class);
-        startActivity(i);
-        finish();
-    }
-
-    public void onLoginFailed() {
-        Toasty.error(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-
-        binding.btnLogin.setEnabled(true);
-    }
-
-
-    @Override
-    public void onClickTextView() {
-        // Start the Signup activity
-        Intent intent = new Intent(getApplicationContext(), RegistrationActivity.class);
-        startActivityForResult(intent, REQUEST_SIGNUP);
-        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-    }
-
-    @Override
-    public void onClickLoginBtn() {
-
-        UserLoginReq req = new UserLoginReq();
-        req.appVersion = appVersion;
-        req.deviceName = deviceName;
-        req.imeiNumber = imeiNumber;
-        req.registrationID = registrationID;
-        req.userName = binding.edEmail.getText().toString().trim();
-        req.password = binding.edPassword.getText().toString().trim();
-        login(req);
-    }
-
-    @Override
-    public void onClickLoginFailed() {
-        onLoginFailed();
-    }
-
-    @Override
-    public void onSetEmailError(boolean bool) {
-        if (bool)
-            binding.edEmail.setError("enter a valid email address");
-        else
-            binding.edEmail.setError(null);
-
-    }
-
-    @Override
-    public void onSetPwdError(boolean bool) {
-        if (bool)
-            binding.edPassword.setError("between 4 and 10 alphanumeric characters");
-        else
-            binding.edPassword.setError(null);
-
-    }
+    }*/
 }

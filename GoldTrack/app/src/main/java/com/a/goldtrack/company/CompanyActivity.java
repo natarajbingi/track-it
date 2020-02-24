@@ -12,40 +12,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddCompany;
-import com.a.goldtrack.Model.AddCompanyRes;
-import com.a.goldtrack.Model.AddUserForCompany;
-import com.a.goldtrack.Model.AddUserForCompanyRes;
 import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetCompanyRes;
-import com.a.goldtrack.Model.GetUserForCompany;
-import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.Model.UpdateCompanyDetails;
-import com.a.goldtrack.Model.UpdateCompanyDetailsRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityCompanyBinding;
-import com.a.goldtrack.network.APIService;
-import com.a.goldtrack.network.RetrofitClient;
-import com.a.goldtrack.ui.home.CustomAdapter;
-import com.a.goldtrack.users.UserForCompanyActivity;
 import com.a.goldtrack.utils.Constants;
-import com.a.goldtrack.utils.Sessions;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import es.dmoral.toasty.Toasty;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-
-public class CompanyActivity extends AppCompatActivity implements View.OnClickListener, CustomCompanyAdapter.CompanyClicked, ICompanyView {
+public class CompanyActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, ICompanyView {
 
     CompanyViewModel viewModel;
     ActivityCompanyBinding binding;
@@ -65,18 +48,21 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //  setContentView(R.layout.activity_company);
-
         viewModel = ViewModelProviders.of(this).get(CompanyViewModel.class);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_company);
         binding.setCmpModel(viewModel);
+        context = CompanyActivity.this;
+
+        init();
+    }
+
+    private void init() {
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         final ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        context = CompanyActivity.this;
-        progressDialog = new ProgressDialog(context, R.style.AppTheme_Dark_Dialog);
+        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("in Progress...");
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
@@ -98,7 +84,6 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
                 setmRecyclerView();
             }
         });
-
 
     }
 
@@ -188,17 +173,28 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
 
         Constants.Toasty(context, "Company Added successfully", Constants.success);
         resetAll();
-        progressDialog.dismiss();
+        // progressDialog.dismiss();
         viewModel.getCompany(reqGet);
     }
 
     @Override
     public void updateCompanyDetailes() {
-        progressDialog.dismiss();
+        // progressDialog.dismiss();
         Constants.Toasty(context, "Company Updated successfully", Constants.success);
         resetAll();
         viewOrEdit = true;
         viewModel.getCompany(reqGet);
+    }
+
+    @Override
+    public void onSuccessGetCompany(GetCompanyRes model) {
+        progressDialog.dismiss();
+
+    }
+
+    @Override
+    public void onErrorSpread(String msg) {
+        progressDialog.dismiss();
     }
 
     void setmRecyclerView() {
@@ -207,8 +203,8 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
         if (mAdapter == null) {
             mAdapter = new CustomCompanyAdapter(mDataset);
-            mAdapter.setClickListener(this);
             binding.recyclerBranches.setAdapter(mAdapter);
+            mAdapter.setClickListener(this);
         } else
             mAdapter.notifyDataSetChanged();
 
@@ -240,7 +236,6 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         binding.recyclerBranches.setLayoutManager(mLayoutManager);
         binding.recyclerBranches.scrollToPosition(scrollPosition);
     }
-
 
 
     private void resetAll() {

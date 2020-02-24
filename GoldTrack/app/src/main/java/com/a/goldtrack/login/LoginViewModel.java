@@ -6,7 +6,11 @@ import android.text.TextWatcher;
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.ViewModel;
 
-public class LoginViewModel extends ViewModel {
+import com.a.goldtrack.Model.UserLoginReq;
+import com.a.goldtrack.Model.UserLoginRes;
+import com.a.goldtrack.network.RestFullServices;
+
+public class LoginViewModel extends ViewModel implements ILoginCallBacks {
 
     ObservableField<String> email = null;
     ObservableField<String> pwd = null;
@@ -91,4 +95,17 @@ public class LoginViewModel extends ViewModel {
         };
     }
 
+    public void loginCall(UserLoginReq req) {
+        RestFullServices.login(req, this);
+    }
+
+    @Override
+    public void onSuccess(UserLoginRes loginRes) {
+        view.onLoginCallSuccess(loginRes);
+    }
+
+    @Override
+    public void onError(String msg) {
+        view.onLoginError(msg);
+    }
 }

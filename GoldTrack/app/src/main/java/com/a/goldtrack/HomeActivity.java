@@ -6,7 +6,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.a.goldtrack.company.CompanyActivity;
+import com.a.goldtrack.companybranche.CompanyBranchesActivity;
+import com.a.goldtrack.items.ItemsActivity;
 import com.a.goldtrack.login.LoginActivity;
+import com.a.goldtrack.users.UserForCompanyActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -39,6 +43,7 @@ public class HomeActivity extends AppCompatActivity
     private AppBarConfiguration mAppBarConfiguration;
     Context context;
     NavigationView navigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +52,7 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-          navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -70,6 +75,7 @@ public class HomeActivity extends AppCompatActivity
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
 
         NavigationUI.setupWithNavController(navigationView, navController);
+        navigationView.setNavigationItemSelectedListener(this);
 
     }
 
@@ -83,8 +89,6 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-//        navigationView.setNavigationItemSelectedListener(this);
-
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
@@ -92,9 +96,27 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
+        Intent i;
         switch (item.getItemId()) {
-            /*case R.id.menu_logout:
-                break;*/
+            case R.id.nav_home:
+
+                break;
+            case R.id.nav_gallery:
+                i = new Intent(this, CompanyActivity.class);
+                startActivity(i);
+                break;
+            case R.id.nav_slideshow:
+                i = new Intent(this, CompanyBranchesActivity.class);
+                startActivity(i);
+                break;
+            case R.id.nav_tools:
+                i = new Intent(this, ItemsActivity.class);
+                startActivity(i);
+                break;
+            case R.id.nav_share:
+                i = new Intent(this, UserForCompanyActivity.class);
+                startActivity(i);
+                break;
             case R.id.menu_logout: {
                 new AlertDialog.Builder(this)
                         .setIcon(R.mipmap.ic_launcher)

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.GetCompanyRes;
 import com.a.goldtrack.Model.GetItemsRes;
 import com.a.goldtrack.R;
@@ -23,7 +24,7 @@ public class CustomItemsAdapter extends RecyclerView.Adapter<CustomItemsAdapter.
     private static final String TAG = "CustomItemsAdapter";
 
     private List<GetItemsRes.ResList> mDataSet;
-    CompanyClicked companyClicked;
+    RecycleItemClicked companyClicked;
 
     public CustomItemsAdapter(List<GetItemsRes.ResList> dataSet) {
         mDataSet = dataSet;
@@ -41,10 +42,6 @@ public class CustomItemsAdapter extends RecyclerView.Adapter<CustomItemsAdapter.
             text_sub = (TextView) v.findViewById(R.id.text_sub);
 
             v.setOnClickListener(this);
-        }
-
-        public TextView getTextView() {
-            return textView;
         }
 
         @Override
@@ -77,11 +74,8 @@ public class CustomItemsAdapter extends RecyclerView.Adapter<CustomItemsAdapter.
     }
 
     // allows clicks events to be caught
-    public void setClickListener(CompanyClicked companyClicked) {
+    public void setClickListener(RecycleItemClicked companyClicked) {
         this.companyClicked = companyClicked;
     }
 
-    interface CompanyClicked {
-        void oncItemClicked(View view, int position);
-    }
 }

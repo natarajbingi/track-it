@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.GetCompanyRes;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.R;
@@ -23,7 +24,7 @@ public class CustomUsersAdapter extends RecyclerView.Adapter<CustomUsersAdapter.
     private static final String TAG = "CustomCompanyAdapter";
 
     private List<GetUserForCompanyRes.ResList> mDataSet;
-    CompanyClicked companyClicked;
+    RecycleItemClicked companyClicked;
 
     public CustomUsersAdapter(List<GetUserForCompanyRes.ResList> dataSet) {
         mDataSet = dataSet;
@@ -79,11 +80,9 @@ public class CustomUsersAdapter extends RecyclerView.Adapter<CustomUsersAdapter.
     }
 
     // allows clicks events to be caught
-    public void setClickListener(CompanyClicked companyClicked) {
+    public void setClickListener(RecycleItemClicked companyClicked) {
         this.companyClicked = companyClicked;
     }
 
-    interface CompanyClicked {
-        void oncItemClicked(View view, int position);
-    }
+
 }
