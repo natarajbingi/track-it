@@ -94,7 +94,7 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
             mAdapter = new CustomUsersAdapter(mDataset);
             mAdapter.setClickListener(this);
             binding.recyclerUserForCmpy.setAdapter(mAdapter);
-        } else mAdapter.notifyDataSetChanged();
+        } else mAdapter.updateListNew(mDataset);
     }
 
     public void setRecyclerViewLayoutManager(Constants.LayoutManagerType layoutManagerType) {

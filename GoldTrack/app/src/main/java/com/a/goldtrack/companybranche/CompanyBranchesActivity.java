@@ -186,7 +186,7 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
             mAdapter = new CustomCompanyBranchAdapter(mDataset);
             mAdapter.setClickListener(this);
             binding.recyclerBranches.setAdapter(mAdapter);
-        } else mAdapter.notifyDataSetChanged();
+        } else mAdapter.updateListNew(mDataset);
     }
 
     public void setRecyclerViewLayoutManager(Constants.LayoutManagerType layoutManagerType) {

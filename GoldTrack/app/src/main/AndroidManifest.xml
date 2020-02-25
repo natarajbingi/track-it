@@ -23,7 +23,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".items.ItemsActivity"></activity>
+        <activity android:name=".trans.TransActivity"></activity>
+        <activity android:name=".items.ItemsActivity" />
         <activity android:name=".company.CompanyActivity" />
         <activity android:name=".companybranche.CompanyBranchesActivity" />
         <activity android:name=".users.UserForCompanyActivity" />

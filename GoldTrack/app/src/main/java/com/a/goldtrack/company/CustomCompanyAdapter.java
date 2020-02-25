@@ -29,6 +29,12 @@ public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdap
         mDataSet = dataSet;
     }
 
+    public void updateListNew(List<GetCompanyRes.ResList> mDataset) {
+        this.mDataSet.clear();
+        this.mDataSet.addAll(mDataset);
+        this.notifyDataSetChanged();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final TextView textView, text_sub, text_date;
         private final ImageView logo_id;
@@ -41,10 +47,6 @@ public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdap
             text_sub = (TextView) v.findViewById(R.id.text_sub);
 
             v.setOnClickListener(this);
-        }
-
-        public TextView getTextView() {
-            return textView;
         }
 
         @Override

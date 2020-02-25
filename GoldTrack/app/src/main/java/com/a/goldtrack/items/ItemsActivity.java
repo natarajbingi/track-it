@@ -115,7 +115,7 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
             mAdapter = new CustomItemsAdapter(mDataset);
             mAdapter.setClickListener(this);
             binding.recyclerItems.setAdapter(mAdapter);
-        } else mAdapter.notifyDataSetChanged();
+        } else mAdapter.updateListNew(mDataset);
     }
 
     public void setRecyclerViewLayoutManager(Constants.LayoutManagerType layoutManagerType) {

@@ -30,6 +30,11 @@ public class CustomUsersAdapter extends RecyclerView.Adapter<CustomUsersAdapter.
         mDataSet = dataSet;
     }
 
+    public void updateListNew(List<GetUserForCompanyRes.ResList> mDataset) {
+        this.mDataSet.clear();
+        this.mDataSet.addAll(mDataset);
+        this.notifyDataSetChanged();
+    }
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final TextView textView, text_sub, text_date;
         private final ImageView logo_id;

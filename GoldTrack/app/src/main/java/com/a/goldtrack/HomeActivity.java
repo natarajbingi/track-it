@@ -10,6 +10,7 @@ import com.a.goldtrack.company.CompanyActivity;
 import com.a.goldtrack.companybranche.CompanyBranchesActivity;
 import com.a.goldtrack.items.ItemsActivity;
 import com.a.goldtrack.login.LoginActivity;
+import com.a.goldtrack.trans.TransActivity;
 import com.a.goldtrack.users.UserForCompanyActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
@@ -104,18 +105,27 @@ public class HomeActivity extends AppCompatActivity
             case R.id.nav_gallery:
                 i = new Intent(this, CompanyActivity.class);
                 startActivity(i);
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 break;
             case R.id.nav_slideshow:
                 i = new Intent(this, CompanyBranchesActivity.class);
                 startActivity(i);
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 break;
             case R.id.nav_tools:
                 i = new Intent(this, ItemsActivity.class);
                 startActivity(i);
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 break;
             case R.id.nav_share:
                 i = new Intent(this, UserForCompanyActivity.class);
                 startActivity(i);
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                break;
+            case R.id.nav_trans:
+                i = new Intent(this, TransActivity.class);
+                startActivity(i);
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 break;
             case R.id.menu_logout: {
                 new AlertDialog.Builder(this)

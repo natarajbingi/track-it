@@ -84,7 +84,6 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
                 setmRecyclerView();
             }
         });
-
     }
 
 
@@ -189,7 +188,12 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onSuccessGetCompany(GetCompanyRes model) {
         progressDialog.dismiss();
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
     @Override
@@ -206,7 +210,7 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
             binding.recyclerBranches.setAdapter(mAdapter);
             mAdapter.setClickListener(this);
         } else
-            mAdapter.notifyDataSetChanged();
+            mAdapter.updateListNew(mDataset);
 
     }
 
