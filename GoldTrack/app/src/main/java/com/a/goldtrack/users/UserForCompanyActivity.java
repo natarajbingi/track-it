@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -63,7 +64,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class UserForCompanyActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked {
+public class UserForCompanyActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, UserCompanyHandler {
 
     ActivityUserForCompanyBinding binding;
     UserForCompanyViewModel viewModel;
@@ -77,23 +78,23 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
     protected List<GetUserForCompanyRes.ResList> mDataset;
     GetUserForCompany user;
     List<String> rolesList = new ArrayList<>();
+    private int userIdIfEditing = 0;
 
     // Camera Actions
     static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_GALLERY_PHOTO = 2;
     File mPhotoFile;
     FileCompressor mCompressor;
-//    @BindView(R.id.imageViewProfilePic)
-//    ImageView imageViewProfilePic; triggImgGet,selectedImg
-
 
     void setmRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this);
         mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
-        mAdapter = new CustomUsersAdapter(mDataset);
-        mAdapter.setClickListener(this);
-        binding.recyclerUserForCmpy.setAdapter(mAdapter);
+        if (mAdapter == null) {
+            mAdapter = new CustomUsersAdapter(mDataset);
+            mAdapter.setClickListener(this);
+            binding.recyclerUserForCmpy.setAdapter(mAdapter);
+        } else mAdapter.notifyDataSetChanged();
     }
 
     public void setRecyclerViewLayoutManager(Constants.LayoutManagerType layoutManagerType) {
@@ -126,11 +127,20 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // setContentView(R.layout.activity_user_for_company);
         viewModel = ViewModelProviders.of(this).get(UserForCompanyViewModel.class);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_user_for_company);
         binding.setUserCmpModel(viewModel);
         context = UserForCompanyActivity.this;
+
+        init();
+    }
+
+    void init() {
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        final ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+
         progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("in Progress...");
@@ -138,10 +148,6 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
 
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
-
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        final ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
 
         binding.btnAddUser.setOnClickListener(this);
         binding.triggImgGet.setOnClickListener(this);
@@ -159,7 +165,17 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         user = new GetUserForCompany();
         user.companyId = Sessions.getUserString(context, Constants.companyId);
         user.userId = "0";
-        getUserForCompany(user);
+        progressDialog.show();
+        viewModel.getUsers(user);
+        viewModel.onViewAvailable(this);
+        viewModel.list.observe(this, new Observer<GetUserForCompanyRes>() {
+            @Override
+            public void onChanged(GetUserForCompanyRes getUserForCompanyRes) {
+                mDataset = getUserForCompanyRes.resList;
+                progressDialog.dismiss();
+                setmRecyclerView();
+            }
+        });
     }
 
     @Override
@@ -169,7 +185,6 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (android.R.id.home == item.getItemId()) // API 5+ solution
@@ -178,6 +193,7 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         }
         return true;
     }
+
     private void setValidNcall() {
         AddUserForCompany req = new AddUserForCompany();
         req.companyId = Sessions.getUserString(context, Constants.companyId);
@@ -200,7 +216,7 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
             return;
         }
 
-        addUserForCompany(req);
+        viewModel.addUser(req);
     }
 
     private void setValidateUpdate() {
@@ -230,129 +246,7 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
             return;
         }
         req1.data.add(req);
-        updateUserDetails(req1);
-    }
-
-
-    private void addUserForCompany(AddUserForCompany req) {
-        Log.d(TAG, "addUserForCompany");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<AddUserForCompanyRes> call = apiService.addUserForCompany(req);
-
-
-        progressDialog.show();
-        call.enqueue(new Callback<AddUserForCompanyRes>() {
-            @Override
-            public void onResponse(Call<AddUserForCompanyRes> call, Response<AddUserForCompanyRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            Constants.Toasty(context, "User Added successfully", Constants.success);
-                            resetAll();
-                            viewOrEdit = true;
-                            getUserForCompany(user);
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AddUserForCompanyRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }
-
-    private void updateUserDetails(UpdateUserDetails req) {
-        Log.d(TAG, "addUserForCompany");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<AddUserForCompanyRes> call = apiService.updateUserDetails(req);
-
-
-        progressDialog.show();
-        call.enqueue(new Callback<AddUserForCompanyRes>() {
-            @Override
-            public void onResponse(Call<AddUserForCompanyRes> call, Response<AddUserForCompanyRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            Constants.Toasty(context, "User Updated successfully", Constants.success);
-                            resetAll();
-                            viewOrEdit = true;
-                            getUserForCompany(user);
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AddUserForCompanyRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }
-
-    private void getUserForCompany(GetUserForCompany req) {
-        Log.d(TAG, "getUserForCompany");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<GetUserForCompanyRes> call = apiService.getUserForCompany(req);
-
-
-        progressDialog.show();
-        call.enqueue(new Callback<GetUserForCompanyRes>() {
-            @Override
-            public void onResponse(Call<GetUserForCompanyRes> call, Response<GetUserForCompanyRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            mDataset = response.body().resList;
-                            setmRecyclerView();
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GetUserForCompanyRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
+        viewModel.updateUser(req1);
     }
 
 
@@ -608,8 +502,6 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         setEditUpdateVals(position);
     }
 
-    private int userIdIfEditing = 0;
-
     private void setEditUpdateVals(int position) {
         userIdIfEditing = Integer.parseInt((mDataset.get(position).id));
         binding.companyId.setText(mDataset.get(position).companyId);
@@ -644,4 +536,168 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
 
         viewOrEdit = false;
     }
+
+    @Override
+    public void getUsersSuccess(GetUserForCompanyRes res) {
+        progressDialog.dismiss();
+        //  mDataset = response.body().resList;
+        //  setmRecyclerView();
+    }
+
+    @Override
+    public void addUserSuccess(AddUserForCompanyRes res) {
+        if (res.success) {
+            Constants.Toasty(context, "User Added successfully", Constants.success);
+            resetAll();
+            viewOrEdit = true;
+            viewModel.getUsers(user);
+            // getUserForCompany(user);
+        } else {
+            Constants.alertDialogShow(context, res.response);
+        }
+    }
+
+    @Override
+    public void updateUserSuccess(AddUserForCompanyRes res) {
+        if (res.success) {
+            Constants.Toasty(context, "User Updated successfully", Constants.success);
+            resetAll();
+            viewOrEdit = true;
+            viewModel.getUsers(user);
+        } else {
+            Constants.alertDialogShow(context, res.response);
+        }
+    }
+
+    @Override
+    public void onError(String msg) {
+        progressDialog.dismiss();
+        Constants.Toasty(context, "Something went wrong, Reason: \n\t\t" + msg, Constants.error);
+    }
+
+
+/*
+    private void addUserForCompany(AddUserForCompany req) {
+        Log.d(TAG, "addUserForCompany");
+        RetrofitClient retrofitSet = new RetrofitClient();
+        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
+        APIService apiService = retrofit.create(APIService.class);
+        Call<AddUserForCompanyRes> call = apiService.addUserForCompany(req);
+
+
+        progressDialog.show();
+        call.enqueue(new Callback<AddUserForCompanyRes>() {
+            @Override
+            public void onResponse(Call<AddUserForCompanyRes> call, Response<AddUserForCompanyRes> response) {
+                progressDialog.dismiss();
+                Constants.logPrint(call.request().toString(), req, response.body());
+                try {
+                    if (response.isSuccessful()) {
+                        if (response.body().success) {
+                            Constants.Toasty(context, "User Added successfully", Constants.success);
+                            resetAll();
+                            viewOrEdit = true;
+                            //getUserForCompany(user);
+                        } else {
+                            Constants.alertDialogShow(context, response.body().response);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddUserForCompanyRes> call, Throwable t) {
+                progressDialog.dismiss();
+                Log.d("Response:", "" + t);
+                Constants.alertDialogShow(context, "Something went wrong, please try again");
+                t.printStackTrace();
+            }
+        });
+
+    }
+
+    private void updateUserDetails(UpdateUserDetails req) {
+        Log.d(TAG, "addUserForCompany");
+        RetrofitClient retrofitSet = new RetrofitClient();
+        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
+        APIService apiService = retrofit.create(APIService.class);
+        Call<AddUserForCompanyRes> call = apiService.updateUserDetails(req);
+
+
+        progressDialog.show();
+        call.enqueue(new Callback<AddUserForCompanyRes>() {
+            @Override
+            public void onResponse(Call<AddUserForCompanyRes> call, Response<AddUserForCompanyRes> response) {
+                progressDialog.dismiss();
+                Constants.logPrint(call.request().toString(), req, response.body());
+                try {
+                    if (response.isSuccessful()) {
+                        if (response.body().success) {
+                            Constants.Toasty(context, "User Updated successfully", Constants.success);
+                            resetAll();
+                            viewOrEdit = true;
+                            //getUserForCompany(user);
+                        } else {
+                            Constants.alertDialogShow(context, response.body().response);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddUserForCompanyRes> call, Throwable t) {
+                progressDialog.dismiss();
+                Log.d("Response:", "" + t);
+                Constants.alertDialogShow(context, "Something went wrong, please try again");
+                t.printStackTrace();
+            }
+        });
+
+    }
+
+    private void getUserForCompany(GetUserForCompany req) {
+        Log.d(TAG, "getUserForCompany");
+        RetrofitClient retrofitSet = new RetrofitClient();
+        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
+        APIService apiService = retrofit.create(APIService.class);
+        Call<GetUserForCompanyRes> call = apiService.getUserForCompany(req);
+
+
+        progressDialog.show();
+        call.enqueue(new Callback<GetUserForCompanyRes>() {
+            @Override
+            public void onResponse(Call<GetUserForCompanyRes> call, Response<GetUserForCompanyRes> response) {
+                progressDialog.dismiss();
+                Constants.logPrint(call.request().toString(), req, response.body());
+                try {
+                    if (response.isSuccessful()) {
+                        if (response.body().success) {
+                            mDataset = response.body().resList;
+                            setmRecyclerView();
+                        } else {
+                            Constants.alertDialogShow(context, response.body().response);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetUserForCompanyRes> call, Throwable t) {
+                progressDialog.dismiss();
+                Log.d("Response:", "" + t);
+                Constants.alertDialogShow(context, "Something went wrong, please try again");
+                t.printStackTrace();
+            }
+        });
+
+    }
+*/
+
+
 }

@@ -8,22 +8,28 @@ import com.a.goldtrack.Model.AddCompanyBranchesRes;
 import com.a.goldtrack.Model.AddCompanyRes;
 import com.a.goldtrack.Model.AddItemReq;
 import com.a.goldtrack.Model.AddItemRes;
+import com.a.goldtrack.Model.AddUserForCompany;
+import com.a.goldtrack.Model.AddUserForCompanyRes;
 import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetCompanyBranches;
 import com.a.goldtrack.Model.GetCompanyBranchesRes;
 import com.a.goldtrack.Model.GetCompanyRes;
 import com.a.goldtrack.Model.GetItemsReq;
 import com.a.goldtrack.Model.GetItemsRes;
+import com.a.goldtrack.Model.GetUserForCompany;
+import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.Model.UpdateCompanyDetails;
 import com.a.goldtrack.Model.UpdateCompanyDetailsRes;
 import com.a.goldtrack.Model.UpdateItemReq;
 import com.a.goldtrack.Model.UpdateItemRes;
+import com.a.goldtrack.Model.UpdateUserDetails;
 import com.a.goldtrack.Model.UserLoginReq;
 import com.a.goldtrack.Model.UserLoginRes;
 import com.a.goldtrack.company.ICallBacks;
 import com.a.goldtrack.companybranche.IBranchCallBacks;
 import com.a.goldtrack.items.IItemsCallBacks;
 import com.a.goldtrack.login.ILoginCallBacks;
+import com.a.goldtrack.users.IUserCallBacks;
 import com.a.goldtrack.utils.Constants;
 
 import java.util.concurrent.TimeUnit;
@@ -211,6 +217,59 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<UpdateItemRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
+            }
+        });
+    }
+
+    /*Users*/
+
+    public static void addUser(AddUserForCompany req, IUserCallBacks callBacks) {
+        getClient().addUserForCompany(req).enqueue(new Callback<AddUserForCompanyRes>() {
+            @Override
+            public void onResponse(Call<AddUserForCompanyRes> call, Response<AddUserForCompanyRes> response) {
+
+                Constants.logPrint(call.request().toString(), req, response.body());
+                if (response.isSuccessful())
+                    callBacks.addUserSuccess(response.body());
+                else callBacks.onError("Something went wrong,Server Error");
+            }
+
+            @Override
+            public void onFailure(Call<AddUserForCompanyRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
+            }
+        });
+    }
+
+    public static void updateUser(UpdateUserDetails req, IUserCallBacks callBacks) {
+        getClient().updateUserDetails(req).enqueue(new Callback<AddUserForCompanyRes>() {
+            @Override
+            public void onResponse(Call<AddUserForCompanyRes> call, Response<AddUserForCompanyRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
+                if (response.isSuccessful())
+                    callBacks.updateUserSuccess(response.body());
+                else callBacks.onError("Something went wrong,Server Error");
+            }
+
+            @Override
+            public void onFailure(Call<AddUserForCompanyRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
+            }
+        });
+    }
+
+    public static void getUsers(GetUserForCompany req, IUserCallBacks callBacks) {
+        getClient().getUserForCompany(req).enqueue(new Callback<GetUserForCompanyRes>() {
+            @Override
+            public void onResponse(Call<GetUserForCompanyRes> call, Response<GetUserForCompanyRes> response) {
+                if (response.isSuccessful())
+                    callBacks.getUsersSuccess(response.body());
+                else callBacks.onError("Something went wrong, Server Error");
+            }
+
+            @Override
+            public void onFailure(Call<GetUserForCompanyRes> call, Throwable t) {
                 callBacks.onError(t.getMessage());
             }
         });
