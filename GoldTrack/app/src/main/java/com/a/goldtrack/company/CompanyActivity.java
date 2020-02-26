@@ -2,14 +2,16 @@ package com.a.goldtrack.company;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.app.ProgressDialog;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
@@ -32,7 +34,7 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
 
     CompanyViewModel viewModel;
     ActivityCompanyBinding binding;
-    ProgressDialog progressDialog;
+    //ProgressDialog progressDialog;
     Context context;
     boolean viewOrEdit = true;
     GetCompany reqGet;
@@ -57,31 +59,45 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void init() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        final ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
 
-        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("in Progress...");
+//        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
+//        progressDialog.setIndeterminate(true);
+//        progressDialog.setMessage("in Progress...");
+
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
+        binding.progressbar.setVisibility(View.GONE);
 
         binding.addSignalCompany.setOnClickListener(this);
         binding.btnAddCompany.setOnClickListener(this);
         reqGet = new GetCompany();
         reqGet.companyId = "0";
 
-        progressDialog.show();
+        // progressDialog.show();
+        binding.progressbar.setVisibility(View.VISIBLE);
         viewModel.getCompany(reqGet);
         viewModel.onViewAvailable(this);
         viewModel.list.observe(this, new Observer<GetCompanyRes>() {
             @Override
             public void onChanged(GetCompanyRes getCompanyRes) {
                 mDataset = getCompanyRes.resList;
-                progressDialog.dismiss();
+                binding.progressbar.setVisibility(View.GONE);
+                //progressDialog.dismiss();
                 setmRecyclerView();
+            }
+        });
+
+        binding.listDetailsHolder.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //binding.listDetailsHolder.setRefreshing(true);
+                binding.progressbar.setVisibility(View.VISIBLE);
+                viewModel.getCompany(reqGet);
             }
         });
     }
@@ -128,7 +144,8 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
             return;
         }
 
-        progressDialog.show();
+       // progressDialog.show();
+        binding.progressbar.setVisibility(View.VISIBLE);
         viewModel.addCompany(req);
     }
 
@@ -163,7 +180,8 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
             return;
         }
         req1.data.add(req);
-        progressDialog.show();
+      //  progressDialog.show();
+        binding.progressbar.setVisibility(View.VISIBLE);
         viewModel.updateCompany(req1);
     }
 
@@ -187,7 +205,9 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onSuccessGetCompany(GetCompanyRes model) {
-        progressDialog.dismiss();
+        //progressDialog.dismiss();
+        binding.progressbar.setVisibility(View.GONE);
+        binding.listDetailsHolder.setRefreshing(false);
     }
 
     @Override
@@ -198,7 +218,9 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onErrorSpread(String msg) {
-        progressDialog.dismiss();
+        // progressDialog.dismiss();
+        binding.progressbar.setVisibility(View.GONE);
+        binding.listDetailsHolder.setRefreshing(false);
     }
 
     void setmRecyclerView() {

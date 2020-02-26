@@ -17,6 +17,7 @@ public class CompanyViewModel extends ViewModel implements ICallBacks {
 
     MutableLiveData<GetCompanyRes> list = null;
     ICompanyView view;
+    public String title = "Company";
 
     public void getCompany(GetCompany model) {
         if (list == null) {

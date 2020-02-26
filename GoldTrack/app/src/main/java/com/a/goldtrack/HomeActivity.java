@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import com.a.goldtrack.company.CompanyActivity;
 import com.a.goldtrack.companybranche.CompanyBranchesActivity;
+import com.a.goldtrack.customer.CustomerActivity;
 import com.a.goldtrack.items.ItemsActivity;
 import com.a.goldtrack.login.LoginActivity;
 import com.a.goldtrack.trans.TransActivity;
@@ -54,8 +55,7 @@ public class HomeActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow,
                 R.id.nav_tools, R.id.nav_share, R.id.menu_logout)
@@ -124,6 +124,11 @@ public class HomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_trans:
                 i = new Intent(this, TransActivity.class);
+                startActivity(i);
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                break;
+            case R.id.nav_customer:
+                i = new Intent(this, CustomerActivity.class);
                 startActivity(i);
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 break;

@@ -1,6 +1,7 @@
 package com.a.goldtrack.Model;
 
 public class AddCustomerReq {
+
     public String uniqueId;
     public String firstName;
     public String lastName;

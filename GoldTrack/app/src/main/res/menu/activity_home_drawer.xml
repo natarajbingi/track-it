@@ -21,6 +21,10 @@
             android:icon="@drawable/ic_menu_manage"
             android:title="Items" />
         <item
+            android:id="@+id/nav_customer"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Customer" />
+        <item
             android:id="@+id/nav_trans"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="Transaction" />
@@ -29,7 +33,7 @@
     <item android:title="Communicate">
         <menu>
             <item
-                    android:id="@+id/nav_share"
+                android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Users" />
             <item

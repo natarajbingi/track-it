@@ -38,4 +38,10 @@
     <color name="iron">#CCCCCC</color>
     <color name="start_color">#29B6F6</color>
     <color name="end_color">#4FC3F7</color>
+
+    <!--dsfdgdg-->
+
+    <color name="title_color">#247CC5</color>
+    <color name="white_color">#FFFFFF</color>
+    <color name="white_black">#000000</color>
 </resources>
