@@ -1,11 +1,11 @@
 package com.a.goldtrack.network;
 
-import android.content.Context;
-
 import com.a.goldtrack.Model.AddCompany;
 import com.a.goldtrack.Model.AddCompanyBranchesReq;
 import com.a.goldtrack.Model.AddCompanyBranchesRes;
 import com.a.goldtrack.Model.AddCompanyRes;
+import com.a.goldtrack.Model.AddCustomerReq;
+import com.a.goldtrack.Model.AddCustomerRes;
 import com.a.goldtrack.Model.AddItemReq;
 import com.a.goldtrack.Model.AddItemRes;
 import com.a.goldtrack.Model.AddUserForCompany;
@@ -14,12 +14,16 @@ import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetCompanyBranches;
 import com.a.goldtrack.Model.GetCompanyBranchesRes;
 import com.a.goldtrack.Model.GetCompanyRes;
+import com.a.goldtrack.Model.GetCustomerReq;
+import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.GetItemsReq;
 import com.a.goldtrack.Model.GetItemsRes;
 import com.a.goldtrack.Model.GetUserForCompany;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.Model.UpdateCompanyDetails;
 import com.a.goldtrack.Model.UpdateCompanyDetailsRes;
+import com.a.goldtrack.Model.UpdateCustomerReq;
+import com.a.goldtrack.Model.UpdateCustomerRes;
 import com.a.goldtrack.Model.UpdateItemReq;
 import com.a.goldtrack.Model.UpdateItemRes;
 import com.a.goldtrack.Model.UpdateUserDetails;
@@ -27,6 +31,7 @@ import com.a.goldtrack.Model.UserLoginReq;
 import com.a.goldtrack.Model.UserLoginRes;
 import com.a.goldtrack.company.ICallBacks;
 import com.a.goldtrack.companybranche.IBranchCallBacks;
+import com.a.goldtrack.customer.ICustomerCallBacs;
 import com.a.goldtrack.items.IItemsCallBacks;
 import com.a.goldtrack.login.ILoginCallBacks;
 import com.a.goldtrack.users.IUserCallBacks;
@@ -270,6 +275,59 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<GetUserForCompanyRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
+            }
+        });
+    }
+
+    /*Customer*/
+
+    public static void addCusomer(AddCustomerReq req, ICustomerCallBacs callBacks) {
+        getClient().addCustomer(req).enqueue(new Callback<AddCustomerRes>() {
+            @Override
+            public void onResponse(Call<AddCustomerRes> call, Response<AddCustomerRes> response) {
+
+                Constants.logPrint(call.request().toString(), req, response.body());
+                if (response.isSuccessful())
+                    callBacks.addCustomerSuccess(response.body());
+                else callBacks.onCompleteError("Something went wrong,Server Error");
+            }
+
+            @Override
+            public void onFailure(Call<AddCustomerRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
+            }
+        });
+    }
+
+    public static void updateCusomer(UpdateCustomerReq req, ICustomerCallBacs callBacks) {
+        getClient().updateCustomerDetails(req).enqueue(new Callback<UpdateCustomerRes>() {
+            @Override
+            public void onResponse(Call<UpdateCustomerRes> call, Response<UpdateCustomerRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
+                if (response.isSuccessful())
+                    callBacks.updateCustomerSuccess(response.body());
+                else callBacks.onCompleteError("Something went wrong,Server Error");
+            }
+
+            @Override
+            public void onFailure(Call<UpdateCustomerRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
+            }
+        });
+    }
+
+    public static void getCusomer(GetCustomerReq req, ICustomerCallBacs callBacks) {
+        getClient().getCustomerDetails(req).enqueue(new Callback<GetCustomerRes>() {
+            @Override
+            public void onResponse(Call<GetCustomerRes> call, Response<GetCustomerRes> response) {
+                if (response.isSuccessful())
+                    callBacks.getCustomerSuccess(response.body());
+                else callBacks.onCompleteError("Something went wrong, Server Error");
+            }
+
+            @Override
+            public void onFailure(Call<GetCustomerRes> call, Throwable t) {
                 callBacks.onError(t.getMessage());
             }
         });

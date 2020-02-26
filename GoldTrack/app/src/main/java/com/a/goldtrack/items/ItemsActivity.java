@@ -261,12 +261,13 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onItemGetSuccess(GetItemsRes getItemsRes) {
         progressDialog.dismiss();
-        if (getItemsRes.success) {
+        /*if (getItemsRes.success) {
             mDataset = getItemsRes.resList;
             setmRecyclerView();
         } else {
             Constants.alertDialogShow(context, getItemsRes.response);
-        }
+            progressDialog.dismiss();
+        }*/
     }
 
     @Override
@@ -277,6 +278,7 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
             viewModel.onGetItemsForCompany(reqGet);
         } else {
             Constants.alertDialogShow(context, itemRes.response);
+            progressDialog.dismiss();
         }
     }
 
@@ -289,6 +291,7 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
             viewModel.onGetItemsForCompany(reqGet);
         } else {
             Constants.alertDialogShow(context, itemRes.response);
+            progressDialog.dismiss();
         }
     }
 
