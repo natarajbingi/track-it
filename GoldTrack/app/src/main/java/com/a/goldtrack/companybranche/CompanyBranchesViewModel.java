@@ -7,6 +7,8 @@ import com.a.goldtrack.Model.AddCompanyBranchesReq;
 import com.a.goldtrack.Model.AddCompanyBranchesRes;
 import com.a.goldtrack.Model.GetCompanyBranches;
 import com.a.goldtrack.Model.GetCompanyBranchesRes;
+import com.a.goldtrack.Model.UpdateCompanyBranchesReq;
+import com.a.goldtrack.Model.UpdateCompanyBranchesRes;
 import com.a.goldtrack.Model.UpdateCompanyDetails;
 import com.a.goldtrack.network.RestFullServices;
 
@@ -36,7 +38,7 @@ public class CompanyBranchesViewModel extends ViewModel implements IBranchCallBa
         RestFullServices.addBranch(req, this);
     }
 
-    void onUpdateBranch(UpdateCompanyDetails req) {
+    void onUpdateBranch(UpdateCompanyBranchesReq req) {
         RestFullServices.updateBranch(req, this);
     }
 
@@ -53,8 +55,8 @@ public class CompanyBranchesViewModel extends ViewModel implements IBranchCallBa
     }
 
     @Override
-    public void onSuccessUpdateBranch() {
-        view.onSuccessUpdateBranch();
+    public void onSuccessUpdateBranch(UpdateCompanyBranchesRes res) {
+        view.onSuccessUpdateBranch(res);
     }
 
     @Override

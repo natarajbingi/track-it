@@ -57,7 +57,7 @@ public class HomeFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         final TextView textView = root.findViewById(R.id.text_home);
-        textView.setVisibility(View.GONE);
+       // textView.setVisibility(View.GONE);
 
         mRecyclerView = (RecyclerView) root.findViewById(R.id.recycler_view);
 
@@ -87,7 +87,6 @@ public class HomeFragment extends Fragment {
 
         GetCompany req = new GetCompany();
         req.companyId = "0";
-        //getListCompany(req);
 
 
         return root;
@@ -129,42 +128,4 @@ public class HomeFragment extends Fragment {
     }
 
 
-    /*private void getListCompany(GetCompany req) {
-        Log.d(TAG, "GetCompany");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<GetCompanyRes> call = apiService.getCompany(req);
-
-
-        progressDialog.show();
-        call.enqueue(new Callback<GetCompanyRes>() {
-            @Override
-            public void onResponse(Call<GetCompanyRes> call, Response<GetCompanyRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            mDataset = response.body().resList;
-                            setmRecyclerView();
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GetCompanyRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }*/
 }

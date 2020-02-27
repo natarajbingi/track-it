@@ -22,6 +22,8 @@ import com.a.goldtrack.Model.AddCompanyBranchesReq;
 import com.a.goldtrack.Model.AddCompanyBranchesRes;
 import com.a.goldtrack.Model.GetCompanyBranches;
 import com.a.goldtrack.Model.GetCompanyBranchesRes;
+import com.a.goldtrack.Model.UpdateCompanyBranchesReq;
+import com.a.goldtrack.Model.UpdateCompanyBranchesRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityCompanyBranchesBinding;
 import com.a.goldtrack.utils.Constants;
@@ -110,11 +112,14 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
 
 
     private void resetAll() {
+        binding.companyId.setText("");
         binding.branchName.setText("");
         binding.branchDesc.setText("");
         binding.branchAddress1.setText("");
         binding.branchCity.setText("");
+        binding.branchPhNumber.setText("");
         binding.branchPin.setText("");
+
 
         binding.addSignalBranch.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
@@ -175,7 +180,26 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
     }
 
     private void setValidateUpdate() {
+        UpdateCompanyBranchesReq req = new UpdateCompanyBranchesReq();
 
+        req.companyId = Sessions.getUserString(context, Constants.companyId);
+        req.id = binding.companyId.getText().toString();
+        req.branchName = binding.branchName.getText().toString();
+        req.branchDesc = binding.branchDesc.getText().toString();
+        req.branchAddress1 = binding.branchAddress1.getText().toString();
+        req.branchCity = binding.branchCity.getText().toString();
+        req.branchPin = binding.branchPin.getText().toString();
+        req.branchPhNumber = binding.branchPhNumber.getText().toString();
+        req.updatedBy = Sessions.getUserString(context, Constants.userName);
+        req.delete=false;
+
+
+        if (req.branchName.isEmpty() || req.branchPhNumber.isEmpty() || req.branchPin.isEmpty()) {
+            Constants.Toasty(context, "Please Enter mandatory Fields", Constants.warning);
+            return;
+        }
+        progressDialog.show();
+        viewModel.onUpdateBranch(req);
     }
 
     void setmRecyclerView() {
@@ -221,6 +245,27 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
     public void oncItemClicked(View view, int position) {
 
         Constants.Toasty(context, "Edit " + mDataset.get(position).branchName, Constants.info);
+        setUpdateVals(position);
+    }
+
+    private void setUpdateVals(int position) {
+
+        binding.companyId.setText(mDataset.get(position).id);
+        binding.branchName.setText(mDataset.get(position).branchName);
+        binding.branchDesc.setText(mDataset.get(position).branchDesc);
+        binding.branchAddress1.setText(mDataset.get(position).branchAddress1);
+        binding.branchCity.setText(mDataset.get(position).branchCity);
+        binding.branchPhNumber.setText(mDataset.get(position).branchPhNumber);
+        binding.branchPin.setText(mDataset.get(position).branchPin);
+
+        binding.btnAddBranch.setText("Update");
+        binding.textView.setText("Update");
+
+        binding.addSignalBranch.setImageDrawable(getResources().getDrawable(R.drawable.ic_arrow_back));
+        binding.listDetailsHolder.setVisibility(View.GONE);
+        binding.addDetailsHolder.setVisibility(View.VISIBLE);
+
+        viewOrEdit = false;
     }
 
     @Override
@@ -235,12 +280,13 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
             resetAll();
             viewModel.onGetBranch(reqGet);
         } else {
+            progressDialog.dismiss();
             Constants.alertDialogShow(context, branchesRes.response);
         }
     }
 
     @Override
-    public void onSuccessUpdateBranch() {
+    public void onSuccessUpdateBranch(UpdateCompanyBranchesRes res) {
         // progressDialog.dismiss();
         Constants.Toasty(context, "Branch Updated successfully", Constants.success);
         resetAll();
@@ -249,89 +295,9 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
 
     @Override
     public void onErrorBranch(String msg) {
+
+        Constants.Toasty(context, msg, Constants.warning);
         progressDialog.dismiss();
     }
 
-    /*private void addCompanyBranches(AddCompanyBranchesReq req) {
-        Log.d(TAG, "addCompanyBranches");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<AddCompanyBranchesRes> call = apiService.addCompanyBranches(req);
-
-
-        progressDialog.show();
-        call.enqueue(new Callback<AddCompanyBranchesRes>() {
-            @Override
-            public void onResponse(Call<AddCompanyBranchesRes> call, Response<AddCompanyBranchesRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            Constants.Toasty(context, "Branch Added successfully", Constants.success);
-                            resetAll();
-                            //getCompanyBranches(reqGet);
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AddCompanyBranchesRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }
-
-    private void getCompanyBranches(GetCompanyBranches req) {
-        Log.d(TAG, "getUserForCompany");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<GetCompanyBranchesRes> call = apiService.getCompanyBranches(req);
-
-
-        progressDialog.show();
-        call.enqueue(new Callback<GetCompanyBranchesRes>() {
-            @Override
-            public void onResponse(Call<GetCompanyBranchesRes> call, Response<GetCompanyBranchesRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            mDataset = response.body().resList;
-                            setmRecyclerView();
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GetCompanyBranchesRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }
-
-    private void updateCompanyDetails(UpdateCompanyDetails req) {
-
-    }*/
 }

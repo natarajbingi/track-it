@@ -17,20 +17,17 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
+import com.a.goldtrack.Model.AddCustomerReq;
 import com.a.goldtrack.Model.AddCustomerRes;
 import com.a.goldtrack.Model.GetCustomerReq;
 import com.a.goldtrack.Model.GetCustomerRes;
-import com.a.goldtrack.Model.GetUserForCompany;
-import com.a.goldtrack.Model.GetUserForCompanyRes;
+import com.a.goldtrack.Model.UpdateCustomerReq;
 import com.a.goldtrack.Model.UpdateCustomerRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityCustomerBinding;
-import com.a.goldtrack.users.CustomUsersAdapter;
-import com.a.goldtrack.users.UserCompanyHandler;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, ICustomerhandler {
@@ -38,50 +35,25 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
     CustomerViewModel viewModel;
     ActivityCustomerBinding binding;
     Context context;
+
     boolean viewOrEdit = true;
-    private static final String TAG = "UserCompanyActivity";
+    private static final String TAG = "CustomerActivity";
     protected CustomCustomersAdapter mAdapter;
     protected Constants.LayoutManagerType mCurrentLayoutManagerType;
     protected RecyclerView.LayoutManager mLayoutManager;
     protected List<GetCustomerRes.ResList> mDataset;
     GetCustomerReq custReq;
-    List<String> rolesList = new ArrayList<>();
-    private int userIdIfEditing = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // setContentView(R.layout.activity_customer);
         context = CustomerActivity.this;
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(CustomerViewModel.class);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_customer);
         binding.setCustModel(viewModel);
 
-        custReq = new GetCustomerReq();
-        custReq.companyID = Sessions.getUserString(context, Constants.companyId);
-        custReq.customerId = "0";
-        viewModel.onViewAvailable(this);
-        binding.progressbar.setVisibility(View.VISIBLE);
-        viewModel.getCustomer(custReq);
-        viewModel.list.observe(this, new Observer<GetCustomerRes>() {
-            @Override
-            public void onChanged(GetCustomerRes resList) {
-                mDataset = resList.resList;
-                binding.progressbar.setVisibility(View.GONE);
-                //progressDialog.dismiss();
-                setmRecyclerView();
-            }
-        });
 
-        binding.listDetailsHolder.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //binding.listDetailsHolder.setRefreshing(true);
-                binding.progressbar.setVisibility(View.VISIBLE);
-                viewModel.getCustomer(custReq);
-            }
-        });
-
+        init();
     }
 
     void init() {
@@ -97,26 +69,77 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
 
         binding.addSignalCustomer.setOnClickListener(this);
         binding.btnAddCustomer.setOnClickListener(this);
+
+        custReq = new GetCustomerReq();
+        //  custReq.companyID = Sessions.getUserString(context, Constants.companyId);
+        custReq.customerId = "0";
+        viewModel.onViewAvailable(this);
+        binding.progressbar.setVisibility(View.VISIBLE);
+        viewModel.getCustomer(custReq);
+        viewModel.list.observe(this, new Observer<GetCustomerRes>() {
+            @Override
+            public void onChanged(GetCustomerRes resList) {
+                mDataset = resList.resList;
+                //progressDialog.dismiss();
+                setmRecyclerView();
+            }
+        });
+
+        binding.listDetailsHolder.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //binding.listDetailsHolder.setRefreshing(true);
+                binding.progressbar.setVisibility(View.VISIBLE);
+                viewModel.getCustomer(custReq);
+            }
+        });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home_none, menu);
-        return true;
-    }
+    private void setValidateAdd() {
+        AddCustomerReq req = new AddCustomerReq();
+        req.firstName = binding.firstName.getText().toString();
+        req.lastName = binding.lastName.getText().toString();
+        req.mobileNum = binding.mobileNum.getText().toString();
+        req.emailId = binding.emailId.getText().toString();
+        req.address1 = binding.address1.getText().toString();
+        req.address2 = binding.address2.getText().toString();
+        req.state = binding.state.getText().toString();
+        req.pin = binding.pin.getText().toString();
+        req.companyID = Sessions.getUserString(context, Constants.companyId);
+        req.createdBy = Sessions.getUserString(context, Constants.userName);
 
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (android.R.id.home == item.getItemId()) // API 5+ solution
-        {
-            finish();//  onBackPressed();
+        if (req.firstName.isEmpty() || req.mobileNum.isEmpty() || req.address1.isEmpty() || req.pin.isEmpty()) {
+            Constants.Toasty(context, "Please fill the mandatory fields.", Constants.warning);
+            return;
         }
-        return true;
+        binding.progressbar.setVisibility(View.VISIBLE);
+        viewModel.addCustomer(req);
     }
 
-    void setmRecyclerView() {
+    private void setValidateUpdate() {
+        UpdateCustomerReq req = new UpdateCustomerReq();
+        req.id = binding.companyId.getText().toString();
+        req.firstName = binding.firstName.getText().toString();
+        req.lastName = binding.lastName.getText().toString();
+        req.mobileNum = binding.mobileNum.getText().toString();
+        req.emailId = binding.emailId.getText().toString();
+        req.address1 = binding.address1.getText().toString();
+        req.address2 = binding.address2.getText().toString();
+        req.state = binding.state.getText().toString();
+        req.pin = binding.pin.getText().toString();
+        req.delete = false;
+        //req.companyID = Sessions.getUserString(context, Constants.companyId);
+        req.updatedBy = Sessions.getUserString(context, Constants.userName);
+
+        if (req.firstName.isEmpty() || req.mobileNum.isEmpty() || req.address1.isEmpty() || req.pin.isEmpty()) {
+            Constants.Toasty(context, "Please fill the mandatory fields.", Constants.warning);
+            return;
+        }
+        binding.progressbar.setVisibility(View.VISIBLE);
+        viewModel.updateCustomer(req);
+    }
+
+    private void setmRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this);
         mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
@@ -154,62 +177,20 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         binding.recyclerCustomer.scrollToPosition(scrollPosition);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_add_customer:
-                //   if (binding.btnAddCustomer.getText().toString().equals("Add Customer"))
-                //  setValidateAdd();
-                //  else
-                // setValidateUpdate();
-                break;
-            case R.id.add_signal_customer:
+    private void resetAll() {
+        binding.companyId.setText("");
+        binding.firstName.setText("");
+        binding.lastName.setText("");
+        binding.mobileNum.setText("");
+        binding.emailId.setText("");
+        binding.address1.setText("");
+        binding.address2.setText("");
+        binding.state.setText("");
+        binding.pin.setText("");
 
-                if (viewOrEdit) {
-
-                    //   resetAll();
-                    binding.btnAddCustomer.setText("Add Customer");
-                    binding.textView.setText("Add Customer");
-
-                    binding.addSignalCustomer.setImageDrawable(getResources().getDrawable(R.drawable.ic_arrow_back));
-                    binding.listDetailsHolder.setVisibility(View.GONE);
-                    binding.addDetailsHolder.setVisibility(View.VISIBLE);
-                } else {
-                    binding.addSignalCustomer.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
-                    binding.listDetailsHolder.setVisibility(View.VISIBLE);
-                    binding.addDetailsHolder.setVisibility(View.GONE);
-                }
-                viewOrEdit = !viewOrEdit;
-                break;
-        }
-    }
-
-
-    @Override
-    public void addCustomerSuccess(AddCustomerRes res) {
-
-    }
-
-    @Override
-    public void updateCustomerSuccess(UpdateCustomerRes res) {
-
-    }
-
-
-    @Override
-    public void getCustomerSuccess(GetCustomerRes res) {
-
-    }
-
-    @Override
-    public void onErrorSpread(String msg) {
-
-    }
-
-    @Override
-    public void oncItemClicked(View view, int position) {
-        Constants.Toasty(context, "Edit " + position/*mDataset.get(position).name*/, Constants.info);
-        setEditUpdateVals(position);
+        binding.addSignalCustomer.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
+        binding.listDetailsHolder.setVisibility(View.VISIBLE);
+        binding.addDetailsHolder.setVisibility(View.GONE);
     }
 
     private void setEditUpdateVals(int position) {
@@ -232,4 +213,85 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
 
         viewOrEdit = false;
     }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.home_none, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (android.R.id.home == item.getItemId()) // API 5+ solution
+        {
+            finish();//  onBackPressed();
+        }
+        return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_add_customer:
+                if (binding.btnAddCustomer.getText().toString().equals("Add Customer"))
+                    setValidateAdd();
+                else
+                    setValidateUpdate();
+                break;
+            case R.id.add_signal_customer:
+                if (viewOrEdit) {
+
+                    resetAll();
+                    binding.btnAddCustomer.setText("Add Customer");
+                    binding.textView.setText("Add Customer");
+
+                    binding.addSignalCustomer.setImageDrawable(getResources().getDrawable(R.drawable.ic_arrow_back));
+                    binding.listDetailsHolder.setVisibility(View.GONE);
+                    binding.addDetailsHolder.setVisibility(View.VISIBLE);
+                } else {
+                    binding.addSignalCustomer.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
+                    binding.listDetailsHolder.setVisibility(View.VISIBLE);
+                    binding.addDetailsHolder.setVisibility(View.GONE);
+                }
+                viewOrEdit = !viewOrEdit;
+                break;
+        }
+    }
+
+    @Override
+    public void addCustomerSuccess(AddCustomerRes res) {
+        Constants.Toasty(context, "Customer Added successfully", Constants.success);
+        resetAll();
+        viewOrEdit = true;
+        viewModel.getCustomer(custReq);
+    }
+
+    @Override
+    public void updateCustomerSuccess(UpdateCustomerRes res) {
+        Constants.Toasty(context, "Customer Updated successfully", Constants.success);
+        resetAll();
+        viewOrEdit = true;
+        viewModel.getCustomer(custReq);
+    }
+
+
+    @Override
+    public void getCustomerSuccess(GetCustomerRes res) {
+        binding.progressbar.setVisibility(View.GONE);
+        binding.listDetailsHolder.setRefreshing(false);
+    }
+
+    @Override
+    public void onErrorSpread(String msg) {
+        Constants.Toasty(context, "Something went wrong, reason: " + msg, Constants.error);
+    }
+
+    @Override
+    public void oncItemClicked(View view, int position) {
+        Constants.Toasty(context, "Edit " + mDataset.get(position).firstName, Constants.info);
+        setEditUpdateVals(position);
+    }
+
 }

@@ -65,9 +65,6 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
-//        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
-//        progressDialog.setIndeterminate(true);
-//        progressDialog.setMessage("in Progress...");
 
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
@@ -80,6 +77,7 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
 
         // progressDialog.show();
         binding.progressbar.setVisibility(View.VISIBLE);
+
         viewModel.getCompany(reqGet);
         viewModel.onViewAvailable(this);
         viewModel.list.observe(this, new Observer<GetCompanyRes>() {
@@ -218,7 +216,6 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onErrorSpread(String msg) {
-        // progressDialog.dismiss();
         binding.progressbar.setVisibility(View.GONE);
         binding.listDetailsHolder.setRefreshing(false);
     }
@@ -347,125 +344,4 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-
-   /* private void addCompany(AddCompany req) {
-        Log.d(TAG, "addCompany");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<AddCompanyRes> call = apiService.addCompany(req);
-
-
-        progressDialog.show();
-        call.enqueue(new Callback<AddCompanyRes>() {
-            @Override
-            public void onResponse(Call<AddCompanyRes> call, Response<AddCompanyRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            Constants.Toasty(context, "Company Added successfully", Constants.success);
-                            resetAll();
-                            GetCompany reqGet = new GetCompany();
-                            reqGet.companyId = "0";
-                            //  getCompany(reqGet);
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AddCompanyRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }
-
-    private void getCompany(GetCompany req) {
-        Log.d(TAG, "getUserForCompany");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<GetCompanyRes> call = apiService.getCompany(req);
-        progressDialog.show();
-        call.enqueue(new Callback<GetCompanyRes>() {
-            @Override
-            public void onResponse(Call<GetCompanyRes> call, Response<GetCompanyRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            mDataset = response.body().resList;
-                            setmRecyclerView();
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GetCompanyRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }
-
-    private void updateCompanyDetails(UpdateCompanyDetails req) {
-        Log.d(TAG, "updateCompanyDetails");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<UpdateCompanyDetailsRes> call = apiService.updateCompanyDetails(req);
-
-
-        progressDialog.show();
-        call.enqueue(new Callback<UpdateCompanyDetailsRes>() {
-            @Override
-            public void onResponse(Call<UpdateCompanyDetailsRes> call, Response<UpdateCompanyDetailsRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-
-                            Constants.Toasty(context, "Company Updated successfully", Constants.success);
-                            resetAll();
-                            viewOrEdit = true;
-                            //  getCompany(reqGet);
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<UpdateCompanyDetailsRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }*/
 }

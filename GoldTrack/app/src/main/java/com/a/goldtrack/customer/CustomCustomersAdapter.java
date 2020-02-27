@@ -35,6 +35,7 @@ public class CustomCustomersAdapter extends RecyclerView.Adapter<CustomCustomers
         this.mDataSet.addAll(mDataset);
         this.notifyDataSetChanged();
     }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final TextView textView, text_sub, text_date;
         private final ImageView logo_id;
@@ -49,10 +50,6 @@ public class CustomCustomersAdapter extends RecyclerView.Adapter<CustomCustomers
             v.setOnClickListener(this);
         }
 
-        public TextView getTextView() {
-            return textView;
-        }
-
         @Override
         public void onClick(View view) {
             if (companyClicked != null) {
@@ -63,8 +60,7 @@ public class CustomCustomersAdapter extends RecyclerView.Adapter<CustomCustomers
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.text_row_item, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.text_row_item, viewGroup, false);
 
         return new ViewHolder(v);
     }
@@ -72,11 +68,10 @@ public class CustomCustomersAdapter extends RecyclerView.Adapter<CustomCustomers
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Log.d(TAG, "Element " + position + " set.");
-        /*viewHolder.textView.setText(mDataSet.get(position).firstName + " " + mDataSet.get(position).lastName);
-        viewHolder.text_sub.setText("Gender: " + mDataSet.get(position).gender
-                + "\t\t\tEmail: " + mDataSet.get(position).emailID
-                + "\nMobile: " + mDataSet.get(position).mobileNo);
-        viewHolder.text_date.setText("DOB: " + mDataSet.get(position).dob);*/
+        viewHolder.textView.setText(mDataSet.get(position).firstName + " " + mDataSet.get(position).lastName);
+        viewHolder.text_sub.setText("Mobile No: " + mDataSet.get(position).mobileNum
+                + "\nEmail: " + mDataSet.get(position).emailId);
+        viewHolder.text_date.setText("Unique ID: " + mDataSet.get(position).uniqueId);
     }
 
     @Override
