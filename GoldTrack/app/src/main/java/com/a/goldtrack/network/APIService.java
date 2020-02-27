@@ -45,6 +45,9 @@ public interface APIService {
     @POST("companybranches/addCompanyBranches")
     Call<AddCompanyBranchesRes> addCompanyBranches(@Body AddCompanyBranchesReq companyBranchesReq);
 
+    @POST("companybranches/updateCompanyBrancheDetails")
+    Call<UpdateCompanyBranchesRes> updateCompanyBrancheDetails(@Body UpdateCompanyBranchesReq companyBranchesReq);
+
     /*Items
      * */
     @POST("items/addItem")

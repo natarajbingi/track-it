@@ -12,7 +12,7 @@ import com.a.goldtrack.Model.UpdateCustomerRes;
 import com.a.goldtrack.network.RestFullServices;
 
 public class CustomerViewModel extends ViewModel implements ICustomerCallBacs {
-    public String custModel = "Customers";
+    public String title = "Customers";
     ICustomerhandler view;
     MutableLiveData<GetCustomerRes> list;
 

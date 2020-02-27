@@ -23,29 +23,32 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".customer.CustomerActivity" />
-        <activity android:name=".trans.TransActivity" />
-        <activity android:name=".items.ItemsActivity" />
+        <activity
+            android:name=".customer.CustomerActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".company.CompanyActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".companybranche.CompanyBranchesActivity" />
-        <activity android:name=".users.UserForCompanyActivity" />
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".addcommodityrates.AddCommodityRatesActivity" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".NotesActivity" />
-        <activity android:name=".register.RegistrationActivity" />
         <activity android:name=".login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Providers -->
+        </activity>
+        <activity android:name=".trans.TransActivity" />
+        <activity android:name=".items.ItemsActivity" />
+        <activity android:name=".companybranche.CompanyBranchesActivity" />
+        <activity android:name=".users.UserForCompanyActivity" />
+        <activity android:name=".addcommodityrates.AddCommodityRatesActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".NotesActivity" />
+        <activity android:name=".register.RegistrationActivity" />
+        <!-- Providers -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

@@ -15,6 +15,7 @@ import com.a.goldtrack.HomeActivity;
 import com.a.goldtrack.Model.UserLoginReq;
 import com.a.goldtrack.Model.UserLoginRes;
 import com.a.goldtrack.R;
+import com.a.goldtrack.customer.CustomerActivity;
 import com.a.goldtrack.register.RegistrationActivity;
 import com.a.goldtrack.databinding.ActivityLoginBinding;
 import com.a.goldtrack.utils.Constants;
@@ -67,11 +68,12 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
     public void onLoginSuccess() {
         binding.btnLogin.setEnabled(true);
 
+//        Intent i = new Intent(LoginActivity.this, CustomerActivity.class);
         Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-//        Intent i = new Intent(LoginActivity.this, CompanyActivity.class);
-//        Intent i = new Intent(LoginActivity.this, UserForCompanyActivity.class);
-//        Intent i = new Intent(LoginActivity.this, CompanyBranchesActivity.class);
-//        Intent i = new Intent(LoginActivity.this, ItemsActivity.class);
+        //        Intent i = new Intent(LoginActivity.this, CompanyActivity.class);
+        //        Intent i = new Intent(LoginActivity.this, UserForCompanyActivity.class);
+        //        Intent i = new Intent(LoginActivity.this, CompanyBranchesActivity.class);
+        //        Intent i = new Intent(LoginActivity.this, ItemsActivity.class);
         startActivity(i);
         finish();
     }
@@ -154,52 +156,5 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
         Log.e(TAG, msg);
         Constants.alertDialogShow(context, "Something went wrong, please try again");
     }
-    /* public void login(UserLoginReq req) {
-        Log.d(TAG, "Login");
-        keepMeSignedStr = binding.keepMeSigned.isChecked();
 
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<UserLoginRes> call = apiService.userLogin(req);
-
-        progressDialog.show();
-        call.enqueue(new Callback<UserLoginRes>() {
-            @Override
-            public void onResponse(Call<UserLoginRes> call, Response<UserLoginRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            if (keepMeSignedStr) {
-                                Sessions.setUserString(context, "TRUE", Constants.keepMeSignedStr);
-                            } else {
-                                Sessions.setUserString(context, "FALSE", Constants.keepMeSignedStr);
-                            }
-                            Sessions.setUserObj(context, response.body().data, Constants.userLogin);
-                            Sessions.setUserString(context, response.body().data.companyId, Constants.companyId);
-                            Sessions.setUserString(context, response.body().data.userName, Constants.userId);
-                            Sessions.setUserString(context, response.body().data.firstName + " " + response.body().data.lastName, Constants.userName);
-                            Sessions.setUserString(context, req.password, Constants.pwdId);
-                            onLoginSuccess();
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<UserLoginRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }*/
 }

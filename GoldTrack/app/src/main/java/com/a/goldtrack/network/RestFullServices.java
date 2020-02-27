@@ -22,6 +22,8 @@ import com.a.goldtrack.Model.GetItemsReq;
 import com.a.goldtrack.Model.GetItemsRes;
 import com.a.goldtrack.Model.GetUserForCompany;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
+import com.a.goldtrack.Model.UpdateCompanyBranchesReq;
+import com.a.goldtrack.Model.UpdateCompanyBranchesRes;
 import com.a.goldtrack.Model.UpdateCompanyDetails;
 import com.a.goldtrack.Model.UpdateCompanyDetailsRes;
 import com.a.goldtrack.Model.UpdateCustomerReq;
@@ -171,8 +173,21 @@ public class RestFullServices {
         });
     }
 
-    public static void updateBranch(UpdateCompanyDetails req, IBranchCallBacks callBacks) {
+    public static void updateBranch(UpdateCompanyBranchesReq req, IBranchCallBacks callBacks) {
+        getClient().updateCompanyBrancheDetails(req).enqueue(new Callback<UpdateCompanyBranchesRes>() {
+            @Override
+            public void onResponse(Call<UpdateCompanyBranchesRes> call, Response<UpdateCompanyBranchesRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
+                if (response.isSuccessful())
+                    callBacks.onSuccessUpdateBranch(response.body());
+                else callBacks.onError("Something went wrong,Server Error");
+            }
 
+            @Override
+            public void onFailure(Call<UpdateCompanyBranchesRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
+            }
+        });
     }
 
     /*Items*/
@@ -323,6 +338,7 @@ public class RestFullServices {
         getClient().getCustomerDetails(req).enqueue(new Callback<GetCustomerRes>() {
             @Override
             public void onResponse(Call<GetCustomerRes> call, Response<GetCustomerRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
                 if (response.isSuccessful())
                     callBacks.getCustomerSuccess(response.body());
                 else callBacks.onCompleteError("Something went wrong, Server Error");

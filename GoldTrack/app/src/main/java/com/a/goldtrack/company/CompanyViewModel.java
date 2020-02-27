@@ -19,6 +19,10 @@ public class CompanyViewModel extends ViewModel implements ICallBacks {
     ICompanyView view;
     public String title = "Company";
 
+//    public CompanyViewModel(GetCompany model) {
+//        RestFullServices.getCompanyList(model, this);
+//    }
+
     public void getCompany(GetCompany model) {
         if (list == null) {
             list = new MutableLiveData<>();
