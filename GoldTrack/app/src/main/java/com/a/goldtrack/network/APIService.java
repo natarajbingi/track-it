@@ -67,4 +67,7 @@ public interface APIService {
     @POST("customer/updateCustomerDetails")
     Call<UpdateCustomerRes> updateCustomerDetails(@Body UpdateCustomerReq customerReq);
 
+    @POST("transaction/validateCustomerWithOTP")
+    Call<CustomerWithOTPRes> validateCustomerWithOTP(@Body CustomerWithOTPReq customerWithOTPReq);
+
 }
