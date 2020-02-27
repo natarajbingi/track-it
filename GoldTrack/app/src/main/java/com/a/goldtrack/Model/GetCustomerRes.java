@@ -19,7 +19,9 @@ public class GetCustomerRes {
         public String address2;
         public String pin;
         public String state;
-        public boolean delete;
+        public String createdBy;
         public String updatedBy;
+        public String createdDt;
+        public String updatedDt;
     }
 }

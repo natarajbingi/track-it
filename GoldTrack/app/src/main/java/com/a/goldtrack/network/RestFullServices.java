@@ -10,6 +10,8 @@ import com.a.goldtrack.Model.AddItemReq;
 import com.a.goldtrack.Model.AddItemRes;
 import com.a.goldtrack.Model.AddUserForCompany;
 import com.a.goldtrack.Model.AddUserForCompanyRes;
+import com.a.goldtrack.Model.CustomerWithOTPReq;
+import com.a.goldtrack.Model.CustomerWithOTPRes;
 import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetCompanyBranches;
 import com.a.goldtrack.Model.GetCompanyBranchesRes;
@@ -328,6 +330,22 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<GetCustomerRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
+            }
+        });
+    }
+
+    public static void getPTO(CustomerWithOTPReq req, ICustomerCallBacs callBacks) {
+        getClient().validateCustomerWithOTP(req).enqueue(new Callback<CustomerWithOTPRes>() {
+            @Override
+            public void onResponse(Call<CustomerWithOTPRes> call, Response<CustomerWithOTPRes> response) {
+//                if (response.isSuccessful())
+//                    callBacks.getCustomerSuccess(response.body());
+//                else callBacks.onCompleteError("Something went wrong, Server Error");
+            }
+
+            @Override
+            public void onFailure(Call<CustomerWithOTPRes> call, Throwable t) {
                 callBacks.onError(t.getMessage());
             }
         });
