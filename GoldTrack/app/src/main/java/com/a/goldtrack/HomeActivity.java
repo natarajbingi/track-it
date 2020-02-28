@@ -11,6 +11,7 @@ import com.a.goldtrack.companybranche.CompanyBranchesActivity;
 import com.a.goldtrack.customer.CustomerActivity;
 import com.a.goldtrack.items.ItemsActivity;
 import com.a.goldtrack.login.LoginActivity;
+import com.a.goldtrack.otp.OtpActivity;
 import com.a.goldtrack.trans.TransActivity;
 import com.a.goldtrack.users.UserForCompanyActivity;
 import com.a.goldtrack.utils.Constants;
@@ -123,7 +124,7 @@ public class HomeActivity extends AppCompatActivity
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 break;
             case R.id.nav_trans:
-                i = new Intent(this, TransActivity.class);
+                i = new Intent(this, OtpActivity.class);
                 startActivity(i);
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 break;
