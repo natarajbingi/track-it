@@ -19,6 +19,7 @@ import android.view.View;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityTransBinding;
 import com.a.goldtrack.otp.OtpActivity;
+import com.a.goldtrack.utils.Constants;
 
 public class TransActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -52,7 +53,12 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         progressDialog.setMessage("in Progress...");
 
         binding.numbver.setText("Verify +91 9980766166");
+        binding.stepNext.setVisibility(View.VISIBLE);
+        binding.bottomTotalLayout.setVisibility(View.GONE);
 
+        setCurrentLayoutVisible();
+        binding.stepNext.setOnClickListener(this);
+        binding.addItemTrans.setOnClickListener(this);
 
     }
 
@@ -75,8 +81,11 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 current = 3;
                 timer.cancel();
                 binding.stepNext.setVisibility(View.GONE);
+                binding.bottomTotalLayout.setVisibility(View.VISIBLE);
             }
             setCurrentLayoutVisible();
+        } else if (v.getId() == R.id.add_item_trans) {
+            Constants.Toasty(context, "inProgress", Constants.info);
         }
     }
 
@@ -136,7 +145,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     }
 
     void askBeforeExit() {
-        new AlertDialog.Builder(this, R.style.AppTheme_Dark_Dialog)
+        new AlertDialog.Builder(TransActivity.this, R.style.AppTheme_Dark_Dialog)
                 .setTitle("Confirm")
                 .setMessage("Are you sure you want to cancel the registration process?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -150,6 +159,6 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                     }
-                });
+                }).create().show();
     }
 }

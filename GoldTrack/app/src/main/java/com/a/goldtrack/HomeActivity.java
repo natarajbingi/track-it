@@ -124,7 +124,7 @@ public class HomeActivity extends AppCompatActivity
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 break;
             case R.id.nav_trans:
-                i = new Intent(this, OtpActivity.class);
+                i = new Intent(this, TransActivity.class);
                 startActivity(i);
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 break;
