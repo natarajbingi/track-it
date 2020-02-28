@@ -13,6 +13,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         tools:context=".company.CompanyActivity">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -37,6 +38,7 @@
             android:id="@+id/list_details_holder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
             android:visibility="gone"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -85,7 +87,8 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="55dp">
+            android:layout_marginTop="55dp"
+            android:animateLayoutChanges="true">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/addDetailsHolder"
@@ -299,6 +302,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="32dp"
                         android:backgroundTint="#9C27B0"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
                         android:padding="15dp"
                         android:text="Add Customer"
                         android:textColor="@android:color/white"

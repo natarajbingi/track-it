@@ -12,6 +12,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         tools:context=".companybranche.CompanyBranchesActivity">
 
 
@@ -19,6 +20,7 @@
             android:id="@+id/list_details_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:orientation="vertical"
             android:visibility="gone">
 
@@ -58,6 +60,7 @@
         <ScrollView
             android:id="@+id/add_details_holder"
             android:layout_width="match_parent"
+            android:animateLayoutChanges="true"
             android:layout_height="wrap_content">
 
             <androidx.cardview.widget.CardView
@@ -200,6 +203,8 @@
                         android:layout_marginTop="32dp"
                         android:backgroundTint="#9C27B0"
                         android:padding="15dp"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
                         android:text="Add Branch"
                         android:textColor="@android:color/white"
                         android:textSize="20dp" />

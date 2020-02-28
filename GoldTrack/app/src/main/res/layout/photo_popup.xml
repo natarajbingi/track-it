@@ -36,6 +36,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="0.15"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:padding="5dp"
                 android:src="@drawable/ic_close" />
 

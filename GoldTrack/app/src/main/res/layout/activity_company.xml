@@ -13,6 +13,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         tools:context=".company.CompanyActivity">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -36,6 +37,7 @@
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/list_details_holder"
             android:layout_width="match_parent"
+            android:animateLayoutChanges="true"
             android:layout_height="match_parent"
             android:visibility="gone"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -91,6 +93,7 @@
                 android:id="@+id/addDetailsHolder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
                 android:elevation="4dp"
                 app:cardUseCompatPadding="true">
 
@@ -367,6 +370,8 @@
                         android:layout_marginTop="32dp"
                         android:backgroundTint="#9C27B0"
                         android:padding="15dp"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
                         android:text="Add Company"
                         android:textColor="@android:color/white"
                         android:textSize="20dp" />

@@ -40,7 +40,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".trans.TransActivity" />
+        <activity
+            android:name=".trans.TransActivity"
+            android:label="@string/title_activity_trans" />
         <activity android:name=".items.ItemsActivity" />
         <activity android:name=".companybranche.CompanyBranchesActivity" />
         <activity android:name=".users.UserForCompanyActivity" />

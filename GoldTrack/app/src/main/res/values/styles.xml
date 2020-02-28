@@ -43,10 +43,10 @@
     <!--it end-->
     <style name="DefaultButton" parent="AppTheme">
         <item name="android:background">@color/colorPrimary</item>
-        <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:padding">8dp</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily">sans-serif-condensed-medium</item>
     </style>
 

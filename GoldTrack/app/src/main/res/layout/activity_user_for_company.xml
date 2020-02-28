@@ -202,6 +202,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:visibility="gone" />
+
                     <TextView
                         android:id="@+id/roleListEditTime"
                         android:layout_width="match_parent"
@@ -242,6 +243,8 @@
                         android:id="@+id/selectedImg"
                         android:layout_width="match_parent"
                         android:layout_height="75dp"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
                         android:src="@drawable/ic_menu_camera" />
 
                     <Button
@@ -250,6 +253,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="32dp"
                         android:backgroundTint="#9C27B0"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
                         android:padding="15dp"
                         android:text="Add USER"
                         android:textColor="@android:color/white"
