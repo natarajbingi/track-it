@@ -48,6 +48,7 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".NotesActivity" />
         <activity android:name=".register.RegistrationActivity" />
+        <activity android:name=".otp.OtpActivity" />
         <!-- Providers -->
         <provider
             android:name="androidx.core.content.FileProvider"
