@@ -249,16 +249,11 @@
 
                     <Button
                         android:id="@+id/btn_add_user"
+                        style="@style/purpoleButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="32dp"
-                        android:backgroundTint="#9C27B0"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:padding="15dp"
-                        android:text="Add USER"
-                        android:textColor="@android:color/white"
-                        android:textSize="20dp" />
+                        android:text="ADD USER" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </ScrollView>
