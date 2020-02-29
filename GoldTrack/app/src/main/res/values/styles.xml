@@ -49,6 +49,36 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily">sans-serif-condensed-medium</item>
     </style>
+    <style name="purpoleButton" parent="AppTheme">
+        <item name="android:background">@drawable/btn_bg_purpole</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/purpol</item>
+        <item name="android:fontFamily">sans-serif-condensed-medium</item>
+    </style>
+    <style name="blueButton" parent="AppTheme">
+        <item name="android:background">@drawable/btn_bg_blue</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/start_color</item>
+        <item name="android:fontFamily">sans-serif-condensed-medium</item>
+    </style>
+    <style name="greyButton" parent="AppTheme">
+        <item name="android:background">@drawable/btn_bg_grey</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/monsoon</item>
+        <item name="android:fontFamily">sans-serif-condensed-medium</item>
+    </style>
 
 
     <style name="WarningButton" parent="AppTheme">

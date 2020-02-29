@@ -201,13 +201,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="32dp"
-                        android:backgroundTint="#9C27B0"
                         android:padding="15dp"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:text="Add Branch"
-                        android:textColor="@android:color/white"
-                        android:textSize="20dp" />
+                        android:text="ADD BRANCH"
+                        style="@style/purpoleButton" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </ScrollView>

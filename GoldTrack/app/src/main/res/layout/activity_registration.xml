@@ -149,11 +149,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="32dp"
-                        android:backgroundTint="#9C27B0"
-                        android:padding="15dp"
-                        android:text="Register"
-                        android:textColor="@android:color/white"
-                        android:textSize="20dp" />
+                        style="@style/purpoleButton"
+                        android:text="REGISTER" />
 
                     <TextView
                         android:id="@+id/link_login"

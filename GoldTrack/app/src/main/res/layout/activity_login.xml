@@ -74,10 +74,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
+                        android:hint="Email"
                         android:inputType="textEmailAddress"
                         android:text="abd@gmail.com"
-                        app:addTextChangedListener="@{viewModel.emailWatcher()}"
-                        android:hint="Email" />
+                        app:addTextChangedListener="@{viewModel.emailWatcher()}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -90,10 +90,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="42dp"
                         android:ems="10"
-                        android:text="demo123"
-                        app:addTextChangedListener="@{viewModel.pwdWatcher()}"
                         android:hint="Password"
-                        android:inputType="textPassword" />
+                        android:inputType="textPassword"
+                        android:text="demo123"
+                        app:addTextChangedListener="@{viewModel.pwdWatcher()}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -108,14 +108,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
-                    android:backgroundTint="#9C27B0"
+                    style="@style/purpoleButton"
                     android:onClick="@{()->viewModel.loginBtn()}"
                     android:padding="15dp"
-                    android:text="Login"
-                    android:clickable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:textColor="@android:color/white"
-                    android:textSize="20dp"
+                    android:text="LOGIN"
                     app:cornerRadius="25dp" />
 
             </LinearLayout>

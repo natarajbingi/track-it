@@ -17,6 +17,7 @@
         tools:context=".trans.TransActivity">
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -25,6 +26,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <!--first_step_layout-->
                 <LinearLayout
                     android:id="@+id/first_step_layout"
                     android:layout_width="match_parent"
@@ -119,7 +121,7 @@
 
                 </LinearLayout>
 
-
+                <!--second_step_otp-->
                 <LinearLayout
                     android:id="@+id/second_step_otp"
                     android:layout_width="match_parent"
@@ -237,6 +239,7 @@
 
                 </LinearLayout>
 
+                <!--third_step_details-->
                 <LinearLayout
                     android:id="@+id/third_step_details"
                     android:layout_width="match_parent"
@@ -348,11 +351,18 @@
                                 android:textStyle="bold" />
                         </RelativeLayout>
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recycler_trans_items"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
                     </LinearLayout>
+
+                    <include
+                        android:id="@+id/item_add_trans_layout_parent"
+                        layout="@layout/add_trans_item"
+                        android:visibility="gone" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_trans_items"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -377,17 +387,13 @@
 
         <Button
             android:id="@+id/step_next"
-            style="@style/Widget.AppCompat.ButtonBar"
+            style="@style/blueButton"
             android:layout_width="175dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
-            android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:gravity="center"
-            android:text="NEXT"
-            android:textColor="@color/end_color" />
+            android:text="NEXT" />
     </RelativeLayout>
 </layout>
