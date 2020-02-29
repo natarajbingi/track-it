@@ -28,6 +28,7 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 import java.util.TimeZone;
 
 import es.dmoral.toasty.Toasty;
@@ -44,6 +45,7 @@ public class Constants {
     public static final String companyId = "companyId";
     public static final String userLogin = "userLogin";
     public static final String userName = "userName";
+    public static final String userIdID = "userIdID";
     public static final String userId = "userId";
     public static final String pwdId = "pwdId";
     public static final int error = 0;
@@ -72,7 +74,15 @@ public class Constants {
         inputManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
+    public static String getRandomNumberString() {
+        // It will generate 6 digit random Number.
+        // from 0 to 999999
+        Random rnd = new Random();
+        int number = rnd.nextInt(999999);
 
+        // this will convert any number sequence into 6 character.
+        return String.format("%06d", number);
+    }
     public static void Toasty(Context ctx, String Msg, int type) {
         switch (type) {
             case error:

@@ -32,20 +32,19 @@ public class CustomTransAddedItemAdapter extends RecyclerView.Adapter<CustomTran
     }
 
     public void updateListNew(List<ItemsTrans> mDataset) {
-        this.mDataSet.clear();
-        this.mDataSet.addAll(mDataset);
+        this.mDataSet = (mDataset);
         this.notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final TextView commodity_name, commodity_amount, commodity_weight, stone_wastage, nett_weight, other_wastage;
-        private final ImageView edit_click, down_click;
         private final LinearLayout hidden_layout;
 
         public ViewHolder(View v) {
             super(v);
-            edit_click = (ImageView) v.findViewById(R.id.edit_click);
-            down_click = (ImageView) v.findViewById(R.id.down_click);
+            final boolean[] show = {true};
+            ImageView edit_click = (ImageView) v.findViewById(R.id.edit_click);
+            ImageView down_click = (ImageView) v.findViewById(R.id.down_click);
             commodity_name = (TextView) v.findViewById(R.id.commodity_name);
             commodity_amount = (TextView) v.findViewById(R.id.commodity_amount);
             commodity_weight = (TextView) v.findViewById(R.id.commodity_weight);
@@ -58,8 +57,12 @@ public class CustomTransAddedItemAdapter extends RecyclerView.Adapter<CustomTran
             down_click.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    hidden_layout.setVisibility(View.VISIBLE);
+                    if (show[0]) {
+                        hidden_layout.setVisibility(View.VISIBLE);
+                    } else {
+                        hidden_layout.setVisibility(View.GONE);
+                    }
+                    show[0] = !show[0];
                 }
             });
         }
@@ -83,11 +86,11 @@ public class CustomTransAddedItemAdapter extends RecyclerView.Adapter<CustomTran
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Log.d(TAG, "Element " + position + " set.");
         viewHolder.commodity_name.setText(mDataSet.get(position).commodity);
-        viewHolder.commodity_amount.setText("Rs. " +mDataSet.get(position).amount);
-        viewHolder.commodity_weight.setText( mDataSet.get(position).commodityWeight+" Grms" );
-        viewHolder.nett_weight.setText( "Nett wt: " +mDataSet.get(position).stoneWastage );
-        viewHolder.stone_wastage.setText( "Stone wst: " +mDataSet.get(position).stoneWastage );
-        viewHolder.other_wastage.setText( "Stone wst: " +mDataSet.get(position).otherWastage );
+        viewHolder.commodity_amount.setText("Rs. " + mDataSet.get(position).amount);
+        viewHolder.commodity_weight.setText(mDataSet.get(position).commodityWeight + " Grms");
+        viewHolder.nett_weight.setText("Nett wt: " + mDataSet.get(position).stoneWastage);
+        viewHolder.stone_wastage.setText("Stone wst: " + mDataSet.get(position).stoneWastage);
+        viewHolder.other_wastage.setText("Stone wst: " + mDataSet.get(position).otherWastage);
     }
 
     @Override
