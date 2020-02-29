@@ -4,6 +4,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,11 +21,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
+import com.a.goldtrack.Model.CustomerWithOTPReq;
 import com.a.goldtrack.Model.ItemsTrans;
 import com.a.goldtrack.R;
 import com.a.goldtrack.customer.CustomCustomersAdapter;
 import com.a.goldtrack.databinding.ActivityTransBinding;
 import com.a.goldtrack.utils.Constants;
+import com.a.goldtrack.utils.Sessions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +42,13 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     LinearLayout item_add_trans_layout;
     private int current = 1, first = 1, second = 2, third = 3;
     List<ItemsTrans> list;
+    private static final String TAG = "TransActivity";
+    protected CustomTransAddedItemAdapter mAdapter;
+    protected Constants.LayoutManagerType mCurrentLayoutManagerType;
+    protected RecyclerView.LayoutManager mLayoutManager;
+    boolean showingItemAdd = false;
+    int counter = 0;
+    String otp = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +81,16 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         setCurrentLayoutVisible();
         binding.stepNext.setOnClickListener(this);
         binding.addItemTrans.setOnClickListener(this);
-
+        binding.itemAddTransLayoutParent.addItem.setOnClickListener(this);
+        binding.itemAddTransLayoutParent.cancel.setOnClickListener(this);
+        viewModel.getListItemsTest();
+        viewModel.list.observe(this, new Observer<List<ItemsTrans>>() {
+            @Override
+            public void onChanged(List<ItemsTrans> itemsTrans) {
+                list = itemsTrans;
+                setmRecyclerView();
+            }
+        });
     }
 
     @Override
@@ -83,52 +102,85 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         // overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
-    boolean showingItemAdd = false;
-
-    List<ItemsTrans> addTranItemsNowTest() {
-        List<ItemsTrans> list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            ItemsTrans im = new ItemsTrans();
-            im.commodity = "Chain " + i;
-            im.commodityWeight = "100." + i;
-            im.amount = "200" + i;
-            im.nettWeight = "100 " + i;
-            im.purity = "100 " + i;
-            im.stoneWastage = "100 " + i;
-            im.otherWastage = "100 " + i;
-            im.itemID = "" + i;
-            list.add(im);
-        }
-        return list;
-    }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.step_next) {
-            if (current == 1) {
-                current = 2;
-                startCounter();
-            } else if (current == 2) {
-                current = 3;
-                timer.cancel();
-                binding.stepNext.setVisibility(View.GONE);
-                binding.bottomTotalLayout.setVisibility(View.VISIBLE);
-                binding.recyclerTransItems.setVisibility(View.VISIBLE);
-                setmRecyclerView();
-            }
-            setCurrentLayoutVisible();
-        } else if (v.getId() == R.id.add_item_trans) {
-            // Constants.Toasty(context, "inProgress", Constants.info);
-            if (!showingItemAdd) {
-                binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove));
-                binding.itemAddTransLayoutParent.setVisibility(View.VISIBLE);
-                binding.recyclerTransItems.setVisibility(View.GONE);
-            } else {
+        switch (v.getId()) {
+            case R.id.step_next:
+                if (current == 1) {
+                    current = 2;
+                    startCounter();
+                } else if (current == 2) {
+                    current = 3;
+                    timer.cancel();
+                }
+                setCurrentLayoutVisible();
+                break;
+            case R.id.add_item_trans:
+                // Constants.Toasty(context, "inProgress", Constants.info);
+                if (!showingItemAdd) {
+                    binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove));
+                    binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.VISIBLE);
+                    binding.recyclerTransItems.setVisibility(View.GONE);
+                    binding.bottomTotalLayout.setVisibility(View.GONE);
+                } else {
+                    binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
+                    binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.GONE);
+                    binding.recyclerTransItems.setVisibility(View.VISIBLE);
+                    binding.bottomTotalLayout.setVisibility(View.VISIBLE);
+                }
+                showingItemAdd = !showingItemAdd;
+                break;
+            case R.id.cancel:
                 binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
-                binding.itemAddTransLayoutParent.setVisibility(View.GONE);
+                binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.GONE);
                 binding.recyclerTransItems.setVisibility(View.VISIBLE);
-            }
-            showingItemAdd = !showingItemAdd;
+                binding.bottomTotalLayout.setVisibility(View.VISIBLE);
+
+                showingItemAdd = !showingItemAdd;
+                break;
+            case R.id.resend:
+                otp = Constants.getRandomNumberString();
+
+
+                break;
+            case R.id.add_item:
+                ItemsTrans nn = new ItemsTrans();
+                nn.amount = binding.itemAddTransLayoutParent.amount.getText().toString();
+                nn.commodityWeight = binding.itemAddTransLayoutParent.commodityWeight.getText().toString();
+                nn.stoneWastage = binding.itemAddTransLayoutParent.stoneWastage.getText().toString();
+                nn.otherWastage = binding.itemAddTransLayoutParent.otherWastage.getText().toString();
+                nn.nettWeight = binding.itemAddTransLayoutParent.nettWeight.getText().toString();
+                nn.purity = binding.itemAddTransLayoutParent.purity.getText().toString();
+                nn.commodity = binding.itemAddTransLayoutParent.selectCommodity.getSelectedItem().toString();
+                nn.itemID = (list.size() + 1) + "";
+
+                if (nn.amount.isEmpty() || nn.commodityWeight.isEmpty()
+                        || nn.stoneWastage.isEmpty() || nn.otherWastage.isEmpty()
+                        || nn.nettWeight.isEmpty() || nn.purity.isEmpty()
+                        || nn.commodity.equals("Select")
+                ) {
+                    Constants.Toasty(context, "Please enter mandatory fields.", Constants.warning);
+                    break;
+                } else {
+                    list.add(nn);
+                    viewModel.list.postValue(list);
+
+                    binding.itemAddTransLayoutParent.amount.setText("");
+                    binding.itemAddTransLayoutParent.commodityWeight.setText("");
+                    binding.itemAddTransLayoutParent.stoneWastage.setText("");
+                    binding.itemAddTransLayoutParent.otherWastage.setText("");
+                    binding.itemAddTransLayoutParent.nettWeight.setText("");
+                    binding.itemAddTransLayoutParent.purity.setText("");
+                    binding.itemAddTransLayoutParent.selectCommodity.setSelection(0);
+
+                    binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
+                    binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.GONE);
+                    binding.recyclerTransItems.setVisibility(View.VISIBLE);
+                    binding.bottomTotalLayout.setVisibility(View.VISIBLE);
+
+                }
+                break;
         }
     }
 
@@ -138,6 +190,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 binding.firstStepLayout.setVisibility(View.VISIBLE);
                 binding.secondStepOtp.setVisibility(View.GONE);
                 binding.thirdStepDetails.setVisibility(View.GONE);
+                otp = Constants.getRandomNumberString();
                 break;
             case 2:
                 binding.firstStepLayout.setVisibility(View.GONE);
@@ -145,9 +198,15 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 binding.thirdStepDetails.setVisibility(View.GONE);
                 break;
             case 3:
+                binding.stepNext.setVisibility(View.GONE);
+
                 binding.firstStepLayout.setVisibility(View.GONE);
                 binding.secondStepOtp.setVisibility(View.GONE);
                 binding.thirdStepDetails.setVisibility(View.VISIBLE);
+
+                binding.bottomTotalLayout.setVisibility(View.VISIBLE);
+                binding.recyclerTransItems.setVisibility(View.VISIBLE);
+                //setmRecyclerView();
                 break;
         }
     }
@@ -206,20 +265,31 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    private static final String TAG = "TransActivity";
-    protected CustomTransAddedItemAdapter mAdapter;
-    protected Constants.LayoutManagerType mCurrentLayoutManagerType;
-    protected RecyclerView.LayoutManager mLayoutManager;
+    void firstLayoutValidate() {
+        CustomerWithOTPReq req = new CustomerWithOTPReq();
+        req.companyID = Sessions.getUserString(context, Constants.companyId);
+        req.userID = Sessions.getUserString(context, Constants.userId);
+        req.customerID = binding.selectCustomer.getSelectedItem().toString();
+        req.customerMob = binding.selectCustomer.getSelectedItem().toString();
+        req.counter = (counter + 1) + "";
+        req.otp = otp;
+
+        if(req.customerMob.equals("Select")||req.customerID.equals("Select")){
+
+            return;
+        }
+        viewModel.verifyOtp(req);
+    }
 
     private void setmRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this);
         mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
         if (mAdapter == null) {
-            mAdapter = new CustomTransAddedItemAdapter(addTranItemsNowTest());
+            mAdapter = new CustomTransAddedItemAdapter(list);
             mAdapter.setClickListener(this);
             binding.recyclerTransItems.setAdapter(mAdapter);
-        } else mAdapter.updateListNew(addTranItemsNowTest());
+        } else mAdapter.updateListNew(list);
     }
 
     public void setRecyclerViewLayoutManager(Constants.LayoutManagerType layoutManagerType) {

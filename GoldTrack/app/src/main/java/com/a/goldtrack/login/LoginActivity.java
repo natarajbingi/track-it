@@ -141,7 +141,8 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
             }
             Sessions.setUserObj(context, loginRes.data, Constants.userLogin);
             Sessions.setUserString(context, loginRes.data.companyId, Constants.companyId);
-            Sessions.setUserString(context, loginRes.data.userName, Constants.userId);
+            Sessions.setUserString(context, loginRes.data.id, Constants.userId);
+            Sessions.setUserString(context, loginRes.data.userName, Constants.userIdID);
             Sessions.setUserString(context, loginRes.data.firstName + " " + loginRes.data.lastName, Constants.userName);
             Sessions.setUserString(context, binding.edPassword.getText().toString(), Constants.pwdId);
             onLoginSuccess();

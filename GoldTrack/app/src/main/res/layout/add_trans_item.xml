@@ -1,191 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="transModelSecondary"
+            type="com.a.goldtrack.trans.TransViewModel" />
+    </data>
 
     <LinearLayout
         android:id="@+id/item_add_trans_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="10dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/background_one_"
-            android:padding="8dp"
-            android:text="Add Item" />
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:text="Select Commodity *"
-            android:textSize="12sp" />
-
-        <Spinner
-            android:id="@+id/select_commodity"
-            style="@style/Widget.AppCompat.Spinner.Underlined"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:entries="@array/commodity" />
-
-        <LinearLayout
-            style="@style/Widget.AppCompat.Spinner.Underlined"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Commodity: GOLD" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/amount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:enabled="false"
-                    android:hint="Amount *"
-                    android:inputType="text|numberDecimal"
-                    android:text="2500.00" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/commodity_weight"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Commodity Weight *"
-                android:inputType="text|numberDecimal" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/nett_weight"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Net Weight *"
-                android:inputType="text|numberDecimal" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/stone_wastage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Stone Wastage *"
-                android:inputType="text|numberDecimal" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/other_wastage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Other Wastage *"
-                android:inputType="text|numberDecimal" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/purity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="purity% *"
-                android:inputType="text|numberDecimal" />
-        </com.google.android.material.textfield.TextInputLayout>
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/background"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:padding="10dp">
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="AMOUNT: "
-                android:textSize="20sp" />
+                android:background="@color/background_one_"
+                android:padding="8dp"
+                android:text="Add Item" />
 
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:text="Rs. 2500.00"
-                android:textColor="@color/start_color"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:paddingLeft="5dp"
+                android:text="Select Commodity *"
+                android:textSize="12sp" />
 
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:layout_width="0dp"
+            <Spinner
+                android:id="@+id/select_commodity"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/btn_bg_grey"
-                android:clickable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:text="Cancel"
-                android:textColor="@color/monsoon"
-                android:textSize="20sp" />
+                android:entries="@array/commodity" />
 
-            <Button
-                android:layout_width="0dp"
+            <LinearLayout
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/btn_bg_blue"
-                android:clickable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:text="ADD"
-                android:textColor="@color/start_color"
-                android:textSize="20sp" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Commodity: GOLD" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
 
 
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/amount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:hint="Amount *"
+                        android:inputType="text|numberDecimal"
+                        android:text="2500.00" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/commodity_weight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Commodity Weight *"
+                    android:inputType="text|number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/nett_weight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Net Weight *"
+                    android:inputType="text|number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/stone_wastage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Stone Wastage *"
+                    android:inputType="text|number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/other_wastage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Other Wastage *"
+                    android:inputType="text|number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/purity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="purity% *"
+                    android:inputType="text|number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="AMOUNT: "
+                    android:textSize="20sp" />
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="Rs. 2500.00"
+                    android:textColor="@color/start_color"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/cancel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_bg_grey"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:text="Cancel"
+                    android:textColor="@color/monsoon"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/add_item"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_bg_blue"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:text="ADD"
+                    android:textColor="@color/start_color"
+                    android:textSize="20sp" />
+
+
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</layout>

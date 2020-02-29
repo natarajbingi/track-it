@@ -38,6 +38,7 @@ import com.a.goldtrack.companybranche.IBranchCallBacks;
 import com.a.goldtrack.customer.ICustomerCallBacs;
 import com.a.goldtrack.items.IItemsCallBacks;
 import com.a.goldtrack.login.ILoginCallBacks;
+import com.a.goldtrack.trans.ITransCallBacks;
 import com.a.goldtrack.users.IUserCallBacks;
 import com.a.goldtrack.utils.Constants;
 
@@ -351,13 +352,13 @@ public class RestFullServices {
         });
     }
 
-    public static void getPTO(CustomerWithOTPReq req, ICustomerCallBacs callBacks) {
+    public static void getPTO(CustomerWithOTPReq req, ITransCallBacks callBacks) {
         getClient().validateCustomerWithOTP(req).enqueue(new Callback<CustomerWithOTPRes>() {
             @Override
             public void onResponse(Call<CustomerWithOTPRes> call, Response<CustomerWithOTPRes> response) {
-//                if (response.isSuccessful())
-//                    callBacks.getCustomerSuccess(response.body());
-//                else callBacks.onCompleteError("Something went wrong, Server Error");
+                if (response.isSuccessful())
+                    callBacks.onOtpSuccess(response.body());
+                else callBacks.onErrorComplete("Something went wrong, Server Error");
             }
 
             @Override

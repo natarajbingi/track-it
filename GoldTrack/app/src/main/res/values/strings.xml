@@ -21,25 +21,28 @@
     <string name="logout_confirm">Are you sure you want to Logout?</string>
     <string name="yes">YES</string>
     <string name="no">NO</string>
+    <string name="super_admin">SUPER_ADMIN</string>
 
     <string-array name="roles">
         <item>Select</item>
         <item>ADMIN</item>
-        <item>USER</item>
-        <item>MANAGER</item>
-        <item>MARKETING</item>
+        <item>EXECUTIVE</item>
+        <item>REPORT</item>
     </string-array>
+
     <string-array name="gender">
         <item>Select</item>
         <item>MALE</item>
         <item>FEMALE</item>
     </string-array>
+
     <string-array name="commodity">
         <item>Select</item>
         <item>PLATINUM</item>
         <item>GOLD</item>
         <item>SILVER</item>
     </string-array>
+
     <string name="intro_message">
         <![CDATA[
 

@@ -59,6 +59,16 @@
         <item name="android:textColor">@color/purpol</item>
         <item name="android:fontFamily">sans-serif-condensed-medium</item>
     </style>
+    <style name="greenButton" parent="AppTheme">
+        <item name="android:background">@drawable/btn_bg_green</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/button_success_text</item>
+        <item name="android:fontFamily">sans-serif-condensed-medium</item>
+    </style>
     <style name="blueButton" parent="AppTheme">
         <item name="android:background">@drawable/btn_bg_blue</item>
         <item name="android:padding">10dp</item>
