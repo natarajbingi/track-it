@@ -79,19 +79,19 @@
                             android:layout_height="wrap_content"
                             android:entries="@array/commodity" />
 
-                        <!--<TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="5dp"
-                            android:text="Select Customer *"
-                            android:textSize="12sp" />
+                            <!--<TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingLeft="5dp"
+                                android:text="Select Customer *"
+                                android:textSize="12sp" />
 
-                        <Spinner
-                            android:id="@+id/select_customer"
-                            style="@style/Widget.AppCompat.Spinner.Underlined"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:entries="@array/commodity" />-->
+                            <Spinner
+                                android:id="@+id/select_customer"
+                                style="@style/Widget.AppCompat.Spinner.Underlined"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:entries="@array/commodity" />-->
 
 
                         <com.google.android.material.textfield.TextInputLayout

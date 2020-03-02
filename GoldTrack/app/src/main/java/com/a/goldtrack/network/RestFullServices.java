@@ -44,6 +44,7 @@ import com.a.goldtrack.Model.AddTransactionReq;
 import com.a.goldtrack.trans.ITransCallBacks;
 import com.a.goldtrack.users.IUserCallBacks;
 import com.a.goldtrack.utils.Constants;
+import com.google.gson.Gson;
 
 import java.util.concurrent.TimeUnit;
 
@@ -178,7 +179,7 @@ public class RestFullServices {
     }
 
     public static void getDropdownDataForCompany(GetCompany req, ITransCallBacks callBacks) {
-        getClient().getDropdownDataForCompany(req).enqueue(new Callback<DropdownDataForCompanyRes>() {
+        /*getClient().getDropdownDataForCompany(req).enqueue(new Callback<DropdownDataForCompanyRes>() {
             @Override
             public void onResponse(Call<DropdownDataForCompanyRes> call, Response<DropdownDataForCompanyRes> response) {
                 Constants.logPrint(call.request().toString(), req, response.body());
@@ -191,7 +192,10 @@ public class RestFullServices {
             public void onFailure(Call<DropdownDataForCompanyRes> call, Throwable t) {
                 callBacks.onError(t.getMessage());
             }
-        });
+        });*/
+        Gson gj = new Gson();
+        DropdownDataForCompanyRes res = gj.fromJson(Constants.listme, DropdownDataForCompanyRes.class);
+        callBacks.onDropDownSuccess(res);
     }
 
     public static void updateBranch(UpdateCompanyBranchesReq req, IBranchCallBacks callBacks) {
@@ -328,7 +332,9 @@ public class RestFullServices {
 
                 Constants.logPrint(call.request().toString(), req, response.body());
                 if (response.isSuccessful())
-                    callBacks.addCustomerSuccess(response.body());
+                    if (response.body().success)
+                        callBacks.addCustomerSuccess(response.body());
+                    else callBacks.onCompleteError(response.body().response);
                 else callBacks.onCompleteError("Something went wrong,Server Error");
             }
 

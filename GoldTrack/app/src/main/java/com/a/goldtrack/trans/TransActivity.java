@@ -163,15 +163,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             e.printStackTrace();
         }
         customersArr = ReturnArray;
-
-        //Creating the instance of ArrayAdapter containing list of fruit names
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.select_dialog_item,
-                customersArr.keySet().toArray(new String[0]));
-        //Getting the instance of AutoCompleteTextView
-        binding.autoCompleteSelectCustomer.setThreshold(1);//will start working from first character
-        binding.autoCompleteSelectCustomer.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
-        binding.autoCompleteSelectCustomer.setTextColor(Color.RED);
+        setAutoComplete(binding.autoCompleteSelectCustomer, customersArr.keySet().toArray(new String[0]));
 
     }
 
@@ -201,6 +193,19 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         spinnerArrayAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
         // The drop down view
         spr.setAdapter(spinnerArrayAdapter);
+    }
+
+    private void setAutoComplete(AutoCompleteTextView auto, String[] array) {
+        // -----------------------------------------------
+        //Creating the instance of ArrayAdapter containing list of fruit names
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.select_dialog_item,
+                array);
+        //Getting the instance of AutoCompleteTextView
+        // binding.autoCompleteSelectCustomer.setThreshold(1);//will start working from first character
+        auto.setThreshold(1);//will start working from first character
+        auto.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
+        auto.setTextColor(Color.RED);
     }
 
     @Override
@@ -283,7 +288,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 float stoneWastage = Float.parseFloat(binding.itemAddTransLayoutParent.stoneWastage.getText().toString());
                 float otherWastage = Float.parseFloat(binding.itemAddTransLayoutParent.otherWastage.getText().toString());
 
-                float netWeight = (commodityWeight + stoneWastage + otherWastage);
+                float netWeight = (commodityWeight - (stoneWastage + otherWastage));
                 float netWeightAmount = amount * netWeight;
                 binding.itemAddTransLayoutParent.nettWeight.setText(netWeight + "");
                 binding.itemAddTransLayoutParent.calculatedItemAmount.setText("Rs. " + netWeightAmount);
@@ -309,7 +314,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 float stoneWastage1 = Float.parseFloat(binding.itemAddTransLayoutParent.stoneWastage.getText().toString());
                 float otherWastage1 = Float.parseFloat(binding.itemAddTransLayoutParent.otherWastage.getText().toString());
 
-                float netWeight1 = (commodityWeight1 + stoneWastage1 + otherWastage1);
+                float netWeight1 = (commodityWeight1 - (stoneWastage1 + otherWastage1));
                 float netWeightAmount1 = amount1 * netWeight1;
 
                 ItemsTrans nn = new ItemsTrans();
