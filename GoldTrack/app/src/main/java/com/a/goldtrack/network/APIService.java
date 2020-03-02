@@ -1,7 +1,7 @@
 package com.a.goldtrack.network;
 
 import com.a.goldtrack.Model.*;
-import com.a.goldtrack.trans.AddTransactionReq;
+import com.a.goldtrack.Model.AddTransactionReq;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

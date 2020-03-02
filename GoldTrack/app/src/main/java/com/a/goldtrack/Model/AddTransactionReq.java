@@ -1,4 +1,4 @@
-package com.a.goldtrack.trans;
+package com.a.goldtrack.Model;
 
 import java.util.List;
 
@@ -31,10 +31,10 @@ public class AddTransactionReq {
 
         public String itemID;
         public String commodityWeight;
+        public String purity;
         public String stoneWastage;
         public String otherWastage;
         public String nettWeight;
-        public String purity;
         public String amount;
 
     }

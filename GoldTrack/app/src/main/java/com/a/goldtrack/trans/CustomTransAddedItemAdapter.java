@@ -87,10 +87,10 @@ public class CustomTransAddedItemAdapter extends RecyclerView.Adapter<CustomTran
         Log.d(TAG, "Element " + position + " set.");
         viewHolder.commodity_name.setText(mDataSet.get(position).commodity);
         viewHolder.commodity_amount.setText("Rs. " + mDataSet.get(position).amount);
-        viewHolder.commodity_weight.setText(mDataSet.get(position).commodityWeight + " Grms");
-        viewHolder.nett_weight.setText("Nett wt: " + mDataSet.get(position).stoneWastage);
-        viewHolder.stone_wastage.setText("Stone wst: " + mDataSet.get(position).stoneWastage);
-        viewHolder.other_wastage.setText("Stone wst: " + mDataSet.get(position).otherWastage);
+        viewHolder.commodity_weight.setText("Commodity Wt: " + mDataSet.get(position).commodityWeight + " Grms");
+        viewHolder.nett_weight.setText("Net Wt: " + mDataSet.get(position).nettWeight);
+        viewHolder.stone_wastage.setText("Stone Wt: " + mDataSet.get(position).stoneWastage);
+        viewHolder.other_wastage.setText("Other Wt: " + mDataSet.get(position).otherWastage);
     }
 
     @Override

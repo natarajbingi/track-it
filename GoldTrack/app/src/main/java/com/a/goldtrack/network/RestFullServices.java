@@ -40,8 +40,7 @@ import com.a.goldtrack.companybranche.IBranchCallBacks;
 import com.a.goldtrack.customer.ICustomerCallBacs;
 import com.a.goldtrack.items.IItemsCallBacks;
 import com.a.goldtrack.login.ILoginCallBacks;
-import com.a.goldtrack.trans.AddTransactionReq;
-import com.a.goldtrack.trans.IDropdownDataCallBacks;
+import com.a.goldtrack.Model.AddTransactionReq;
 import com.a.goldtrack.trans.ITransCallBacks;
 import com.a.goldtrack.users.IUserCallBacks;
 import com.a.goldtrack.utils.Constants;
@@ -178,10 +177,11 @@ public class RestFullServices {
         });
     }
 
-    public static void getDropdownDataForCompany(GetCompany req, IDropdownDataCallBacks callBacks) {
+    public static void getDropdownDataForCompany(GetCompany req, ITransCallBacks callBacks) {
         getClient().getDropdownDataForCompany(req).enqueue(new Callback<DropdownDataForCompanyRes>() {
             @Override
             public void onResponse(Call<DropdownDataForCompanyRes> call, Response<DropdownDataForCompanyRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
                 if (response.isSuccessful()) {
                     callBacks.onDropDownSuccess(response.body());
                 } else callBacks.onErrorComplete("Something went wrong, Server Error");
@@ -376,11 +376,22 @@ public class RestFullServices {
     /*
      * Transactions*/
     public static void getPTO(CustomerWithOTPReq req, ITransCallBacks callBacks) {
-        getClient().validateCustomerWithOTP(req).enqueue(new Callback<CustomerWithOTPRes>() {
+
+        CustomerWithOTPRes res = new CustomerWithOTPRes();
+        res.success = true;
+        res.id = 0;
+        res.response = "Success";
+        callBacks.onOtpSuccess(res);
+        Constants.logPrint(null, req, res);
+        /*getClient().validateCustomerWithOTP(req).enqueue(new Callback<CustomerWithOTPRes>() {
             @Override
             public void onResponse(Call<CustomerWithOTPRes> call, Response<CustomerWithOTPRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
                 if (response.isSuccessful())
-                    callBacks.onOtpSuccess(response.body());
+                    if (response.body().success)
+                        callBacks.onOtpSuccess(response.body());
+                    else
+                        callBacks.onErrorComplete(response.body().response);
                 else callBacks.onErrorComplete("Something went wrong, Server Error");
             }
 
@@ -388,13 +399,15 @@ public class RestFullServices {
             public void onFailure(Call<CustomerWithOTPRes> call, Throwable t) {
                 callBacks.onError(t.getMessage());
             }
-        });
+        });*/
+
     }
 
     public static void addTransaction(AddTransactionReq req, ITransCallBacks callBacks) {
         getClient().addTransaction(req).enqueue(new Callback<AddTransactionRes>() {
             @Override
             public void onResponse(Call<AddTransactionRes> call, Response<AddTransactionRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
                 if (response.isSuccessful())
                     callBacks.onAddTransSuccess(response.body());
                 else callBacks.onErrorComplete("Something went wrong, Server Error");

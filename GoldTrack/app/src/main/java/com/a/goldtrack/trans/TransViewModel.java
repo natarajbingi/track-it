@@ -3,9 +3,12 @@ package com.a.goldtrack.trans;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.a.goldtrack.Model.AddTransactionReq;
 import com.a.goldtrack.Model.AddTransactionRes;
 import com.a.goldtrack.Model.CustomerWithOTPReq;
 import com.a.goldtrack.Model.CustomerWithOTPRes;
+import com.a.goldtrack.Model.DropdownDataForCompanyRes;
+import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.ItemsTrans;
 import com.a.goldtrack.network.RestFullServices;
 
@@ -14,7 +17,8 @@ import java.util.List;
 
 public class TransViewModel extends ViewModel implements ITransCallBacks {
 
-    MutableLiveData<List<ItemsTrans>> list;
+    // MutableLiveData<List<ItemsTrans>> list = new MutableLiveData<>();
+    MutableLiveData<DropdownDataForCompanyRes> dropdownList;
     ITransUiHandler view;
 
     @Override
@@ -22,12 +26,6 @@ public class TransViewModel extends ViewModel implements ITransCallBacks {
         super.onCleared();
     }
 
-    public void getListItemsTest() {
-        if (list == null) {
-            list = new MutableLiveData<>();
-        }
-        list.postValue(addTranItemsNowTest());
-    }
 
     public void onViewAvailable(ITransUiHandler view) {
         this.view = view;
@@ -55,11 +53,25 @@ public class TransViewModel extends ViewModel implements ITransCallBacks {
     }
 
     public void addTransreq(AddTransactionReq req) {
-        RestFullServices.addTransaction(req,this);
+        RestFullServices.addTransaction(req, this);
     }
+
+    public void getDropdowns(GetCompany req) {
+        if (dropdownList == null) {
+            dropdownList = new MutableLiveData<>();
+        }
+        RestFullServices.getDropdownDataForCompany(req, this);
+    }
+
     @Override
     public void onOtpSuccess(CustomerWithOTPRes body) {
         view.onUiVerifyOtpSuccess(body);
+    }
+
+    @Override
+    public void onDropDownSuccess(DropdownDataForCompanyRes body) {
+        dropdownList.postValue(body);
+        view.onGetDropDownsSuccess(body);
     }
 
     @Override
