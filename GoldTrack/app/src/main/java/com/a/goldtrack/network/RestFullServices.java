@@ -22,6 +22,8 @@ import com.a.goldtrack.Model.GetCustomerReq;
 import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.GetItemsReq;
 import com.a.goldtrack.Model.GetItemsRes;
+import com.a.goldtrack.Model.GetTransactionReq;
+import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.Model.GetUserForCompany;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.Model.UpdateCompanyBranchesReq;
@@ -421,6 +423,22 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<AddTransactionRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
+            }
+        });
+    }
+    public static void getTransaction(GetTransactionReq req, ITransCallBacks callBacks) {
+        getClient().getTransactionForFilters(req).enqueue(new Callback<GetTransactionRes>() {
+            @Override
+            public void onResponse(Call<GetTransactionRes> call, Response<GetTransactionRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
+                if (response.isSuccessful())
+                    callBacks.onGetTransSuccess(response.body());
+                else callBacks.onErrorComplete("Something went wrong, Server Error");
+            }
+
+            @Override
+            public void onFailure(Call<GetTransactionRes> call, Throwable t) {
                 callBacks.onError(t.getMessage());
             }
         });
