@@ -81,6 +81,9 @@ public interface APIService {
     Call<CustomerWithOTPRes> validateCustomerWithOTP(@Body CustomerWithOTPReq customerWithOTPReq);
 
     @POST("transaction/addTransaction")
-    Call<AddTransactionRes> addTransaction (@Body AddTransactionReq req);
+    Call<AddTransactionRes> addTransaction(@Body AddTransactionReq req);
+
+    @POST("transaction/getTransactionForFilters")
+    Call<GetTransactionRes> getTransactionForFilters(@Body GetTransactionReq req);
 
 }

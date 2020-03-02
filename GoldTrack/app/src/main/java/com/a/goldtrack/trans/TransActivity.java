@@ -33,6 +33,7 @@ import com.a.goldtrack.Model.CustomerWithOTPReq;
 import com.a.goldtrack.Model.CustomerWithOTPRes;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompany;
+import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.Model.ItemsTrans;
 import com.a.goldtrack.R;
 import com.a.goldtrack.customer.CustomCustomersAdapter;
@@ -532,6 +533,11 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     public void onAddTransSuccess(AddTransactionRes res) {
         progressDialog.dismiss();
         Constants.Toasty(context, res.response + "" + res.transactionID, Constants.success);
+    }
+
+    @Override
+    public void onGetTransSuccess(GetTransactionRes res) {
+
     }
 
     @Override

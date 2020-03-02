@@ -9,6 +9,7 @@ import com.a.goldtrack.Model.CustomerWithOTPReq;
 import com.a.goldtrack.Model.CustomerWithOTPRes;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompany;
+import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.Model.ItemsTrans;
 import com.a.goldtrack.network.RestFullServices;
 
@@ -77,6 +78,11 @@ public class TransViewModel extends ViewModel implements ITransCallBacks {
     @Override
     public void onAddTransSuccess(AddTransactionRes res) {
         view.onAddTransSuccess(res);
+    }
+
+    @Override
+    public void onGetTransSuccess(GetTransactionRes res) {
+        view.onGetTransSuccess(res);
     }
 
     @Override
