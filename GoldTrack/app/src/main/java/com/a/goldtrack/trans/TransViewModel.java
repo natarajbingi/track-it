@@ -3,6 +3,7 @@ package com.a.goldtrack.trans;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.a.goldtrack.Model.AddTransactionRes;
 import com.a.goldtrack.Model.CustomerWithOTPReq;
 import com.a.goldtrack.Model.CustomerWithOTPRes;
 import com.a.goldtrack.Model.ItemsTrans;
@@ -53,9 +54,17 @@ public class TransViewModel extends ViewModel implements ITransCallBacks {
         RestFullServices.getPTO(req, this);
     }
 
+    public void addTransreq(AddTransactionReq req) {
+        RestFullServices.addTransaction(req,this);
+    }
     @Override
     public void onOtpSuccess(CustomerWithOTPRes body) {
         view.onUiVerifyOtpSuccess(body);
+    }
+
+    @Override
+    public void onAddTransSuccess(AddTransactionRes res) {
+        view.onAddTransSuccess(res);
     }
 
     @Override
