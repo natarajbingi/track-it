@@ -1,6 +1,7 @@
 package com.a.goldtrack.network;
 
 import com.a.goldtrack.Model.*;
+import com.a.goldtrack.trans.AddTransactionReq;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -21,6 +22,10 @@ public interface APIService {
 
     @POST("company/updateCompanyDetails")
     Call<UpdateCompanyDetailsRes> updateCompanyDetails(@Body UpdateCompanyDetails updateCompanyDetails);
+
+
+    @POST("company/getDropdownDataForCompany")
+    Call<DropdownDataForCompanyRes> getDropdownDataForCompany(@Body GetCompany req);
 
 
     /*Users
@@ -74,5 +79,8 @@ public interface APIService {
      * */
     @POST("transaction/validateCustomerWithOTP")
     Call<CustomerWithOTPRes> validateCustomerWithOTP(@Body CustomerWithOTPReq customerWithOTPReq);
+
+    @POST("transaction/addTransaction")
+    Call<AddTransactionRes> addTransaction (@Body AddTransactionReq req);
 
 }

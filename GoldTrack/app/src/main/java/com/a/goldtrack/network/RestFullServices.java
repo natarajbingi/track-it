@@ -8,10 +8,12 @@ import com.a.goldtrack.Model.AddCustomerReq;
 import com.a.goldtrack.Model.AddCustomerRes;
 import com.a.goldtrack.Model.AddItemReq;
 import com.a.goldtrack.Model.AddItemRes;
+import com.a.goldtrack.Model.AddTransactionRes;
 import com.a.goldtrack.Model.AddUserForCompany;
 import com.a.goldtrack.Model.AddUserForCompanyRes;
 import com.a.goldtrack.Model.CustomerWithOTPReq;
 import com.a.goldtrack.Model.CustomerWithOTPRes;
+import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetCompanyBranches;
 import com.a.goldtrack.Model.GetCompanyBranchesRes;
@@ -38,6 +40,8 @@ import com.a.goldtrack.companybranche.IBranchCallBacks;
 import com.a.goldtrack.customer.ICustomerCallBacs;
 import com.a.goldtrack.items.IItemsCallBacks;
 import com.a.goldtrack.login.ILoginCallBacks;
+import com.a.goldtrack.trans.AddTransactionReq;
+import com.a.goldtrack.trans.IDropdownDataCallBacks;
 import com.a.goldtrack.trans.ITransCallBacks;
 import com.a.goldtrack.users.IUserCallBacks;
 import com.a.goldtrack.utils.Constants;
@@ -174,6 +178,22 @@ public class RestFullServices {
         });
     }
 
+    public static void getDropdownDataForCompany(GetCompany req, IDropdownDataCallBacks callBacks) {
+        getClient().getDropdownDataForCompany(req).enqueue(new Callback<DropdownDataForCompanyRes>() {
+            @Override
+            public void onResponse(Call<DropdownDataForCompanyRes> call, Response<DropdownDataForCompanyRes> response) {
+                if (response.isSuccessful()) {
+                    callBacks.onDropDownSuccess(response.body());
+                } else callBacks.onErrorComplete("Something went wrong, Server Error");
+            }
+
+            @Override
+            public void onFailure(Call<DropdownDataForCompanyRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
+            }
+        });
+    }
+
     public static void updateBranch(UpdateCompanyBranchesReq req, IBranchCallBacks callBacks) {
         getClient().updateCompanyBrancheDetails(req).enqueue(new Callback<UpdateCompanyBranchesRes>() {
             @Override
@@ -298,7 +318,8 @@ public class RestFullServices {
         });
     }
 
-    /*Customer*/
+    /*
+     * Customer*/
 
     public static void addCusomer(AddCustomerReq req, ICustomerCallBacs callBacks) {
         getClient().addCustomer(req).enqueue(new Callback<AddCustomerRes>() {
@@ -352,6 +373,8 @@ public class RestFullServices {
         });
     }
 
+    /*
+     * Transactions*/
     public static void getPTO(CustomerWithOTPReq req, ITransCallBacks callBacks) {
         getClient().validateCustomerWithOTP(req).enqueue(new Callback<CustomerWithOTPRes>() {
             @Override
@@ -363,6 +386,22 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<CustomerWithOTPRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
+            }
+        });
+    }
+
+    public static void addTransaction(AddTransactionReq req, ITransCallBacks callBacks) {
+        getClient().addTransaction(req).enqueue(new Callback<AddTransactionRes>() {
+            @Override
+            public void onResponse(Call<AddTransactionRes> call, Response<AddTransactionRes> response) {
+                if (response.isSuccessful())
+                    callBacks.onAddTransSuccess(response.body());
+                else callBacks.onErrorComplete("Something went wrong, Server Error");
+            }
+
+            @Override
+            public void onFailure(Call<AddTransactionRes> call, Throwable t) {
                 callBacks.onError(t.getMessage());
             }
         });
