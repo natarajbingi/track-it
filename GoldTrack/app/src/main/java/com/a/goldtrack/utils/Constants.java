@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
@@ -61,6 +63,22 @@ public class Constants {
 
     // Methods
 
+    public static boolean isConnection(Context c) {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
+    }
 
     public static void hideKeyboard(Context ctx) {
         InputMethodManager inputManager = (InputMethodManager) ctx
@@ -83,6 +101,7 @@ public class Constants {
         // this will convert any number sequence into 6 character.
         return String.format("%06d", number);
     }
+
     public static void Toasty(Context ctx, String Msg, int type) {
         switch (type) {
             case error:
@@ -258,141 +277,141 @@ public class Constants {
                 }, 3000);*/
 
 
-        public static String listme ="{\n" +
-                "  \"branchesList\": [\n" +
-                "    {\n" +
-                "      \"companyId\": 1,\n" +
-                "      \"branchAddress1\": \"No.123, Vijaynagr, Gulbarga\",\n" +
-                "      \"branchCity\": \"Gulbarga\",\n" +
-                "      \"branchCode\": \"DYU_GUL_02\",\n" +
-                "      \"branchDesc\": \"It is in Vijay Nagar, Gulbarga\",\n" +
-                "      \"branchName\": \"Gulbarga_Branch\",\n" +
-                "      \"branchPhNumber\": \"123456889\",\n" +
-                "      \"branchPin\": \"5853555\",\n" +
-                "      \"response\": null,\n" +
-                "      \"success\": false,\n" +
-                "      \"id\": 1,\n" +
-                "      \"createdBy\": null,\n" +
-                "      \"updatedBy\": null,\n" +
-                "      \"createdDt\": null,\n" +
-                "      \"updatedDt\": null\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"companyId\": 1,\n" +
-                "      \"branchAddress1\": \"Bangalore\",\n" +
-                "      \"branchCity\": \"Bangalore\",\n" +
-                "      \"branchCode\": \"DYU_20200225123918\",\n" +
-                "      \"branchDesc\": \"test generator branches\",\n" +
-                "      \"branchName\": \"Bangalore branch\",\n" +
-                "      \"branchPhNumber\": \"9988669966\",\n" +
-                "      \"branchPin\": \"964664\",\n" +
-                "      \"response\": null,\n" +
-                "      \"success\": false,\n" +
-                "      \"id\": 3,\n" +
-                "      \"createdBy\": null,\n" +
-                "      \"updatedBy\": null,\n" +
-                "      \"createdDt\": null,\n" +
-                "      \"updatedDt\": null\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"companyId\": 1,\n" +
-                "      \"branchAddress1\": \"yugfvvv\",\n" +
-                "      \"branchCity\": \"vhbh\",\n" +
-                "      \"branchCode\": \"DYU_20200225124941\",\n" +
-                "      \"branchDesc\": \"ghghhg\",\n" +
-                "      \"branchName\": \"wahhh and\",\n" +
-                "      \"branchPhNumber\": \"1226659889\",\n" +
-                "      \"branchPin\": \"524488\",\n" +
-                "      \"response\": null,\n" +
-                "      \"success\": false,\n" +
-                "      \"id\": 4,\n" +
-                "      \"createdBy\": null,\n" +
-                "      \"updatedBy\": null,\n" +
-                "      \"createdDt\": null,\n" +
-                "      \"updatedDt\": null\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"customerList\": [\n" +
-                "    {\n" +
-                "      \"uniqueId\": \"2341\",\n" +
-                "      \"firstName\": \"Test1\",\n" +
-                "      \"lastName\": \"tt1\",\n" +
-                "      \"mobileNum\": \"9980766166\",\n" +
-                "      \"emailId\": \"test1@gmail.com\",\n" +
-                "      \"address1\": \"Channasandra1\",\n" +
-                "      \"address2\": \"Bangalore1\",\n" +
-                "      \"pin\": \"578886\",\n" +
-                "      \"id\": 1,\n" +
-                "      \"state\": \"Karnataka1\",\n" +
-                "      \"createdBy\": null,\n" +
-                "      \"updatedBy\": null,\n" +
-                "      \"createdDt\": null,\n" +
-                "      \"updatedDt\": null\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"uniqueId\": \"2158\",\n" +
-                "      \"firstName\": \"one days\",\n" +
-                "      \"lastName\": \"second hand\",\n" +
-                "      \"mobileNum\": \"9980766166\",\n" +
-                "      \"emailId\": \"oneday@gmail.com\",\n" +
-                "      \"address1\": \"test generator\",\n" +
-                "      \"address2\": \"best wishes\",\n" +
-                "      \"pin\": \"986686\",\n" +
-                "      \"id\": 2,\n" +
-                "      \"state\": \"karnataka\",\n" +
-                "      \"createdBy\": null,\n" +
-                "      \"updatedBy\": null,\n" +
-                "      \"createdDt\": null,\n" +
-                "      \"updatedDt\": null\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"itemsList\": [\n" +
-                "    {\n" +
-                "      \"companyID\": 1,\n" +
-                "      \"commodity\": \"GOLD\",\n" +
-                "      \"itemName\": \"Chain\",\n" +
-                "      \"itemDesc\": \"Gold chain longp\",\n" +
-                "      \"id\": 1,\n" +
-                "      \"createdBy\": null,\n" +
-                "      \"updatedBy\": null,\n" +
-                "      \"createdDt\": null,\n" +
-                "      \"updatedDt\": null\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"companyID\": 1,\n" +
-                "      \"commodity\": \"GOLD\",\n" +
-                "      \"itemName\": \"Chain Long\",\n" +
-                "      \"itemDesc\": \"Gold chain long long\",\n" +
-                "      \"id\": 2,\n" +
-                "      \"createdBy\": null,\n" +
-                "      \"updatedBy\": null,\n" +
-                "      \"createdDt\": null,\n" +
-                "      \"updatedDt\": null\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"companyID\": 1,\n" +
-                "      \"commodity\": \"GOLD\",\n" +
-                "      \"itemName\": \"silevr chain \",\n" +
-                "      \"itemDesc\": \"added chai\",\n" +
-                "      \"id\": 3,\n" +
-                "      \"createdBy\": null,\n" +
-                "      \"updatedBy\": null,\n" +
-                "      \"createdDt\": null,\n" +
-                "      \"updatedDt\": null\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"companyID\": 1,\n" +
-                "      \"commodity\": \"SILVER\",\n" +
-                "      \"itemName\": \"chain KMC silver\",\n" +
-                "      \"itemDesc\": \"silver ade\",\n" +
-                "      \"id\": 4,\n" +
-                "      \"createdBy\": null,\n" +
-                "      \"updatedBy\": null,\n" +
-                "      \"createdDt\": null,\n" +
-                "      \"updatedDt\": null\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"response\": \"Data fetched successfully\",\n" +
-                "  \"success\": true\n" +
-                "}";
+    public static String listme = "{\n" +
+            "  \"branchesList\": [\n" +
+            "    {\n" +
+            "      \"companyId\": 1,\n" +
+            "      \"branchAddress1\": \"No.123, Vijaynagr, Gulbarga\",\n" +
+            "      \"branchCity\": \"Gulbarga\",\n" +
+            "      \"branchCode\": \"DYU_GUL_02\",\n" +
+            "      \"branchDesc\": \"It is in Vijay Nagar, Gulbarga\",\n" +
+            "      \"branchName\": \"Gulbarga_Branch\",\n" +
+            "      \"branchPhNumber\": \"123456889\",\n" +
+            "      \"branchPin\": \"5853555\",\n" +
+            "      \"response\": null,\n" +
+            "      \"success\": false,\n" +
+            "      \"id\": 1,\n" +
+            "      \"createdBy\": null,\n" +
+            "      \"updatedBy\": null,\n" +
+            "      \"createdDt\": null,\n" +
+            "      \"updatedDt\": null\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"companyId\": 1,\n" +
+            "      \"branchAddress1\": \"Bangalore\",\n" +
+            "      \"branchCity\": \"Bangalore\",\n" +
+            "      \"branchCode\": \"DYU_20200225123918\",\n" +
+            "      \"branchDesc\": \"test generator branches\",\n" +
+            "      \"branchName\": \"Bangalore branch\",\n" +
+            "      \"branchPhNumber\": \"9988669966\",\n" +
+            "      \"branchPin\": \"964664\",\n" +
+            "      \"response\": null,\n" +
+            "      \"success\": false,\n" +
+            "      \"id\": 3,\n" +
+            "      \"createdBy\": null,\n" +
+            "      \"updatedBy\": null,\n" +
+            "      \"createdDt\": null,\n" +
+            "      \"updatedDt\": null\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"companyId\": 1,\n" +
+            "      \"branchAddress1\": \"yugfvvv\",\n" +
+            "      \"branchCity\": \"vhbh\",\n" +
+            "      \"branchCode\": \"DYU_20200225124941\",\n" +
+            "      \"branchDesc\": \"ghghhg\",\n" +
+            "      \"branchName\": \"wahhh and\",\n" +
+            "      \"branchPhNumber\": \"1226659889\",\n" +
+            "      \"branchPin\": \"524488\",\n" +
+            "      \"response\": null,\n" +
+            "      \"success\": false,\n" +
+            "      \"id\": 4,\n" +
+            "      \"createdBy\": null,\n" +
+            "      \"updatedBy\": null,\n" +
+            "      \"createdDt\": null,\n" +
+            "      \"updatedDt\": null\n" +
+            "    }\n" +
+            "  ],\n" +
+            "  \"customerList\": [\n" +
+            "    {\n" +
+            "      \"uniqueId\": \"2341\",\n" +
+            "      \"firstName\": \"Test1\",\n" +
+            "      \"lastName\": \"tt1\",\n" +
+            "      \"mobileNum\": \"9980766166\",\n" +
+            "      \"emailId\": \"test1@gmail.com\",\n" +
+            "      \"address1\": \"Channasandra1\",\n" +
+            "      \"address2\": \"Bangalore1\",\n" +
+            "      \"pin\": \"578886\",\n" +
+            "      \"id\": 1,\n" +
+            "      \"state\": \"Karnataka1\",\n" +
+            "      \"createdBy\": null,\n" +
+            "      \"updatedBy\": null,\n" +
+            "      \"createdDt\": null,\n" +
+            "      \"updatedDt\": null\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"uniqueId\": \"2158\",\n" +
+            "      \"firstName\": \"one days\",\n" +
+            "      \"lastName\": \"second hand\",\n" +
+            "      \"mobileNum\": \"9980766166\",\n" +
+            "      \"emailId\": \"oneday@gmail.com\",\n" +
+            "      \"address1\": \"test generator\",\n" +
+            "      \"address2\": \"best wishes\",\n" +
+            "      \"pin\": \"986686\",\n" +
+            "      \"id\": 2,\n" +
+            "      \"state\": \"karnataka\",\n" +
+            "      \"createdBy\": null,\n" +
+            "      \"updatedBy\": null,\n" +
+            "      \"createdDt\": null,\n" +
+            "      \"updatedDt\": null\n" +
+            "    }\n" +
+            "  ],\n" +
+            "  \"itemsList\": [\n" +
+            "    {\n" +
+            "      \"companyID\": 1,\n" +
+            "      \"commodity\": \"GOLD\",\n" +
+            "      \"itemName\": \"Chain\",\n" +
+            "      \"itemDesc\": \"Gold chain longp\",\n" +
+            "      \"id\": 1,\n" +
+            "      \"createdBy\": null,\n" +
+            "      \"updatedBy\": null,\n" +
+            "      \"createdDt\": null,\n" +
+            "      \"updatedDt\": null\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"companyID\": 1,\n" +
+            "      \"commodity\": \"GOLD\",\n" +
+            "      \"itemName\": \"Chain Long\",\n" +
+            "      \"itemDesc\": \"Gold chain long long\",\n" +
+            "      \"id\": 2,\n" +
+            "      \"createdBy\": null,\n" +
+            "      \"updatedBy\": null,\n" +
+            "      \"createdDt\": null,\n" +
+            "      \"updatedDt\": null\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"companyID\": 1,\n" +
+            "      \"commodity\": \"GOLD\",\n" +
+            "      \"itemName\": \"silevr chain \",\n" +
+            "      \"itemDesc\": \"added chai\",\n" +
+            "      \"id\": 3,\n" +
+            "      \"createdBy\": null,\n" +
+            "      \"updatedBy\": null,\n" +
+            "      \"createdDt\": null,\n" +
+            "      \"updatedDt\": null\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"companyID\": 1,\n" +
+            "      \"commodity\": \"SILVER\",\n" +
+            "      \"itemName\": \"chain KMC silver\",\n" +
+            "      \"itemDesc\": \"silver ade\",\n" +
+            "      \"id\": 4,\n" +
+            "      \"createdBy\": null,\n" +
+            "      \"updatedBy\": null,\n" +
+            "      \"createdDt\": null,\n" +
+            "      \"updatedDt\": null\n" +
+            "    }\n" +
+            "  ],\n" +
+            "  \"response\": \"Data fetched successfully\",\n" +
+            "  \"success\": true\n" +
+            "}";
 }

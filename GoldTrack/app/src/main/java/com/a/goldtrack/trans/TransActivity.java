@@ -4,6 +4,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -41,6 +42,7 @@ import com.a.goldtrack.customer.CustomCustomersAdapter;
 import com.a.goldtrack.databinding.ActivityTransBinding;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -108,8 +110,15 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         viewModel.onViewAvailable(this);
         GetCompany req = new GetCompany();
         req.companyId = Sessions.getUserString(context, Constants.companyId);
-        progressDialog.show();
-        viewModel.getDropdowns(req);
+        if (Constants.isConnection(context)) {
+            progressDialog.show();
+            viewModel.getDropdowns(req);
+        } else {
+            viewModel.dropdownList = new MutableLiveData<>();
+            Gson gj = new Gson();
+            DropdownDataForCompanyRes res = gj.fromJson(Constants.listme, DropdownDataForCompanyRes.class);
+            viewModel.dropdownList.postValue(res);
+        }
 
         viewModel.dropdownList.observe(this, new Observer<DropdownDataForCompanyRes>() {
             @Override
@@ -223,7 +232,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.step_next:
+            case R.id.step_next: {
                 if (current == 1) {
                     CustomerWithOTPReq req = firstLayoutValidate();
                     if (req != null) {
@@ -261,8 +270,9 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                         }
                     }
                 }
-                break;
-            case R.id.add_item_trans:
+            }
+            break;
+            case R.id.add_item_trans: {
                 // Constants.Toasty(context, "inProgress", Constants.info);
                 if (!showingItemAdd) {
                     binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove));
@@ -276,16 +286,18 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                     binding.bottomTotalLayout.setVisibility(View.VISIBLE);
                 }
                 showingItemAdd = !showingItemAdd;
-                break;
-            case R.id.cancel:
+            }
+            break;
+            case R.id.cancel: {
                 binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
                 binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.GONE);
                 binding.recyclerTransItems.setVisibility(View.VISIBLE);
                 binding.bottomTotalLayout.setVisibility(View.VISIBLE);
 
                 showingItemAdd = !showingItemAdd;
-                break;
-            case R.id.item_adding_local_calci:
+            }
+            break;
+            case R.id.item_adding_local_calci: {
                 if (binding.itemAddTransLayoutParent.selectedCommodityAmount.getText().toString().isEmpty() ||
                         binding.itemAddTransLayoutParent.commodityWeight.getText().toString().isEmpty() ||
                         binding.itemAddTransLayoutParent.stoneWastage.getText().toString().isEmpty()) {
@@ -302,17 +314,17 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 binding.itemAddTransLayoutParent.nettWeight.setText(netWeight + "");
                 binding.itemAddTransLayoutParent.calculatedItemAmount.setText("Rs. " + netWeightAmount);
 
-
-                break;
-            case R.id.resend:
+            }
+            break;
+            case R.id.resend: {
                 otp = Constants.getRandomNumberString();
                 CustomerWithOTPReq req = firstLayoutValidate();
                 if (req != null) {
                     progressDialog.show();
                     viewModel.verifyOtp(req);
                 }
-
-                break;
+            }
+            break;
             case R.id.add_item: {
                 if (binding.itemAddTransLayoutParent.nettWeight.getText().toString().isEmpty() || binding.itemAddTransLayoutParent.nettWeight.getText().toString().equals("0.00")) {
                     Constants.Toasty(context, "Please check calculation before add ITEM", Constants.warning);
@@ -367,11 +379,13 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             }
             break;
             case R.id.step_last_submit:
-                if (addTransactionReq.itemList.size() > 0) {
-                    progressDialog.show();
-                    viewModel.addTransreq(addTransactionReq);
-                } else
-                    Constants.Toasty(context, "No Items Found to do transaction.", Constants.info);
+                if (Constants.isConnection(context))
+                    if (addTransactionReq.itemList.size() > 0) {
+                        progressDialog.show();
+                        viewModel.addTransreq(addTransactionReq);
+                    } else
+                        Constants.Toasty(context, "No Items Found to do transaction.", Constants.warning);
+                else Constants.Toasty(context, "Please check network connection.", Constants.info);
                 break;
         }
     }
