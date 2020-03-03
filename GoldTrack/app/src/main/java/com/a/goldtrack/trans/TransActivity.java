@@ -28,6 +28,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
+import com.a.goldtrack.Model.AddTransactionReq;
 import com.a.goldtrack.Model.AddTransactionRes;
 import com.a.goldtrack.Model.CustomerWithOTPReq;
 import com.a.goldtrack.Model.CustomerWithOTPRes;
@@ -248,6 +249,13 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                                     "Commodity: " + binding.selectCommodity.getSelectedItem().toString());
                             binding.itemAddTransLayoutParent.selectedCommodityAmount.setText(
                                     binding.commodityRate.getText().toString());
+
+
+                            binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove));
+                            binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.VISIBLE);
+                            binding.recyclerTransItems.setVisibility(View.GONE);
+                            binding.bottomTotalLayout.setVisibility(View.GONE);
+                            showingItemAdd = !showingItemAdd;
                         } else {
                             Constants.Toasty(context, "Please enter Valid OTP, try again.", Constants.error);
                         }
@@ -359,7 +367,11 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             }
             break;
             case R.id.step_last_submit:
-                Constants.Toasty(context, "Now we talking last stage", Constants.info);
+                if (addTransactionReq.itemList.size() > 0) {
+                    progressDialog.show();
+                    viewModel.addTransreq(addTransactionReq);
+                } else
+                    Constants.Toasty(context, "No Items Found to do transaction.", Constants.info);
                 break;
         }
     }
@@ -466,6 +478,8 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         return req;
     }
 
+    AddTransactionReq addTransactionReq;
+
     private void setmRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this);
         mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
@@ -477,16 +491,69 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         } else {
             mAdapter.updateListNew(list);
         }
+
+        double totalCommodityWeight = 0,
+                totalStoneWastage = 0,
+                totalOtherWastage = 0,
+                totalNettWeight = 0,
+                totalAmount = 0,
+                grossAmount = 0,
+                marginAmount = 0,
+                nettAmount = 0,
+                paidAmountForRelease = 0,
+                marginPercent = 0,
+                roundOffAmount = 0;
         if (list.size() > 0) {
-            double grandTotalAmt = 0.0;
+            addTransactionReq = new AddTransactionReq();
+            addTransactionReq.itemList = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
-                grandTotalAmt += Double.parseDouble(list.get(i).amount);
+                AddTransactionReq.ItemList itemList = new AddTransactionReq.ItemList();
+                totalCommodityWeight += Double.parseDouble(list.get(i).commodityWeight);
+                totalStoneWastage += Double.parseDouble(list.get(i).stoneWastage);
+                totalOtherWastage += Double.parseDouble(list.get(i).otherWastage);
+                totalNettWeight += Double.parseDouble(list.get(i).nettWeight);
+                totalAmount += Double.parseDouble(list.get(i).amount);
+
+                itemList.amount = list.get(i).amount;
+                itemList.itemID = list.get(i).itemID;
+                itemList.commodityWeight = list.get(i).commodityWeight;
+                itemList.purity = list.get(i).purity;
+                itemList.stoneWastage = list.get(i).stoneWastage;
+                itemList.otherWastage = list.get(i).otherWastage;
+                itemList.nettWeight = list.get(i).nettWeight;
+
+                addTransactionReq.itemList.add(itemList);
             }
-            binding.grandTotalAmtBottom.setText("Total: Rs. " + grandTotalAmt);
+            binding.grandTotalAmtBottom.setText("Total: Rs. " + totalAmount);
         } else {
             binding.grandTotalAmtBottom.setText("Total: Rs. 0.00");
         }
 
+        addTransactionReq.transValidOTP = otp;
+        addTransactionReq.companyID = Sessions.getUserString(context, Constants.companyId);
+        addTransactionReq.userID = Sessions.getUserString(context, Constants.userId);
+        addTransactionReq.customerID = customersArr.get(binding.autoCompleteSelectCustomer.getText().toString());
+        addTransactionReq.branchID = branchesArr.get(binding.selectBranch.getSelectedItem().toString());
+        addTransactionReq.commodity = binding.selectCommodity.getSelectedItem().toString();
+        addTransactionReq.createdBy = Sessions.getUserString(context, Constants.userIdID);
+        addTransactionReq.presentDayCommodityRate = binding.commodityRate.getText().toString();
+
+        addTransactionReq.totalCommodityWeight = totalCommodityWeight + "";
+        addTransactionReq.totalStoneWastage = totalStoneWastage + "";
+        addTransactionReq.totalOtherWastage = totalOtherWastage + "";
+        addTransactionReq.totalNettWeight = totalNettWeight + "";
+        addTransactionReq.totalAmount = totalAmount + "";
+
+        addTransactionReq.grossAmount = grossAmount + "";
+        addTransactionReq.marginAmount = marginAmount + "";
+        addTransactionReq.nettAmount = nettAmount + "";
+        addTransactionReq.paidAmountForRelease = paidAmountForRelease + "";
+        addTransactionReq.marginPercent = marginPercent + "";
+        addTransactionReq.roundOffAmount = roundOffAmount + "";
+
+        addTransactionReq.referencePicData = "";
+        addTransactionReq.nbfcReferenceNo = "DYU_" + Constants.getDateNowAll();
+        addTransactionReq.comments = "";
     }
 
     public void setRecyclerViewLayoutManager(Constants.LayoutManagerType layoutManagerType) {
@@ -527,6 +594,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         current = 2;
         startCounter();
         setCurrentLayoutVisible();
+        binding.otpedit.setText(otp);
     }
 
     @Override

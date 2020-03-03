@@ -27,7 +27,7 @@ public class AddTransactionReq {
     public String comments;
     public List<ItemList> itemList;
 
-    public class ItemList {
+    public static class ItemList {
 
         public String itemID;
         public String commodityWeight;

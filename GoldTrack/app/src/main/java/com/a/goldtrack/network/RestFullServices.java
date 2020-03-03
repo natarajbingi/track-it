@@ -181,7 +181,7 @@ public class RestFullServices {
     }
 
     public static void getDropdownDataForCompany(GetCompany req, ITransCallBacks callBacks) {
-        /*getClient().getDropdownDataForCompany(req).enqueue(new Callback<DropdownDataForCompanyRes>() {
+        getClient().getDropdownDataForCompany(req).enqueue(new Callback<DropdownDataForCompanyRes>() {
             @Override
             public void onResponse(Call<DropdownDataForCompanyRes> call, Response<DropdownDataForCompanyRes> response) {
                 Constants.logPrint(call.request().toString(), req, response.body());
@@ -194,10 +194,10 @@ public class RestFullServices {
             public void onFailure(Call<DropdownDataForCompanyRes> call, Throwable t) {
                 callBacks.onError(t.getMessage());
             }
-        });*/
-        Gson gj = new Gson();
+        });
+       /* Gson gj = new Gson();
         DropdownDataForCompanyRes res = gj.fromJson(Constants.listme, DropdownDataForCompanyRes.class);
-        callBacks.onDropDownSuccess(res);
+        callBacks.onDropDownSuccess(res);*/
     }
 
     public static void updateBranch(UpdateCompanyBranchesReq req, IBranchCallBacks callBacks) {
@@ -417,7 +417,10 @@ public class RestFullServices {
             public void onResponse(Call<AddTransactionRes> call, Response<AddTransactionRes> response) {
                 Constants.logPrint(call.request().toString(), req, response.body());
                 if (response.isSuccessful())
-                    callBacks.onAddTransSuccess(response.body());
+                    if (response.body().success)
+                        callBacks.onAddTransSuccess(response.body());
+                    else
+                        callBacks.onErrorComplete(response.body().response);
                 else callBacks.onErrorComplete("Something went wrong, Server Error");
             }
 
@@ -427,6 +430,7 @@ public class RestFullServices {
             }
         });
     }
+
     public static void getTransaction(GetTransactionReq req, ITransCallBacks callBacks) {
         getClient().getTransactionForFilters(req).enqueue(new Callback<GetTransactionRes>() {
             @Override
