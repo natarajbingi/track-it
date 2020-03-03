@@ -43,7 +43,8 @@
         </activity>
         <activity
             android:name=".trans.TransActivity"
-            android:label="@string/title_activity_trans" />
+            android:label="@string/title_activity_trans"
+            android:screenOrientation="portrait" />
         <activity android:name=".items.ItemsActivity" />
         <activity android:name=".companybranche.CompanyBranchesActivity" />
         <activity android:name=".users.UserForCompanyActivity" />

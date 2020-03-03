@@ -37,7 +37,8 @@ public class CustomTransAddedItemAdapter extends RecyclerView.Adapter<CustomTran
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private final TextView commodity_name, commodity_amount, commodity_weight, stone_wastage, nett_weight, other_wastage;
+        private final TextView commodity_name, commodity_amount, commodity_weight, stone_wastage, nett_weight, other_wastage
+                , purity, margin;
         private final LinearLayout hidden_layout;
 
         public ViewHolder(View v) {
@@ -51,6 +52,8 @@ public class CustomTransAddedItemAdapter extends RecyclerView.Adapter<CustomTran
             stone_wastage = (TextView) v.findViewById(R.id.stone_wastage);
             nett_weight = (TextView) v.findViewById(R.id.nett_weight);
             other_wastage = (TextView) v.findViewById(R.id.other_wastage);
+            margin = (TextView) v.findViewById(R.id.margin);
+            purity = (TextView) v.findViewById(R.id.purity);
             hidden_layout = (LinearLayout) v.findViewById(R.id.hidden_layout);
 
             edit_click.setOnClickListener(this);
@@ -91,6 +94,8 @@ public class CustomTransAddedItemAdapter extends RecyclerView.Adapter<CustomTran
         viewHolder.nett_weight.setText("Net Wt: " + mDataSet.get(position).nettWeight);
         viewHolder.stone_wastage.setText("Stone Wt: " + mDataSet.get(position).stoneWastage);
         viewHolder.other_wastage.setText("Other Wt: " + mDataSet.get(position).otherWastage);
+        viewHolder.purity.setText("Purity: " + mDataSet.get(position).purity);
+        viewHolder.margin.setText("Margin: " + mDataSet.get(position).margin);
     }
 
     @Override
