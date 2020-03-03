@@ -9,5 +9,6 @@ public class ItemsTrans {
     public String nettWeight;
     public String amount;
     public String commodity;
+    public String margin;
 
 }

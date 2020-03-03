@@ -308,11 +308,21 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 float commodityWeight = Float.parseFloat(binding.itemAddTransLayoutParent.commodityWeight.getText().toString());
                 float stoneWastage = Float.parseFloat(binding.itemAddTransLayoutParent.stoneWastage.getText().toString());
                 float otherWastage = Float.parseFloat(binding.itemAddTransLayoutParent.otherWastage.getText().toString());
+                float purity = Float.parseFloat(binding.itemAddTransLayoutParent.purity.getText().toString());
+                float margin = Float.parseFloat(binding.itemAddTransLayoutParent.margin.getText().toString());
 
                 float netWeight = (commodityWeight - (stoneWastage + otherWastage));
-                float netWeightAmount = amount * netWeight;
-                binding.itemAddTransLayoutParent.nettWeight.setText(netWeight + "");
-                binding.itemAddTransLayoutParent.calculatedItemAmount.setText("Rs. " + netWeightAmount);
+                float netWeight1WithPurity = (netWeight * purity) / 100;
+
+                float netWeightAmount = amount * netWeight1WithPurity;
+
+                float marginAmt = (netWeightAmount * margin) / 100;// 2 / 100
+                float FinalAmt = netWeightAmount - marginAmt;
+
+                // float netWeightAmount = amount * netWeight;
+                binding.itemAddTransLayoutParent.nettWeight.setText("Net Weight: " + netWeight);
+                //   binding.itemAddTransLayoutParent.calculatedItemAmount.setText("Rs. " + netWeightAmount);
+                binding.itemAddTransLayoutParent.calculatedItemAmount.setText("Rs. " + FinalAmt);
 
             }
             break;
@@ -334,23 +344,39 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 float commodityWeight1 = Float.parseFloat(binding.itemAddTransLayoutParent.commodityWeight.getText().toString());
                 float stoneWastage1 = Float.parseFloat(binding.itemAddTransLayoutParent.stoneWastage.getText().toString());
                 float otherWastage1 = Float.parseFloat(binding.itemAddTransLayoutParent.otherWastage.getText().toString());
+                float purity1 = Float.parseFloat(binding.itemAddTransLayoutParent.purity.getText().toString());
+                float margin1 = Float.parseFloat(binding.itemAddTransLayoutParent.margin.getText().toString());
+
+                /*float netWeight1 = (commodityWeight1 - (stoneWastage1 + otherWastage1));
+                float netWeight1WithPurity1 = netWeight1 * (purity1 / 100);
+
+                float netWeightAmount1 = amount1 * netWeight1WithPurity1;*/
+                // float marginAmt = netWeightAmount * (margin / 100);// 2 / 100
+                //  float FinalAmt = netWeightAmount - marginAmt;
 
                 float netWeight1 = (commodityWeight1 - (stoneWastage1 + otherWastage1));
-                float netWeightAmount1 = amount1 * netWeight1;
+                float netWeight1WithPurity = (netWeight1 * purity1) / 100;
+
+                float netWeightAmount = amount1 * netWeight1WithPurity;
+
+                float marginAmt = (netWeightAmount * margin1) / 100;// 2 / 100
+                float FinalAmt = netWeightAmount - marginAmt;
+
 
                 ItemsTrans nn = new ItemsTrans();
-                nn.amount = netWeightAmount1 + "";
+                nn.itemID = itemsArr.get(binding.itemAddTransLayoutParent.selectItem.getSelectedItem().toString());
+                nn.amount = FinalAmt + "";
                 nn.commodityWeight = commodityWeight1 + "";
                 nn.stoneWastage = stoneWastage1 + "";
                 nn.otherWastage = otherWastage1 + "";
-                nn.nettWeight = binding.itemAddTransLayoutParent.nettWeight.getText().toString();
+                nn.nettWeight = binding.itemAddTransLayoutParent.nettWeight.getText().toString().split(":")[1];
                 nn.purity = binding.itemAddTransLayoutParent.purity.getText().toString();
                 nn.commodity = binding.itemAddTransLayoutParent.selectItem.getSelectedItem().toString();
-                nn.itemID = itemsArr.get(binding.itemAddTransLayoutParent.selectItem.getSelectedItem().toString());
+                nn.margin = binding.itemAddTransLayoutParent.margin.getText().toString();
 
 
                 if (nn.amount.isEmpty() || nn.commodityWeight.isEmpty()
-                        || nn.stoneWastage.isEmpty() || nn.otherWastage.isEmpty()
+                        || nn.stoneWastage.isEmpty() || nn.otherWastage.isEmpty() || nn.margin.isEmpty()
                         || nn.nettWeight.isEmpty() || nn.purity.isEmpty()
                         || nn.commodity.equals("Select")
                 ) {
@@ -365,10 +391,11 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                     binding.itemAddTransLayoutParent.commodityWeight.setText("");
                     binding.itemAddTransLayoutParent.stoneWastage.setText("");
                     binding.itemAddTransLayoutParent.otherWastage.setText("");
-                    binding.itemAddTransLayoutParent.nettWeight.setText("0.00");
                     binding.itemAddTransLayoutParent.purity.setText("");
-                    binding.itemAddTransLayoutParent.calculatedItemAmount.setText("0.00");
+                    binding.itemAddTransLayoutParent.margin.setText("");
                     binding.itemAddTransLayoutParent.selectItem.setSelection(0);
+                    binding.itemAddTransLayoutParent.nettWeight.setText("Net Weight : 0.00");
+                    binding.itemAddTransLayoutParent.calculatedItemAmount.setText("Rs. 0.00");
 
                     binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
                     binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.GONE);
