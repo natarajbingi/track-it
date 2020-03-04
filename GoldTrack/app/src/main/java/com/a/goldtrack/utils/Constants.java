@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -23,7 +24,9 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
+import com.a.goldtrack.GTrackApplication;
 import com.a.goldtrack.R;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -63,11 +66,11 @@ public class Constants {
 
     // Methods
 
-    public static boolean isConnection(Context c) {
+    public static boolean isConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
 
-        ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) GTrackApplication.getInstance().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo[] netInfo = cm.getAllNetworkInfo();
         for (NetworkInfo ni : netInfo) {
             if (ni.getTypeName().equalsIgnoreCase("WIFI"))
@@ -78,6 +81,26 @@ public class Constants {
                     haveConnectedMobile = true;
         }
         return haveConnectedWifi || haveConnectedMobile;
+    }
+
+    // Showing the status in Snackbar
+    public static void showSnack(boolean isConnected, View view) {
+        String message;
+        int color;
+        if (isConnected) {
+            message = "Good! Connected to Internet";
+            color = Color.WHITE;
+        } else {
+            message = "Sorry! Not connected to internet";
+            color = Color.RED;
+        }
+
+        Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
+
+        View sbView = snackbar.getView();
+        TextView textView = (TextView) sbView.findViewById(com.google.android.material.R.id.snackbar_text);
+        textView.setTextColor(color);
+        snackbar.show();
     }
 
     public static void hideKeyboard(Context ctx) {

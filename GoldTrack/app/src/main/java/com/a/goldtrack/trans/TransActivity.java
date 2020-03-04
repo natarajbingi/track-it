@@ -110,7 +110,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         viewModel.onViewAvailable(this);
         GetCompany req = new GetCompany();
         req.companyId = Sessions.getUserString(context, Constants.companyId);
-        if (Constants.isConnection(context)) {
+        if (Constants.isConnection()) {
             progressDialog.show();
             viewModel.getDropdowns(req);
         } else {
@@ -145,35 +145,33 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void setDropDowns() {
-        Map<String, String> ReturnArray = new LinkedHashMap<String, String>();
-        ReturnArray.put("Select", "Select");
+        branchesArr = new LinkedHashMap<String, String>();
+        customersArr = new LinkedHashMap<String, String>();
+        branchesArr.put("Select", "Select");
 
-        /* Branches
-         * */
+        /* Branches */
         try {
             for (int i = 0; i < dropdownRes.branchesList.size(); i++) {
-                ReturnArray.put(dropdownRes.branchesList.get(i).branchName.toUpperCase() + "-" + dropdownRes.branchesList.get(i).id, dropdownRes.branchesList.get(i).id);
+                branchesArr.put(dropdownRes.branchesList.get(i).branchName.toUpperCase()
+                        + "-" + dropdownRes.branchesList.get(i).id, dropdownRes.branchesList.get(i).id);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        branchesArr = ReturnArray;
-        setSpinners(binding.selectBranch, branchesArr.keySet().toArray(new String[0]));
 
-        /* Customer
-         * */
-        ReturnArray.clear();
-        ReturnArray.put("Select", "Select");
+        /* Customer  */
+        customersArr.put("Select", "Select");
         try {
             for (int i = 0; i < dropdownRes.customerList.size(); i++) {
-                ReturnArray.put(dropdownRes.customerList.get(i).firstName.toUpperCase()
+                customersArr.put(dropdownRes.customerList.get(i).firstName.toUpperCase()
                         + " " + dropdownRes.customerList.get(i).lastName.toUpperCase()
                         + "-" + dropdownRes.customerList.get(i).mobileNum, dropdownRes.customerList.get(i).id);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        customersArr = ReturnArray;
+
+        setSpinners(binding.selectBranch, branchesArr.keySet().toArray(new String[0]));
         setAutoComplete(binding.autoCompleteSelectCustomer, customersArr.keySet().toArray(new String[0]));
 
     }
@@ -279,6 +277,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                     binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.VISIBLE);
                     binding.recyclerTransItems.setVisibility(View.GONE);
                     binding.bottomTotalLayout.setVisibility(View.GONE);
+                    resetInnerAddItem();
                 } else {
                     binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
                     binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.GONE);
@@ -383,20 +382,18 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                     Constants.Toasty(context, "Please enter mandatory fields.", Constants.warning);
                     break;
                 } else {
-                    list.add(nn);
+                    if (!binding.itemAddTransLayoutParent.addItem.getText().toString().equals("UPDATE")) {
+                        list.add(nn);
+                    } else {
+                        list.remove(position);
+                        list.add(position, nn);
+                    }
+
                     setmRecyclerView();
                     //viewModel.list.postValue(list);
 
                     //  binding.itemAddTransLayoutParent.selectedCommodityAmount.setText("");
-                    binding.itemAddTransLayoutParent.commodityWeight.setText("");
-                    binding.itemAddTransLayoutParent.stoneWastage.setText("");
-                    binding.itemAddTransLayoutParent.otherWastage.setText("");
-                    binding.itemAddTransLayoutParent.purity.setText("");
-                    binding.itemAddTransLayoutParent.margin.setText("");
-                    binding.itemAddTransLayoutParent.selectItem.setSelection(0);
-                    binding.itemAddTransLayoutParent.nettWeight.setText("Net Weight : 0.00");
-                    binding.itemAddTransLayoutParent.calculatedItemAmount.setText("Rs. 0.00");
-
+                    resetInnerAddItem();
                     binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
                     binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.GONE);
                     binding.recyclerTransItems.setVisibility(View.VISIBLE);
@@ -406,7 +403,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             }
             break;
             case R.id.step_last_submit:
-                if (Constants.isConnection(context))
+                if (Constants.isConnection())
                     if (addTransactionReq.itemList.size() > 0) {
                         progressDialog.show();
                         viewModel.addTransreq(addTransactionReq);
@@ -415,6 +412,19 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 else Constants.Toasty(context, "Please check network connection.", Constants.info);
                 break;
         }
+    }
+
+    private void resetInnerAddItem() {
+        binding.itemAddTransLayoutParent.addItem.setText("ADD");
+        binding.itemAddTransLayoutParent.commodityWeight.setText("");
+        binding.itemAddTransLayoutParent.stoneWastage.setText("");
+        binding.itemAddTransLayoutParent.otherWastage.setText("");
+        binding.itemAddTransLayoutParent.purity.setText("");
+        binding.itemAddTransLayoutParent.margin.setText("");
+        binding.itemAddTransLayoutParent.selectItem.setSelection(0);
+        binding.itemAddTransLayoutParent.nettWeight.setText("Net Weight: 0.00");
+        binding.itemAddTransLayoutParent.calculatedItemAmount.setText("Rs. 0.00");
+
     }
 
     void setCurrentLayoutVisible() {
@@ -444,14 +454,12 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home_none, menu);
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -554,6 +562,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 totalOtherWastage += Double.parseDouble(list.get(i).otherWastage);
                 totalNettWeight += Double.parseDouble(list.get(i).nettWeight);
                 totalAmount += Double.parseDouble(list.get(i).amount);
+                marginPercent += Double.parseDouble(list.get(i).margin);
 
                 itemList.amount = list.get(i).amount;
                 itemList.itemID = list.get(i).itemID;
@@ -570,6 +579,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             binding.grandTotalAmtBottom.setText("Total: Rs. 0.00");
         }
 
+        roundOffAmount = totalAmount;
         addTransactionReq.transValidOTP = otp;
         addTransactionReq.companyID = Sessions.getUserString(context, Constants.companyId);
         addTransactionReq.userID = Sessions.getUserString(context, Constants.userId);
@@ -624,9 +634,28 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         binding.recyclerTransItems.scrollToPosition(scrollPosition);
     }
 
+    int position;
+
     @Override
     public void oncItemClicked(View view, int position) {
+        this.position = position;
+        binding.itemAddTransLayoutParent.commodityWeight.setText(list.get(position).commodityWeight);
+        binding.itemAddTransLayoutParent.stoneWastage.setText(list.get(position).stoneWastage);
+        binding.itemAddTransLayoutParent.otherWastage.setText(list.get(position).otherWastage);
+        binding.itemAddTransLayoutParent.purity.setText(list.get(position).purity);
+        binding.itemAddTransLayoutParent.margin.setText(list.get(position).margin);
+        binding.itemAddTransLayoutParent.selectItem.setSelection(
+                ((ArrayAdapter<String>)
+                        binding.itemAddTransLayoutParent.selectItem.getAdapter()
+                ).getPosition(list.get(position).commodity));
+        binding.itemAddTransLayoutParent.nettWeight.setText("Net Weight : " + list.get(position).nettWeight);
+        binding.itemAddTransLayoutParent.calculatedItemAmount.setText("Rs. " + list.get(position).amount);
 
+        binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove));
+        binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.VISIBLE);
+        binding.recyclerTransItems.setVisibility(View.GONE);
+        binding.bottomTotalLayout.setVisibility(View.GONE);
+        binding.itemAddTransLayoutParent.addItem.setText("UPDATE");
     }
 
     @Override

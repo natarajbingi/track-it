@@ -1,6 +1,5 @@
 package com.a.goldtrack.company;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
@@ -18,6 +17,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.a.goldtrack.GTrackApplication;
+import com.a.goldtrack.Interfaces.ConnectivityReceiverListener;
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddCompany;
 import com.a.goldtrack.Model.GetCompany;
@@ -30,8 +31,7 @@ import com.a.goldtrack.utils.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompanyActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, ICompanyView {
-
+public class CompanyActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, ICompanyView, ConnectivityReceiverListener {
     CompanyViewModel viewModel;
     ActivityCompanyBinding binding;
     //ProgressDialog progressDialog;
@@ -63,7 +63,6 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
 
 
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
@@ -142,7 +141,7 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
             return;
         }
 
-       // progressDialog.show();
+        // progressDialog.show();
         binding.progressbar.setVisibility(View.VISIBLE);
         viewModel.addCompany(req);
     }
@@ -178,7 +177,7 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
             return;
         }
         req1.data.add(req);
-      //  progressDialog.show();
+        //  progressDialog.show();
         binding.progressbar.setVisibility(View.VISIBLE);
         viewModel.updateCompany(req1);
     }
@@ -343,5 +342,16 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         viewOrEdit = false;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        // register connection status listener
+        GTrackApplication.getInstance().setConnectivityListener(this);
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        Constants.showSnack(isConnected, binding.textView);
+    }
 }
