@@ -39,7 +39,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:animateLayoutChanges="true"
-            android:visibility="gone"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
@@ -73,6 +72,18 @@
                         android:textStyle="bold" />
                 </RelativeLayout>
 
+                <EditText
+                    android:id="@+id/search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:background="@null"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@color/grey"
+                    android:hint="Search..."
+                    android:inputType="text"
+                    android:visibility="gone" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_customer"
                     android:layout_width="match_parent"
@@ -88,7 +99,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="55dp"
-            android:animateLayoutChanges="true">
+            android:animateLayoutChanges="true"
+            android:visibility="gone">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/addDetailsHolder"
@@ -298,12 +310,12 @@
 
                     <Button
                         android:id="@+id/btn_add_customer"
+                        style="@style/purpoleButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="32dp"
                         android:padding="15dp"
-                        android:text="ADD CUSTOMER"
-                        style="@style/purpoleButton" />
+                        android:text="ADD CUSTOMER" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </ScrollView>

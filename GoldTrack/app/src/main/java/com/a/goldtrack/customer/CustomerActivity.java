@@ -12,6 +12,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +31,7 @@ import com.a.goldtrack.databinding.ActivityCustomerBinding;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, ICustomerhandler {
@@ -85,12 +89,33 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
+        try {
+            binding.search.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
+        } catch (Exception e) {
+
+        }
         binding.listDetailsHolder.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 //binding.listDetailsHolder.setRefreshing(true);
                 binding.progressbar.setVisibility(View.VISIBLE);
                 viewModel.getCustomer(custReq);
+            }
+        });
+
+
+        binding.search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filter(s.toString());
             }
         });
     }
@@ -214,6 +239,23 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         viewOrEdit = false;
     }
 
+
+    public void filter(String s) {
+        Log.d("mDataset",""+mDataset.size());
+        List<GetCustomerRes.ResList> temp = new ArrayList<>();
+        if (mDataset != null && mDataset.size() > 0) {
+            for (GetCustomerRes.ResList d : mDataset) {
+
+                if (d.firstName.toLowerCase().contains(s.toLowerCase())) {
+                    temp.add(d);
+                }
+            }
+            if (mAdapter != null) {
+                mAdapter.updateListNew(temp);
+            }
+        }else {
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

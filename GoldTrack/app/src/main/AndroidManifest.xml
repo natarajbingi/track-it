@@ -27,15 +27,20 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".customer.CustomerActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".company.CompanyActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".login.LoginActivity">
+        <activity
+            android:name=".login.LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,14 +51,30 @@
             android:name=".trans.TransActivity"
             android:label="@string/title_activity_trans"
             android:screenOrientation="portrait" />
-        <activity android:name=".items.ItemsActivity" />
-        <activity android:name=".companybranche.CompanyBranchesActivity" />
-        <activity android:name=".users.UserForCompanyActivity" />
-        <activity android:name=".addcommodityrates.AddCommodityRatesActivity" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".NotesActivity" />
-        <activity android:name=".register.RegistrationActivity" />
-        <activity android:name=".otp.OtpActivity" />
+        <activity
+            android:name=".items.ItemsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".companybranche.CompanyBranchesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".users.UserForCompanyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".addcommodityrates.AddCommodityRatesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NotesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".register.RegistrationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".otp.OtpActivity"
+            android:screenOrientation="portrait" />
         <!-- Providers -->
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -4,9 +4,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -30,12 +35,18 @@ import com.a.goldtrack.network.RetrofitClient;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 
 public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeUiView {
@@ -91,11 +102,11 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
 
         GetTransactionReq req = new GetTransactionReq();
         req.companyID = Sessions.getUserString(context, Constants.companyId);
-        req.employeeID = "0";
+        req.employeeID = Sessions.getUserString(context,Constants.userId);
         req.branchID = "0";
         req.customerID = "0";
         req.commodity = "";
-        req.transactionDate = "";
+        req.transactionDate = Constants.getDateNowyyyymmmdd();
         progressDialog.show();
         viewModel.getTransactions(req);
 
@@ -158,6 +169,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
     @Override
     public void oncItemClicked(View view, int position) {
         Constants.Toasty(context, mDataset.get(position).customerName, Constants.info);
+        popupWindow(mDataset.get(position));
     }
 
     @Override
@@ -182,5 +194,79 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
     public void onErrorComplete(String s) {
         progressDialog.dismiss();
         Constants.Toasty(context, s, Constants.info);
+    }
+
+
+    private void popupWindow(GetTransactionRes.DataList res) {
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = layoutInflater.inflate(R.layout.trans_item_popup, null);
+        final PopupWindow popupWindow = new PopupWindow(
+                popupView,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT, true);
+
+        popupView.setFocusable(true);
+        final TextView nbfcReferenceNo = (TextView) popupView.findViewById(R.id.nbfcReferenceNo);
+        final TextView customer = (TextView) popupView.findViewById(R.id.customer);
+        final TextView presentDayCommodityRate = (TextView) popupView.findViewById(R.id.selectedTextCommodityPrice);
+        final TextView commodity = (TextView) popupView.findViewById(R.id.commodity);
+        final TextView totalCommodityWeight = (TextView) popupView.findViewById(R.id.totalCommodityWeight);
+        final TextView totalStoneWastage = (TextView) popupView.findViewById(R.id.totalStoneWastage);
+        final TextView totalOtherWastage = (TextView) popupView.findViewById(R.id.totalOtherWastage);
+        final TextView totalNettWeight = (TextView) popupView.findViewById(R.id.totalNettWeight);
+        final TextView totalAmount = (TextView) popupView.findViewById(R.id.totalAmount);
+        final TextView grossAmount = (TextView) popupView.findViewById(R.id.grossAmount);
+        final TextView nettAmount = (TextView) popupView.findViewById(R.id.nettAmount);
+        final TextView marginPercent = (TextView) popupView.findViewById(R.id.marginPercent);
+        final TextView marginAmount = (TextView) popupView.findViewById(R.id.marginAmount);
+        final ImageView referencePicData = (ImageView) popupView.findViewById(R.id.referencePicData);
+        final TextView itemsDataRepeat = (TextView) popupView.findViewById(R.id.itemsDataRepeat);
+        final TextView paidAmountForRelease = (TextView) popupView.findViewById(R.id.paidAmountForRelease);
+        final TextView roundOffAmount = (TextView) popupView.findViewById(R.id.roundOffAmount);
+        final TextView comments = (TextView) popupView.findViewById(R.id.comments);
+
+        Button buttonRequestADD = (Button) popupView.findViewById(R.id.TestButton);
+
+
+        try {
+            nbfcReferenceNo.setText("Ref No: " + res.nbfcReferenceNo+"\nBill No: "+res.billNumber);
+            customer.setText("Customer: "+res.customerName);
+            commodity.setText("Commodity: "+res.commodity);
+            presentDayCommodityRate.setText("Commodity Rate: "+res.presentDayCommodityRate);
+            totalCommodityWeight.setText("Cmd Weight:\n" + res.totalCommodityWeight);
+            totalStoneWastage.setText("Stone Wst:\n" + res.totalStoneWastage);
+            totalOtherWastage.setText("Other Wst:\n" + res.totalOtherWastage);
+            totalNettWeight.setText("Total NetWeight: " + res.totalNettWeight);
+            totalAmount.setText("Total Amt: " + res.totalAmount);
+            grossAmount.setText("Gross Amt: " + res.grossAmount);
+            nettAmount.setText("Net Amt: " + res.nettAmount);
+            marginPercent.setText("Margin %: " + res.marginPercent);
+            marginAmount.setText("Margin Amt: " + res.marginAmount);
+            paidAmountForRelease.setText("Released Amt: " + res.paidAmountForRelease);
+            roundOffAmount.setText("Round Off Amt: " + res.roundOffAmount);
+            comments.setText("Comments:\n " + res.comments);
+
+
+            String itemsDataRepeatStr = "ITEMS: \n";
+
+            for (int i = 0; i < res.itemList.size(); i++) {
+                itemsDataRepeatStr += (i + 1) + ") " + res.itemList.get(i).itemName + "\t\t" + res.itemList.get(i).commodityWeight + "Grms\t\t Rs. " + res.itemList.get(i).amount + "\n\n";
+            }
+
+            itemsDataRepeat.setText(itemsDataRepeatStr);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        buttonRequestADD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+
+
+        popupWindow.showAtLocation(mRecyclerView, Gravity.CENTER, 0, 0);
+        popupWindow.showAsDropDown(mRecyclerView, 0, 0);
     }
 }
