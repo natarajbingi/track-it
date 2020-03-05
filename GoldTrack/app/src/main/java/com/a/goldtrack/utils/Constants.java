@@ -220,7 +220,7 @@ public class Constants {
     public static AlertDialog alertDialogShow(Context context,
                                               String message,
                                               final DialogInterface.OnClickListener onClickListener) {
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(context, R.style.AppTheme_ProgressBar);
         alertDialog.setTitle(context.getResources().getString(R.string.app_name));
         alertDialog.setMessage(message);
         alertDialog.setCancelable(false);

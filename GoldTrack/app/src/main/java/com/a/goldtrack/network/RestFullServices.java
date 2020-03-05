@@ -44,6 +44,7 @@ import com.a.goldtrack.items.IItemsCallBacks;
 import com.a.goldtrack.login.ILoginCallBacks;
 import com.a.goldtrack.Model.AddTransactionReq;
 import com.a.goldtrack.trans.ITransCallBacks;
+import com.a.goldtrack.ui.home.IHomeFragCallbacks;
 import com.a.goldtrack.users.IUserCallBacks;
 import com.a.goldtrack.utils.Constants;
 import com.google.gson.Gson;
@@ -431,19 +432,26 @@ public class RestFullServices {
         });
     }
 
-    public static void getTransaction(GetTransactionReq req, ITransCallBacks callBacks) {
+    public static void getTransaction(GetTransactionReq req, ITransCallBacks callBacks, IHomeFragCallbacks callbacks) {
         getClient().getTransactionForFilters(req).enqueue(new Callback<GetTransactionRes>() {
             @Override
             public void onResponse(Call<GetTransactionRes> call, Response<GetTransactionRes> response) {
                 Constants.logPrint(call.request().toString(), req, response.body());
-                if (response.isSuccessful())
-                    callBacks.onGetTransSuccess(response.body());
-                else callBacks.onErrorComplete("Something went wrong, Server Error");
+                if (response.isSuccessful()) {
+                    if (callBacks != null) callBacks.onGetTransSuccess(response.body());
+                    if (callbacks != null) callbacks.onGetTransSuccess(response.body());
+                } else {
+                    if (callBacks != null)
+                        callBacks.onErrorComplete("Something went wrong, Server Error");
+                    if (callbacks != null)
+                        callbacks.onErrorComplete("Something went wrong, Server Error");
+                }
             }
 
             @Override
             public void onFailure(Call<GetTransactionRes> call, Throwable t) {
-                callBacks.onError(t.getMessage());
+                if (callBacks != null) callBacks.onError(t.getMessage());
+                if (callbacks != null) callbacks.onError(t.getMessage());
             }
         });
     }

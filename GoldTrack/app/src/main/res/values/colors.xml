@@ -36,6 +36,7 @@
     <color name="aluminum">#999999</color>
     <color name="base">#AAAAAA</color>
     <color name="iron">#CCCCCC</color>
+    <color name="light_me">#EEEEEE</color>
     <color name="start_color">#29B6F6</color>
     <color name="end_color">#4FC3F7</color>
     <color name="purpol">#9C27B0</color>

@@ -40,6 +40,14 @@
         <!--        <item name="android:width"></item>-->
     </style>
 
+    <style name="AppTheme.alertSuccess" parent="Theme.AppCompat.Dialog">
+        <item name="colorAccent">@color/white</item>
+        <item name="android:textColorPrimary">@color/iron</item>
+        <item name="android:background">@color/button_success_text</item>
+        <item name="android:textSize">20sp</item>
+        <!--        <item name="android:width"></item>-->
+    </style>
+
     <!--it end-->
     <style name="DefaultButton" parent="AppTheme">
         <item name="android:background">@color/colorPrimary</item>
