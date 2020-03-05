@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,7 +22,7 @@ import java.util.List;
 /**
  * Provide views to RecyclerView with data from mDataSet.
  */
-public class CustomCustomersAdapter extends RecyclerView.Adapter<CustomCustomersAdapter.ViewHolder> {
+public class CustomCustomersAdapter extends RecyclerView.Adapter<CustomCustomersAdapter.ViewHolder> implements Filterable {
     private static final String TAG = "CustomCustomersAdapter";
 
     private List<GetCustomerRes.ResList> mDataSet;
@@ -34,6 +36,11 @@ public class CustomCustomersAdapter extends RecyclerView.Adapter<CustomCustomers
         this.mDataSet.clear();
         this.mDataSet.addAll(mDataset);
         this.notifyDataSetChanged();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return null;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

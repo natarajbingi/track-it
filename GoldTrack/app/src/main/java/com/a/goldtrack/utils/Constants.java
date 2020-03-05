@@ -2,7 +2,9 @@ package com.a.goldtrack.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -17,6 +19,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -50,14 +54,15 @@ public class Constants {
     public static final String companyId = "companyId";
     public static final String userLogin = "userLogin";
     public static final String userName = "userName";
-    public static final String userIdID = "userIdID";
-    public static final String userId = "userId";
+    public static final String userIdID = "userIdID"; // emailID
+    public static final String userId = "userId"; // id
     public static final String pwdId = "pwdId";
     public static final int error = 0;
     public static final int success = 1;
     public static final int info = 2;
     public static final int warning = 3;
     public static final int custom = 4;
+    private ProgressDialog pd;
 
     public static enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,
@@ -238,6 +243,56 @@ public class Constants {
         return alert;
     }
 
+    public static void datePicker(final Context ctx, final EditText text) {
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        final Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(ctx,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        Calendar newDate = Calendar.getInstance();
+                        newDate.set(year, monthOfYear, dayOfMonth);
+                        text.setText(dateFormatter.format(newDate.getTime()));
+
+                    }
+                }, mYear, mMonth, mDay);
+
+        Calendar maxDate = Calendar.getInstance();
+        maxDate.set(Calendar.DAY_OF_MONTH, mDay);
+        maxDate.set(Calendar.MONTH, mMonth);
+        maxDate.set(Calendar.YEAR, mYear);
+        datePickerDialog.getDatePicker().setMaxDate(maxDate.getTimeInMillis());
+        datePickerDialog.show();
+
+
+    }
+
+
+    public static void getCalender(Context context, final EditText editText) {
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        DatePickerDialog fromDatePickerDialog;
+        Calendar newCalendar = Calendar.getInstance();
+        final DatePickerDialog finalFromDatePickerDialog;
+        fromDatePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                editText.setText(dateFormatter.format(newDate.getTime()));
+
+
+            }
+
+        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+        fromDatePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+        newCalendar.add(Calendar.MONTH, 1);
+        fromDatePickerDialog.getDatePicker().setMaxDate(newCalendar.getTimeInMillis());
+        fromDatePickerDialog.show();
+
+    }
 
     public static Dialog popUpImg(Context context, Uri uri, String ImgCredit, String encodedImgORUrl, Bitmap bitmap, String Type) {
         final Dialog dialog = new Dialog(context, android.R.style.Theme_Light);
@@ -289,6 +344,25 @@ public class Constants {
         return dialog;
     }
 
+    public void showProgress(Context ctx) {
+        if (!((Activity) ctx).isFinishing()) {
+            pd = new ProgressDialog(ctx);
+            pd.setMessage("loading");
+            pd.setCancelable(false);
+            pd.show();
+        }
+    }
+
+
+    public void hideProgress(Context ctx) {
+        if (pd != null) {
+            if (!((Activity) ctx).isFinishing()) {
+                if (pd.isShowing()) {
+                    pd.dismiss();
+                }
+            }
+        }
+    }
         /*new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
