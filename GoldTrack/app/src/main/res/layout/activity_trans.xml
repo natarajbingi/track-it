@@ -354,7 +354,7 @@
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@color/start_color"
+                                android:background="@color/tiles"
                                 android:paddingTop="10dp"
                                 android:paddingBottom="10dp">
 

@@ -1,5 +1,6 @@
 package com.a.goldtrack.company;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
@@ -71,11 +72,14 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void init() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);*/
 
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        final ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
 
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
@@ -110,7 +114,7 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-        binding.triggImgGet.setOnClickListener(this);
+       // binding.triggImgGet.setOnClickListener(this);
     }
 
 

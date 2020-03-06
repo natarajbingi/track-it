@@ -64,6 +64,7 @@ public class Constants {
     public static final String userIdID = "userIdID"; // emailID
     public static final String userId = "userId"; // id
     public static final String pwdId = "pwdId";
+    public static final String roles = "roles";
     public static final int error = 0;
     public static final int success = 1;
     public static final int info = 2;
