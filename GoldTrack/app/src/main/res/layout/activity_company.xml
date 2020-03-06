@@ -365,8 +365,8 @@
                     <ImageView
                         android:id="@+id/selectedImg"
                         android:layout_width="match_parent"
-                        android:layout_height="75dp"
-                        android:src="@drawable/ic_menu_camera" />
+                        android:layout_height="105dp"
+                        android:src="@drawable/placeholder" />
 
                     <Button
                         android:id="@+id/btn_add_company"

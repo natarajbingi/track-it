@@ -102,11 +102,11 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
 
         GetTransactionReq req = new GetTransactionReq();
         req.companyID = Sessions.getUserString(context, Constants.companyId);
-        req.employeeID = Sessions.getUserString(context,Constants.userId);
+        req.employeeID = Sessions.getUserString(context, Constants.userId);
         req.branchID = "0";
         req.customerID = "0";
         req.commodity = "";
-        req.transactionDate = Constants.getDateNowyyyymmmdd();
+        req.transactionDate = /*Constants.getDateNowyyyymmmdd();*/"";
         progressDialog.show();
         viewModel.getTransactions(req);
 
@@ -229,10 +229,10 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
 
 
         try {
-            nbfcReferenceNo.setText("Ref No: " + res.nbfcReferenceNo+"\nBill No: "+res.billNumber);
-            customer.setText("Customer: "+res.customerName);
-            commodity.setText("Commodity: "+res.commodity);
-            presentDayCommodityRate.setText("Commodity Rate: "+res.presentDayCommodityRate);
+            nbfcReferenceNo.setText("Ref No: " + res.nbfcReferenceNo + "\nBill No: " + res.billNumber);
+            customer.setText("Customer: " + res.customerName);
+            commodity.setText("Commodity: " + res.commodity);
+            presentDayCommodityRate.setText("Commodity Rate: " + res.presentDayCommodityRate);
             totalCommodityWeight.setText("Cmd Weight:\n" + res.totalCommodityWeight);
             totalStoneWastage.setText("Stone Wst:\n" + res.totalStoneWastage);
             totalOtherWastage.setText("Other Wst:\n" + res.totalOtherWastage);

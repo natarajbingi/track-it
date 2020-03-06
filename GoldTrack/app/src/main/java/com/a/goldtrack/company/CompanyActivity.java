@@ -12,7 +12,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,13 +30,20 @@ import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetCompanyRes;
 import com.a.goldtrack.Model.UpdateCompanyDetails;
 import com.a.goldtrack.R;
+import com.a.goldtrack.camera.CamReqActivity;
+import com.a.goldtrack.camera.ICameraUtil;
 import com.a.goldtrack.databinding.ActivityCompanyBinding;
 import com.a.goldtrack.utils.Constants;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
-public class CompanyActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, ICompanyView, ConnectivityReceiverListener {
+public class CompanyActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, ICameraUtil, ICompanyView, ConnectivityReceiverListener {
     CompanyViewModel viewModel;
     ActivityCompanyBinding binding;
     //ProgressDialog progressDialog;
@@ -97,6 +109,8 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
                 viewModel.getCompany(reqGet);
             }
         });
+
+        binding.triggImgGet.setOnClickListener(this);
     }
 
 
@@ -307,6 +321,12 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
                 }
                 viewOrEdit = !viewOrEdit;
                 break;
+            case R.id.triggImgGet:
+                CamReqActivity v = new CamReqActivity();
+                v.onICameraAvailable(this);
+                Intent i = new Intent(CompanyActivity.this, CamReqActivity.class);
+                startActivity(i);
+                break;
         }
     }
 
@@ -353,5 +373,12 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         Constants.showSnack(isConnected, binding.textView);
+    }
+
+
+    @Override
+    public void onReturnBitmapCaptured(Bitmap bitmap) {
+        Constants.saveImage(context, bitmap);
+        binding.selectedImg.setImageBitmap(bitmap);
     }
 }

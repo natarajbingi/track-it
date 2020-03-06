@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-feature android:name="android.hardware.camera.flash" />
@@ -25,6 +24,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".camera.CamReqActivity"></activity>
         <activity
             android:name=".customer.CustomerActivity"
             android:screenOrientation="portrait"
@@ -74,8 +74,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".otp.OtpActivity"
-            android:screenOrientation="portrait" />
-        <!-- Providers -->
+            android:screenOrientation="portrait" /> <!-- Providers -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -86,7 +85,6 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
 
-
         <receiver
             android:name=".broadcast.ConnectivityReceiver"
             android:enabled="true">
@@ -94,7 +92,6 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>
