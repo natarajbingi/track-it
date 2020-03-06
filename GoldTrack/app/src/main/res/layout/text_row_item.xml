@@ -4,12 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/background"
+    android:layout_marginLeft="1dp"
+    android:layout_marginTop="2dp"
+    android:layout_marginRight="1dp"
+    android:background="@color/tiles"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?selectableItemBackground"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp">
+    android:padding="10dp">
 
     <ImageView
         android:id="@+id/logo_id"
@@ -17,23 +19,24 @@
         android:layout_height="75dp"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="10dp"
+        android:visibility="gone"
         android:layout_marginBottom="8dp"
-        android:src="@drawable/logo" />
+        android:src="@drawable/placeholder" />
 
 
     <TextView
         android:id="@+id/text_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_medium"
-        android:layout_marginTop="20dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="15dp"
         android:layout_toRightOf="@+id/logo_id"
         android:ellipsize="end"
         android:maxLines="1"
         android:text="@string/element_text"
         android:textAllCaps="true"
         android:textColor="@color/jet"
-        android:textSize="18sp"
+        android:textSize="19sp"
         android:textStyle="bold" />
 
     <TextView
@@ -41,14 +44,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text_header"
-        android:layout_marginLeft="@dimen/margin_medium"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="6dp"
         android:layout_toRightOf="@+id/logo_id"
         android:ellipsize="end"
+        android:layout_marginBottom="15dp"
         android:maxLines="3"
         android:text="@string/element_text"
-        android:textColor="@color/monsoon"
-        android:textSize="15sp" />
+        android:textColor="@color/oil"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/text_date"
@@ -74,6 +78,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:visibility="gone"
         android:layout_below="@+id/logo_id"
         android:background="@color/aluminum" />
 

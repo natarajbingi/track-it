@@ -76,10 +76,10 @@
                         android:ems="10"
                         android:hint="Email"
                         android:inputType="textEmailAddress"
-                        android:text="abd@gmail.com"
+                        android:text=""
                         app:addTextChangedListener="@{viewModel.emailWatcher()}" />
                 </com.google.android.material.textfield.TextInputLayout>
-
+<!--demo123-->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
                         android:ems="10"
                         android:hint="Password"
                         android:inputType="textPassword"
-                        android:text="demo123"
+                        android:text=""
                         app:addTextChangedListener="@{viewModel.pwdWatcher()}" />
                 </com.google.android.material.textfield.TextInputLayout>
 

@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -30,6 +31,8 @@ import com.a.goldtrack.Model.GetCompanyRes;
 import com.a.goldtrack.Model.GetTransactionReq;
 import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.R;
+import com.a.goldtrack.databinding.FragmentHomeBinding;
+import com.a.goldtrack.databinding.TransItemPopupBinding;
 import com.a.goldtrack.network.APIService;
 import com.a.goldtrack.network.RetrofitClient;
 import com.a.goldtrack.utils.Constants;
@@ -51,24 +54,20 @@ import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeUiView {
 
-    private HomeViewModel viewModel;
 
-
-    protected Constants.LayoutManagerType mCurrentLayoutManagerType;
-
-    protected RecyclerView mRecyclerView;
-    protected CustomHomeAdapter mAdapter;
-    protected RecyclerView.LayoutManager mLayoutManager;
-    // protected List<GetCompanyRes.ResList> mDataset;
+    private Constants.LayoutManagerType mCurrentLayoutManagerType;
+    private CustomHomeAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
     List<GetTransactionRes.DataList> mDataset;
     private static final String TAG = "RecyclerViewFragment";
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
     private static final int DATASET_COUNT = 60;
-    private RadioGroup radioGrp;
-    ProgressDialog progressDialog;
-    Context context;
-    TextView textView;
+    private ProgressDialog progressDialog;
+    private Context context;
+    private HomeViewModel viewModel;
+
+    private FragmentHomeBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         context = getContext();
@@ -77,15 +76,13 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("in Progress...");
 
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
-        textView = root.findViewById(R.id.text_home);
-        textView.setVisibility(View.GONE);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
+        binding.setHomeFragModel(viewModel);
 
-        mRecyclerView = (RecyclerView) root.findViewById(R.id.recycler_view);
-
-        radioGrp = (RadioGroup) root.findViewById(R.id.radioGrp);
-        radioGrp.setVisibility(View.GONE);
-        radioGrp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        // View root1 = binding.getRoot();//inflater.inflate(R.layout.fragment_home, container, false);
+        binding.textHome.setVisibility(View.GONE);
+        binding.radioGrp.setVisibility(View.GONE);
+        binding.radioGrp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
@@ -102,7 +99,12 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
 
         GetTransactionReq req = new GetTransactionReq();
         req.companyID = Sessions.getUserString(context, Constants.companyId);
-        req.employeeID = Sessions.getUserString(context, Constants.userId);
+
+        String role = Sessions.getUserString(context, Constants.roles);
+        if (role.equals("ADMIN") || role.equals("SUPER_ADMIN")) {
+            req.employeeID = "0";
+        } else
+            req.employeeID = Sessions.getUserString(context, Constants.userId);
         req.branchID = "0";
         req.customerID = "0";
         req.commodity = "";
@@ -113,7 +115,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         viewModel.getText().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                textView.setText(s);
+                binding.textHome.setText(s);
             }
         });
         viewModel.transList.observe(this, new Observer<GetTransactionRes>() {
@@ -124,10 +126,10 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
                 setmRecyclerView();
             }
         });
-        root.setTag(TAG);
+        binding.getRoot().setTag(TAG);
 
 
-        return root;
+        return binding.getRoot();
     }
 
     private void setmRecyclerView() {
@@ -136,15 +138,15 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
         mAdapter = new CustomHomeAdapter(mDataset);
         mAdapter.setItemClicked(this);
-        mRecyclerView.setAdapter(mAdapter);
+        binding.recyclerView.setAdapter(mAdapter);
     }
 
     private void setRecyclerViewLayoutManager(Constants.LayoutManagerType layoutManagerType) {
         int scrollPosition = 0;
 
         // If a layout manager has already been set, get current scroll position.
-        if (mRecyclerView.getLayoutManager() != null) {
-            scrollPosition = ((LinearLayoutManager) mRecyclerView.getLayoutManager())
+        if (binding.recyclerView.getLayoutManager() != null) {
+            scrollPosition = ((LinearLayoutManager) binding.recyclerView.getLayoutManager())
                     .findFirstCompletelyVisibleItemPosition();
         }
 
@@ -162,8 +164,8 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
                 mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         }
 
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.scrollToPosition(scrollPosition);
+        binding.recyclerView.setLayoutManager(mLayoutManager);
+        binding.recyclerView.scrollToPosition(scrollPosition);
     }
 
     @Override
@@ -177,9 +179,9 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         progressDialog.dismiss();
         if (!res.success) {
             viewModel.setmText(res.response);
-            textView.setVisibility(View.VISIBLE);
+            binding.textHome.setVisibility(View.VISIBLE);
         } else {
-            textView.setVisibility(View.GONE);
+            binding.textHome.setVisibility(View.GONE);
         }
     }
 
@@ -198,6 +200,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
 
 
     private void popupWindow(GetTransactionRes.DataList res) {
+//        TransItemPopupBinding popupBinding = DataBindingUtil.inflate()
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = layoutInflater.inflate(R.layout.trans_item_popup, null);
         final PopupWindow popupWindow = new PopupWindow(
@@ -266,7 +269,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         });
 
 
-        popupWindow.showAtLocation(mRecyclerView, Gravity.CENTER, 0, 0);
-        popupWindow.showAsDropDown(mRecyclerView, 0, 0);
+        popupWindow.showAtLocation(binding.recyclerView, Gravity.CENTER, 0, 0);
+        popupWindow.showAsDropDown(binding.recyclerView, 0, 0);
     }
 }

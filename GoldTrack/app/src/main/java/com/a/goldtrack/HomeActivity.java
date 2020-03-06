@@ -64,7 +64,7 @@ public class HomeActivity extends AppCompatActivity
                 .build();
 
         View hView = navigationView.getHeaderView(0);
-
+        hideItem();
         TextView textHeader = (TextView) hView.findViewById(R.id.text_header);
         TextView textSub = (TextView) hView.findViewById(R.id.text_sub);
         ImageView imageheaderView = (ImageView) hView.findViewById(R.id.imageheaderView);
@@ -78,6 +78,29 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationUI.setupWithNavController(navigationView, navController);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+    }
+
+    private void hideItem() {
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        Menu nav_Menu = navigationView.getMenu();
+        nav_Menu.findItem(R.id.nav_gallery).setVisible(false);
+
+        String role = Sessions.getUserString(context, Constants.roles);
+        switch (role) {
+            case "ADMIN":
+                break;
+            case "EXECUTIVE":
+                nav_Menu.findItem(R.id.nav_slideshow).setVisible(false);
+                nav_Menu.findItem(R.id.nav_share).setVisible(false);
+                break;
+            case "REPORT":
+                break;
+            case "SUPER_ADMIN":
+                nav_Menu.findItem(R.id.nav_gallery).setVisible(true);
+                break;
+        }
 
     }
 

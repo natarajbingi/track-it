@@ -53,7 +53,8 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     ProgressDialog progressDialog;
     Context context;
     CountDownTimer timer;
-    private int current = 1, first = 1, second = 2, third = 3;
+    private final int first = 1, second = 2, third = 3, four = 4;
+    private int current = 1;
     List<ItemsTrans> list;
     private static final String TAG = "TransActivity";
     protected CustomTransAddedItemAdapter mAdapter;
@@ -240,7 +241,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                         Constants.Toasty(context, "Please enter OTP to proceed", Constants.error);
                     } else {
                         if (otp.equals(otpeditStr)) {
-                            current = 3;
+                            current = third;
                             timer.cancel();
                             setCurrentLayoutVisible();
                             binding.selectedCustomerName.setText("Customer: " + binding.autoCompleteSelectCustomer.getText().toString().split("-")[0]);
@@ -343,12 +344,6 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 float purity1 = Float.parseFloat(binding.itemAddTransLayoutParent.purity.getText().toString());
                 float margin1 = Float.parseFloat(binding.itemAddTransLayoutParent.margin.getText().toString());
 
-                /*float netWeight1 = (commodityWeight1 - (stoneWastage1 + otherWastage1));
-                float netWeight1WithPurity1 = netWeight1 * (purity1 / 100);
-
-                float netWeightAmount1 = amount1 * netWeight1WithPurity1;*/
-                // float marginAmt = netWeightAmount * (margin / 100);// 2 / 100
-                //  float FinalAmt = netWeightAmount - marginAmt;
 
                 float netWeight1 = (commodityWeight1 - (stoneWastage1 + otherWastage1));
                 float netWeight1WithPurity = (netWeight1 * purity1) / 100;
@@ -400,30 +395,36 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             break;
             case R.id.step_last_submit: {
                 String str = binding.stepLastSubmit.getText().toString();
-                if (addTransactionReq.itemList.size() > 0) {
-                    if (str.equals("Proceed")) {
-                        current = 4;
-                        setCurrentLayoutVisible();
-                        settingFinalPageVals();
-                        binding.stepLastSubmit.setText("SUBMIT");
+                try {
+                    if (addTransactionReq.itemList != null && addTransactionReq.itemList.size() > 0) {
+                        if (str.equals("Proceed")) {
+                            current = four;
+                            setCurrentLayoutVisible();
+                            settingFinalPageVals();
+                            binding.stepLastSubmit.setText("SUBMIT");
 
-                    } else {
-                        addTransactionReq.paidAmountForRelease = binding.finalLayoutParent.paidAmountForRelease.getText().toString();
-                        addTransactionReq.roundOffAmount = binding.finalLayoutParent.roundOffAmount.getText().toString();
-                        addTransactionReq.comments = binding.finalLayoutParent.comments.getText().toString();
+                        } else {
+                            addTransactionReq.paidAmountForRelease = binding.finalLayoutParent.paidAmountForRelease.getText().toString();
+                            addTransactionReq.roundOffAmount = binding.finalLayoutParent.roundOffAmount.getText().toString();
+                            addTransactionReq.comments = binding.finalLayoutParent.comments.getText().toString();
 
-                        if (addTransactionReq.paidAmountForRelease.isEmpty() || addTransactionReq.roundOffAmount.isEmpty() || addTransactionReq.comments.isEmpty()) {
-                            Constants.Toasty(context, "Please enter Mandatory details to submit.", Constants.warning);
-                            break;
+                            if (addTransactionReq.paidAmountForRelease.isEmpty() || addTransactionReq.roundOffAmount.isEmpty() || addTransactionReq.comments.isEmpty()) {
+                                Constants.Toasty(context, "Please enter Mandatory details to submit.", Constants.warning);
+                                break;
+                            }
+                            if (Constants.isConnection()) {
+                                progressDialog.show();
+                                viewModel.addTransreq(addTransactionReq);
+                            } else
+                                Constants.Toasty(context, "Please check network connection.", Constants.info);
                         }
-                        if (Constants.isConnection()) {
-                            progressDialog.show();
-                            viewModel.addTransreq(addTransactionReq);
-                        } else
-                            Constants.Toasty(context, "Please check network connection.", Constants.info);
-                    }
-                } else
+                    } else
+                        Constants.Toasty(context, "No Items Found to do transaction.", Constants.warning);
+                } catch (Exception e) {
                     Constants.Toasty(context, "No Items Found to do transaction.", Constants.warning);
+                    e.printStackTrace();
+                    Log.d(TAG, e.getMessage());
+                }
             }
             break;
         }
@@ -463,7 +464,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         if (finalReset) {
             list.clear();
 
-            current = 1;
+            current = first;
             binding.otpedit.setText("");
             binding.selectCommodity.setSelection(0);
             binding.selectBranch.setSelection(0);
@@ -520,7 +521,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
     void setCurrentLayoutVisible() {
         switch (current) {
-            case 1:
+            case first:
                 binding.firstStepLayout.setVisibility(View.VISIBLE);
                 binding.secondStepOtp.setVisibility(View.GONE);
                 binding.thirdStepDetails.setVisibility(View.GONE);
@@ -530,13 +531,13 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 binding.bottomTotalLayout.setVisibility(View.GONE);
                 otp = Constants.getRandomNumberString();
                 break;
-            case 2:
+            case second:
                 binding.firstStepLayout.setVisibility(View.GONE);
                 binding.secondStepOtp.setVisibility(View.VISIBLE);
                 binding.thirdStepDetails.setVisibility(View.GONE);
                 binding.finalLayoutParent.finalLayoutChild.setVisibility(View.GONE);
                 break;
-            case 3:
+            case third:
                 binding.stepNext.setVisibility(View.GONE);
 
                 binding.firstStepLayout.setVisibility(View.GONE);
@@ -548,7 +549,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 binding.recyclerTransItems.setVisibility(View.VISIBLE);
                 //setmRecyclerView();
                 break;
-            case 4:
+            case four:
                 binding.stepNext.setVisibility(View.GONE);
 
                 binding.firstStepLayout.setVisibility(View.GONE);
@@ -775,7 +776,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onUiVerifyOtpSuccess(CustomerWithOTPRes body) {
         progressDialog.dismiss();
-        current = 2;
+        current = second;
         binding.numbver.setText("Verify +91 " + binding.autoCompleteSelectCustomer.getText().toString().split("-")[1]);
         startCounter();
         setCurrentLayoutVisible();

@@ -1,5 +1,6 @@
 package com.a.goldtrack.customer;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
@@ -62,11 +63,14 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
 
     void init() {
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);*/
 
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        final ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
         binding.progressbar.setVisibility(View.GONE);
@@ -92,7 +96,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         try {
             binding.search.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         binding.listDetailsHolder.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -241,7 +245,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
 
 
     public void filter(String s) {
-        Log.d("mDataset",""+mDataset.size());
+        Log.d("mDataset", "" + mDataset.size());
         List<GetCustomerRes.ResList> temp = new ArrayList<>();
         if (mDataset != null && mDataset.size() > 0) {
             for (GetCustomerRes.ResList d : mDataset) {
@@ -253,7 +257,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
             if (mAdapter != null) {
                 mAdapter.updateListNew(temp);
             }
-        }else {
+        } else {
         }
     }
 
