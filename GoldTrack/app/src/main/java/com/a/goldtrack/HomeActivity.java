@@ -6,9 +6,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.a.goldtrack.Interfaces.InterfaceClasses;
 import com.a.goldtrack.company.CompanyActivity;
 import com.a.goldtrack.companybranche.CompanyBranchesActivity;
 import com.a.goldtrack.customer.CustomerActivity;
+import com.a.goldtrack.dailyclosure.UserDailyClosureActivity;
 import com.a.goldtrack.items.ItemsActivity;
 import com.a.goldtrack.login.LoginActivity;
 import com.a.goldtrack.otp.OtpActivity;
@@ -19,11 +21,13 @@ import com.a.goldtrack.utils.Sessions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -70,7 +74,7 @@ public class HomeActivity extends AppCompatActivity
         ImageView imageheaderView = (ImageView) hView.findViewById(R.id.imageheaderView);
 
         textHeader.setText(Sessions.getUserString(context, Constants.userName));
-        textSub.setText(Sessions.getUserString(context, Constants.userId));
+        textSub.setText(Sessions.getUserString(context, Constants.userIdID));
 
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -104,6 +108,7 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -116,6 +121,23 @@ public class HomeActivity extends AppCompatActivity
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            sendMessage();
+            Constants.Toasty(context, " Refreshing..", Constants.info);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -156,6 +178,11 @@ public class HomeActivity extends AppCompatActivity
                 startActivity(i);
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 break;
+            case R.id.nav_daily_closure:
+                i = new Intent(this, UserDailyClosureActivity.class);
+                startActivity(i);
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                break;
             case R.id.menu_logout: {
                 new AlertDialog.Builder(this)
                         .setIcon(R.mipmap.ic_launcher)
@@ -192,4 +219,11 @@ public class HomeActivity extends AppCompatActivity
         finish();
     }
 
+    private void sendMessage() {
+        Log.d("sender", "Broadcasting message");
+        Intent intent = new Intent("refresh-from-home");
+        // You can also include some extra data.
+        intent.putExtra("message", "Refresh the recycler view for new Transaction !");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
 }

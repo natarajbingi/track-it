@@ -126,6 +126,21 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
 
     private void setValidateAdd() {
         AddCustomerReq req = new AddCustomerReq();
+       /* {
+            "uniqueId":"124",
+                "firstName":"Test1",
+                "lastName":"tt1",
+                "mobileNum":"9980766166",
+                "emailId":"test@gmail.com",
+                "address1":"Channasandra",
+                "address2":"Bangalore",
+                "pin":"578885",
+                "state":"Karnataka",
+                "createdBy":"Lingu",
+                "companyID":0,
+                "profilePicData":""
+        }*/
+
         req.firstName = binding.firstName.getText().toString();
         req.lastName = binding.lastName.getText().toString();
         req.mobileNum = binding.mobileNum.getText().toString();
@@ -135,7 +150,8 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         req.state = binding.state.getText().toString();
         req.pin = binding.pin.getText().toString();
         req.companyID = Sessions.getUserString(context, Constants.companyId);
-        req.createdBy = Sessions.getUserString(context, Constants.userName);
+        req.createdBy = Sessions.getUserString(context, Constants.userId);
+        req.profilePicData = "";
 
         if (req.firstName.isEmpty() || req.mobileNum.isEmpty() || req.address1.isEmpty() || req.pin.isEmpty()) {
             Constants.Toasty(context, "Please fill the mandatory fields.", Constants.warning);
@@ -173,7 +189,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
         if (mAdapter == null) {
-            mAdapter = new CustomCustomersAdapter(mDataset);
+            mAdapter = new CustomCustomersAdapter(context,mDataset);
             mAdapter.setClickListener(this);
             binding.recyclerCustomer.setAdapter(mAdapter);
         } else mAdapter.updateListNew(mDataset);
@@ -331,6 +347,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onErrorSpread(String msg) {
+        binding.progressbar.setVisibility(View.GONE);
         Constants.Toasty(context, "Something went wrong, reason: " + msg, Constants.error);
     }
 

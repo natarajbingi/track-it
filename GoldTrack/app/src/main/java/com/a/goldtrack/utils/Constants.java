@@ -40,6 +40,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -65,6 +66,7 @@ public class Constants {
     public static final String userId = "userId"; // id
     public static final String pwdId = "pwdId";
     public static final String roles = "roles";
+    public static final String dorpDownSession = "dorpDownSession";
     public static final int error = 0;
     public static final int success = 1;
     public static final int info = 2;
@@ -126,6 +128,31 @@ public class Constants {
             return;
 
         inputManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+    }
+
+    public static String priceWithDecimal(Double price) {
+        DecimalFormat formatter = new DecimalFormat("##,##,##,###.00");
+        return formatter.format(price);
+    }
+
+    public static String priceWithoutDecimal(Double price) {
+        DecimalFormat formatter = new DecimalFormat("##,##,##,###.##");
+        return formatter.format(price);
+    }
+
+    public static String priceToString(String amount) {
+        // int i = Integer.parseInt();
+        if (!amount.equals("")) {
+            double price = Double.parseDouble(amount.replaceAll(",", ""));
+            String toShow = priceWithoutDecimal(price);
+            if (toShow.indexOf(".") > 0) {
+                return priceWithDecimal(price);
+            } else {
+                return priceWithoutDecimal(price);
+            }
+        } else {
+            return "";
+        }
     }
 
     public static String getRandomNumberString() {
@@ -261,18 +288,46 @@ public class Constants {
     }
 
     /* Global Alertdialog for application*/
-    public static AlertDialog alertDialogShow(Context context,
-                                              String message,
-                                              final DialogInterface.OnClickListener onClickListener) {
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(context, R.style.AppTheme_ProgressBar);
+    public static AlertDialog alertDialogShowWithCancel(Context context,
+                                                        String message,
+                                                        final DialogInterface.OnClickListener onClickListener) {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
         alertDialog.setTitle(context.getResources().getString(R.string.app_name));
         alertDialog.setMessage(message);
         alertDialog.setCancelable(false);
         alertDialog.setIcon(R.mipmap.ic_launcher);
-        alertDialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                onClickListener.onClick(dialog, which);
+            }
+        });
+        alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                onClickListener.onClick(dialogInterface, i);
+            }
+        });
+        AlertDialog alert = alertDialog.create();
+
+        // show it
+        alert.show();
+        return alert;
+    }
+
+    public static AlertDialog alertDialogShowOneButton(Context context,
+                                                       String message,
+                                                       final DialogInterface.OnClickListener onClickListener) {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        alertDialog.setTitle(context.getResources().getString(R.string.app_name));
+        alertDialog.setMessage(message);
+        alertDialog.setCancelable(false);
+        alertDialog.setIcon(R.mipmap.ic_launcher);
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                onClickListener.onClick(dialogInterface, i);
             }
         });
         AlertDialog alert = alertDialog.create();

@@ -1,85 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="1dp"
-    android:layout_marginTop="2dp"
-    android:layout_marginRight="1dp"
-    android:background="@color/tiles"
+    android:elevation="4dp"
+    android:layout_marginTop="0dp"
+    android:layout_marginRight="0dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?selectableItemBackground"
-    android:padding="10dp">
+    android:layout_marginLeft="0dp"
+    app:cardUseCompatPadding="true">
 
-    <ImageView
-        android:id="@+id/logo_id"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="10dp"
-        android:visibility="gone"
-        android:layout_marginBottom="8dp"
-        android:src="@drawable/placeholder" />
-
-
-    <TextView
-        android:id="@+id/text_header"
+    <RelativeLayout
+        android:id="@+id/parent_tile_bg"
+        android:background="@color/light_me"
+        android:padding="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="15dp"
-        android:layout_toRightOf="@+id/logo_id"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:text="@string/element_text"
-        android:textAllCaps="true"
-        android:textColor="@color/jet"
-        android:textSize="19sp"
-        android:textStyle="bold" />
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/text_sub"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/text_header"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="6dp"
-        android:layout_toRightOf="@+id/logo_id"
-        android:ellipsize="end"
-        android:layout_marginBottom="15dp"
-        android:maxLines="3"
-        android:text="@string/element_text"
-        android:textColor="@color/oil"
-        android:textSize="16sp" />
+        <ImageView
+            android:id="@+id/logo_id"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/placeholder"
+            android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/text_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/text_sub"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="5dp"
-        android:text="Date: 12-06-2019"
-        android:textColor="@color/jet"
-        android:textSize="12sp" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/text_date"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="5dp"
-        android:src="@drawable/ic_chevron_right" />
+        <TextView
+            android:id="@+id/text_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="15dp"
+            android:layout_toRightOf="@+id/logo_id"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/element_text"
+            android:textAllCaps="true"
+            android:textColor="@color/jet"
+            android:textSize="19sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:visibility="gone"
-        android:layout_below="@+id/logo_id"
-        android:background="@color/aluminum" />
+        <TextView
+            android:id="@+id/text_sub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text_header"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="15dp"
+            android:layout_toRightOf="@+id/logo_id"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:text="@string/element_text"
+            android:textColor="@color/oil"
+            android:textSize="16sp" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/text_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/text_sub"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="5dp"
+            android:text="Date: 12-06-2019"
+            android:textColor="@color/jet"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text_date"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/ic_chevron_right" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/logo_id"
+            android:background="@color/aluminum"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

@@ -15,6 +15,7 @@ import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.ItemsTrans;
 import com.a.goldtrack.R;
+import com.a.goldtrack.utils.Constants;
 
 import java.util.List;
 
@@ -89,7 +90,7 @@ public class CustomTransAddedItemAdapter extends RecyclerView.Adapter<CustomTran
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Log.d(TAG, "Element " + position + " set.");
         viewHolder.commodity_name.setText(mDataSet.get(position).commodity);
-        viewHolder.commodity_amount.setText("Rs. " + mDataSet.get(position).amount);
+        viewHolder.commodity_amount.setText("Rs. " + Constants.priceToString(mDataSet.get(position).amount));
         viewHolder.commodity_weight.setText("Commodity Wt: " + mDataSet.get(position).commodityWeight + " Grms");
         viewHolder.nett_weight.setText("Net Wt: " + mDataSet.get(position).nettWeight);
         viewHolder.stone_wastage.setText("Stone Wt: " + mDataSet.get(position).stoneWastage);

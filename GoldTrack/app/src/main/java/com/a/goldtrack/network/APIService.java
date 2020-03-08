@@ -86,4 +86,15 @@ public interface APIService {
     @POST("transaction/getTransactionForFilters")
     Call<GetTransactionRes> getTransactionForFilters(@Body GetTransactionReq req);
 
+    /*UserDailyClosure
+     * */
+    @POST("user/addUserDailyClosure")
+    Call<AddUserDailyClosureRes> addUserDailyClosure(@Body AddUserDailyClosureReq dailyClosureReq);
+
+    @POST("user/updateUserDailyClosureDetails")
+    Call<UpdateUserDailyClosureRes> updateUserDailyClosureDetails(@Body UpdateUserDailyClosureReq userDailyClosureReq);
+
+    @POST("user/getUserDailyClosureForFilters")
+    Call<GetUserDailyClosureRes> getUserDailyClosureForFilters(@Body GetUserDailyClosureReq getUserDailyClosureReq);
+
 }

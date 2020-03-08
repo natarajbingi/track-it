@@ -30,6 +30,7 @@ public class TransViewModel extends ViewModel implements ITransCallBacks {
 
     public void onViewAvailable(ITransUiHandler view) {
         this.view = view;
+        dropdownList = new MutableLiveData<>();
     }
 
     List<ItemsTrans> addTranItemsNowTest() {

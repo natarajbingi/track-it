@@ -11,7 +11,7 @@ import com.a.goldtrack.Model.UpdateItemReq;
 import com.a.goldtrack.Model.UpdateItemRes;
 import com.a.goldtrack.network.RestFullServices;
 
-public class ItemsViewModel extends ViewModel implements IItemsCallBacks {
+public class    ItemsViewModel extends ViewModel implements IItemsCallBacks {
 
     MutableLiveData<GetItemsRes> list;
     IItemsView view;

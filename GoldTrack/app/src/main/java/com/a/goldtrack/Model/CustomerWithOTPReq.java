@@ -7,5 +7,6 @@ public class CustomerWithOTPReq {
     public String customerID;
     public String customerMob;
     public String counter;
+    public String totalTransactionAmount;
     public String otp;
 }

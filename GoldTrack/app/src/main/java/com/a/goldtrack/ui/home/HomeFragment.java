@@ -1,7 +1,10 @@
 package com.a.goldtrack.ui.home;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -21,11 +24,15 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.a.goldtrack.HomeActivity;
+import com.a.goldtrack.Interfaces.InterfaceClasses;
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
+import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetCompanyRes;
 import com.a.goldtrack.Model.GetTransactionReq;
@@ -34,7 +41,9 @@ import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.FragmentHomeBinding;
 import com.a.goldtrack.databinding.TransItemPopupBinding;
 import com.a.goldtrack.network.APIService;
+import com.a.goldtrack.network.RestFullServices;
 import com.a.goldtrack.network.RetrofitClient;
+import com.a.goldtrack.trans.IDropdownDataCallBacks;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
@@ -68,6 +77,8 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
     private HomeViewModel viewModel;
 
     private FragmentHomeBinding binding;
+    private GetTransactionReq req;
+    private GetCompany reqDrop;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         context = getContext();
@@ -79,6 +90,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
         binding.setHomeFragModel(viewModel);
 
+        LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("refresh-from-home"));
         // View root1 = binding.getRoot();//inflater.inflate(R.layout.fragment_home, container, false);
         binding.textHome.setVisibility(View.GONE);
         binding.radioGrp.setVisibility(View.GONE);
@@ -97,9 +109,8 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         });
         viewModel.onViewAvailable(this);
 
-        GetTransactionReq req = new GetTransactionReq();
+        req = new GetTransactionReq();
         req.companyID = Sessions.getUserString(context, Constants.companyId);
-
         String role = Sessions.getUserString(context, Constants.roles);
         if (role.equals("ADMIN") || role.equals("SUPER_ADMIN")) {
             req.employeeID = "0";
@@ -129,6 +140,10 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         binding.getRoot().setTag(TAG);
 
 
+        reqDrop = new GetCompany();
+        reqDrop.companyId = Sessions.getUserString(context, Constants.companyId);
+        viewModel.getDropdown(reqDrop);
+
         return binding.getRoot();
     }
 
@@ -136,7 +151,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         mLayoutManager = new LinearLayoutManager(getActivity());
         mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
-        mAdapter = new CustomHomeAdapter(mDataset);
+        mAdapter = new CustomHomeAdapter(context, mDataset);
         mAdapter.setItemClicked(this);
         binding.recyclerView.setAdapter(mAdapter);
     }
@@ -184,6 +199,17 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
             binding.textHome.setVisibility(View.GONE);
         }
     }
+
+    @Override
+    public void onGetDrpSuccess(DropdownDataForCompanyRes body) {
+        if (body.success) {
+            Sessions.setUserObj(context, body, Constants.dorpDownSession);
+            Log.d("TAG", "Saving Dropdown Data");
+        } else {
+            Constants.Toasty(context, body.response + ", Please refresh again.", 1);
+        }
+    }
+
 
     @Override
     public void onError(String message) {
@@ -235,25 +261,25 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
             nbfcReferenceNo.setText("Ref No: " + res.nbfcReferenceNo + "\nBill No: " + res.billNumber);
             customer.setText("Customer: " + res.customerName);
             commodity.setText("Commodity: " + res.commodity);
-            presentDayCommodityRate.setText("Commodity Rate: " + res.presentDayCommodityRate);
+            presentDayCommodityRate.setText("Commodity Rate: " + Constants.priceToString(res.presentDayCommodityRate));
             totalCommodityWeight.setText("Cmd Weight:\n" + res.totalCommodityWeight);
             totalStoneWastage.setText("Stone Wst:\n" + res.totalStoneWastage);
             totalOtherWastage.setText("Other Wst:\n" + res.totalOtherWastage);
             totalNettWeight.setText("Total NetWeight: " + res.totalNettWeight);
-            totalAmount.setText("Total Amt: " + res.totalAmount);
-            grossAmount.setText("Gross Amt: " + res.grossAmount);
-            nettAmount.setText("Net Amt: " + res.nettAmount);
+            totalAmount.setText("Total Amt: " + Constants.priceToString(res.totalAmount));
+            grossAmount.setText("Gross Amt: " + Constants.priceToString(res.grossAmount));
+            nettAmount.setText("Net Amt: " + Constants.priceToString(res.nettAmount));
             marginPercent.setText("Margin %: " + res.marginPercent);
-            marginAmount.setText("Margin Amt: " + res.marginAmount);
-            paidAmountForRelease.setText("Released Amt: " + res.paidAmountForRelease);
-            roundOffAmount.setText("Round Off Amt: " + res.roundOffAmount);
+            marginAmount.setText("Margin Amt: " + Constants.priceToString(res.marginAmount));
+            paidAmountForRelease.setText("Released Amt: " + Constants.priceToString(res.paidAmountForRelease));
+            roundOffAmount.setText("Round Off Amt: " + Constants.priceToString(res.roundOffAmount));
             comments.setText("Comments:\n " + res.comments);
 
 
             String itemsDataRepeatStr = "ITEMS: \n";
 
             for (int i = 0; i < res.itemList.size(); i++) {
-                itemsDataRepeatStr += (i + 1) + ") " + res.itemList.get(i).itemName + "\t\t" + res.itemList.get(i).commodityWeight + "Grms\t\t Rs. " + res.itemList.get(i).amount + "\n\n";
+                itemsDataRepeatStr += (i + 1) + ") " + res.itemList.get(i).itemName + "\t\t\t" + res.itemList.get(i).commodityWeight + "Grms\t\t\t Rs. " + Constants.priceToString(res.itemList.get(i).amount) + "\n\n";
             }
 
             itemsDataRepeat.setText(itemsDataRepeatStr);
@@ -272,4 +298,30 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         popupWindow.showAtLocation(binding.recyclerView, Gravity.CENTER, 0, 0);
         popupWindow.showAsDropDown(binding.recyclerView, 0, 0);
     }
+
+
+    @Override
+    public void onDestroyView() {
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver);
+        super.onDestroyView();
+
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            if (intent.getAction() != null && intent.getAction().equals("refresh-from-home")) {
+                progressDialog.show();
+                viewModel.getTransactions(req);
+                reqDrop = new GetCompany();
+                reqDrop.companyId = Sessions.getUserString(context, Constants.companyId);
+                viewModel.getDropdown(reqDrop);
+            }
+            String message = intent.getStringExtra("message");
+            Log.d("receiver", "Got message: " + message);
+
+        }
+    };
 }
