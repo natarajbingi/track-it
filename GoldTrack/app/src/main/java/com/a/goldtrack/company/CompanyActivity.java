@@ -242,7 +242,7 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
         if (mAdapter == null) {
-            mAdapter = new CustomCompanyAdapter(mDataset);
+            mAdapter = new CustomCompanyAdapter(context,mDataset);
             binding.recyclerBranches.setAdapter(mAdapter);
             mAdapter.setClickListener(this);
         } else

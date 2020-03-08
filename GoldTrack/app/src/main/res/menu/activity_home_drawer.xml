@@ -6,7 +6,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_home"
             android:title="@string/menu_home" />
         <item
             android:id="@+id/nav_gallery"
@@ -14,19 +14,19 @@
             android:title="Company" />
         <item
             android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Branches" />
+            android:icon="@drawable/ic_branch"
+            android:title="Branch" />
         <item
             android:id="@+id/nav_tools"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Items" />
+            android:icon="@drawable/ic_items"
+            android:title="Item" />
         <item
             android:id="@+id/nav_customer"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_customer"
             android:title="Customer" />
         <item
             android:id="@+id/nav_trans"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_transaction"
             android:title="Transaction" />
     </group>
 
@@ -34,11 +34,15 @@
         <menu>
             <item
                 android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Users" />
+                android:icon="@drawable/ic_people"
+                android:title="User" />
+            <item
+                android:id="@+id/nav_daily_closure"
+                android:icon="@drawable/ic_repeat"
+                android:title="Daily Closure" />
             <item
                 android:id="@+id/menu_logout"
-                android:icon="@android:drawable/ic_popup_sync"
+                android:icon="@drawable/ic_exit"
                 android:title="@string/menu_logout" />
         </menu>
     </item>

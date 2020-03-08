@@ -58,7 +58,7 @@ dependencies {
     implementation 'com.github.GrenderG:Toasty:1.2.8'
     implementation 'androidx.navigation:navigation-fragment:2.0.0'
     implementation 'androidx.navigation:navigation-ui:2.0.0'
-
+    implementation 'com.wdullaer:materialdatetimepicker:4.2.3'
 //    implementation 'com.jakewharton:butterknife:10.1.0'
 //    annotationProcessor "com.jakewharton:butterknife-compiler:${var}"
     // reactive

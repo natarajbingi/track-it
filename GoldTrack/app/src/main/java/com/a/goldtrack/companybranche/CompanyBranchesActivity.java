@@ -207,7 +207,7 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
         mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
         if (mAdapter == null) {
-            mAdapter = new CustomCompanyBranchAdapter(mDataset);
+            mAdapter = new CustomCompanyBranchAdapter(context,mDataset);
             mAdapter.setClickListener(this);
             binding.recyclerBranches.setAdapter(mAdapter);
         } else mAdapter.updateListNew(mDataset);

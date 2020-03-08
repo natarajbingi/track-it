@@ -9,6 +9,8 @@ import com.a.goldtrack.Model.AddCustomerRes;
 import com.a.goldtrack.Model.AddItemReq;
 import com.a.goldtrack.Model.AddItemRes;
 import com.a.goldtrack.Model.AddTransactionRes;
+import com.a.goldtrack.Model.AddUserDailyClosureReq;
+import com.a.goldtrack.Model.AddUserDailyClosureRes;
 import com.a.goldtrack.Model.AddUserForCompany;
 import com.a.goldtrack.Model.AddUserForCompanyRes;
 import com.a.goldtrack.Model.CustomerWithOTPReq;
@@ -24,6 +26,8 @@ import com.a.goldtrack.Model.GetItemsReq;
 import com.a.goldtrack.Model.GetItemsRes;
 import com.a.goldtrack.Model.GetTransactionReq;
 import com.a.goldtrack.Model.GetTransactionRes;
+import com.a.goldtrack.Model.GetUserDailyClosureReq;
+import com.a.goldtrack.Model.GetUserDailyClosureRes;
 import com.a.goldtrack.Model.GetUserForCompany;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.Model.UpdateCompanyBranchesReq;
@@ -34,15 +38,19 @@ import com.a.goldtrack.Model.UpdateCustomerReq;
 import com.a.goldtrack.Model.UpdateCustomerRes;
 import com.a.goldtrack.Model.UpdateItemReq;
 import com.a.goldtrack.Model.UpdateItemRes;
+import com.a.goldtrack.Model.UpdateUserDailyClosureReq;
+import com.a.goldtrack.Model.UpdateUserDailyClosureRes;
 import com.a.goldtrack.Model.UpdateUserDetails;
 import com.a.goldtrack.Model.UserLoginReq;
 import com.a.goldtrack.Model.UserLoginRes;
 import com.a.goldtrack.company.ICallBacks;
 import com.a.goldtrack.companybranche.IBranchCallBacks;
 import com.a.goldtrack.customer.ICustomerCallBacs;
+import com.a.goldtrack.dailyclosure.IDailyClosureCallBacks;
 import com.a.goldtrack.items.IItemsCallBacks;
 import com.a.goldtrack.login.ILoginCallBacks;
 import com.a.goldtrack.Model.AddTransactionReq;
+import com.a.goldtrack.trans.IDropdownDataCallBacks;
 import com.a.goldtrack.trans.ITransCallBacks;
 import com.a.goldtrack.ui.home.IHomeFragCallbacks;
 import com.a.goldtrack.users.IUserCallBacks;
@@ -182,6 +190,25 @@ public class RestFullServices {
     }
 
     public static void getDropdownDataForCompany(GetCompany req, ITransCallBacks callBacks) {
+        getClient().getDropdownDataForCompany(req).enqueue(new Callback<DropdownDataForCompanyRes>() {
+            @Override
+            public void onResponse(Call<DropdownDataForCompanyRes> call, Response<DropdownDataForCompanyRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
+                if (response.isSuccessful()) {
+                    callBacks.onDropDownSuccess(response.body());
+                } else callBacks.onErrorComplete("Something went wrong, Server Error");
+            }
+
+            @Override
+            public void onFailure(Call<DropdownDataForCompanyRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
+            }
+        });
+       /* Gson gj = new Gson();
+        DropdownDataForCompanyRes res = gj.fromJson(Constants.listme, DropdownDataForCompanyRes.class);
+        callBacks.onDropDownSuccess(res);*/
+    }
+    public static void getDropdownDataForCompanyHome(GetCompany req, IDropdownDataCallBacks callBacks) {
         getClient().getDropdownDataForCompany(req).enqueue(new Callback<DropdownDataForCompanyRes>() {
             @Override
             public void onResponse(Call<DropdownDataForCompanyRes> call, Response<DropdownDataForCompanyRes> response) {
@@ -386,13 +413,13 @@ public class RestFullServices {
      * Transactions*/
     public static void getPTO(CustomerWithOTPReq req, ITransCallBacks callBacks) {
 
-        CustomerWithOTPRes res = new CustomerWithOTPRes();
+        /*CustomerWithOTPRes res = new CustomerWithOTPRes();
         res.success = true;
         res.id = 0;
         res.response = "Success";
         callBacks.onOtpSuccess(res);
-        Constants.logPrint(null, req, res);
-        /*getClient().validateCustomerWithOTP(req).enqueue(new Callback<CustomerWithOTPRes>() {
+        Constants.logPrint(null, req, res);*/
+        getClient().validateCustomerWithOTP(req).enqueue(new Callback<CustomerWithOTPRes>() {
             @Override
             public void onResponse(Call<CustomerWithOTPRes> call, Response<CustomerWithOTPRes> response) {
                 Constants.logPrint(call.request().toString(), req, response.body());
@@ -408,7 +435,7 @@ public class RestFullServices {
             public void onFailure(Call<CustomerWithOTPRes> call, Throwable t) {
                 callBacks.onError(t.getMessage());
             }
-        });*/
+        });
 
     }
 
@@ -452,6 +479,66 @@ public class RestFullServices {
             public void onFailure(Call<GetTransactionRes> call, Throwable t) {
                 if (callBacks != null) callBacks.onError(t.getMessage());
                 if (callbacks != null) callbacks.onError(t.getMessage());
+            }
+        });
+    }
+
+    /*UserDailyClosure
+     * */
+    public static void addDailyClosure(AddUserDailyClosureReq req, IDailyClosureCallBacks callBacks) {
+        getClient().addUserDailyClosure(req).enqueue(new Callback<AddUserDailyClosureRes>() {
+            @Override
+            public void onResponse(Call<AddUserDailyClosureRes> call, Response<AddUserDailyClosureRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
+                if (response.isSuccessful())
+                    if (response.body().success)
+                        callBacks.onAddDailyClousureSuccess(response.body());
+                    else
+                        callBacks.onErrorComplete(response.body().response);
+                else callBacks.onErrorComplete("Something went wrong, Server Error");
+            }
+
+            @Override
+            public void onFailure(Call<AddUserDailyClosureRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
+            }
+        });
+    }
+
+    public static void updateDailyClosures(UpdateUserDailyClosureReq req, IDailyClosureCallBacks callBacks) {
+        getClient().updateUserDailyClosureDetails(req).enqueue(new Callback<UpdateUserDailyClosureRes>() {
+            @Override
+            public void onResponse(Call<UpdateUserDailyClosureRes> call, Response<UpdateUserDailyClosureRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
+                if (response.isSuccessful()) {
+                    callBacks.onUpdateDailyClousureSuccess(response.body());
+                } else {
+                    callBacks.onErrorComplete("Something went wrong, Server Error");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UpdateUserDailyClosureRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
+            }
+        });
+    }
+
+    public static void getDailyClosures(GetUserDailyClosureReq req, IDailyClosureCallBacks callBacks) {
+        getClient().getUserDailyClosureForFilters(req).enqueue(new Callback<GetUserDailyClosureRes>() {
+            @Override
+            public void onResponse(Call<GetUserDailyClosureRes> call, Response<GetUserDailyClosureRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
+                if (response.isSuccessful()) {
+                    callBacks.onGetDailyClosureSuccess(response.body());
+                } else {
+                    callBacks.onErrorComplete("Something went wrong, Server Error");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetUserDailyClosureRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
             }
         });
     }

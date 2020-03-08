@@ -18,6 +18,7 @@ import com.a.goldtrack.R;
 import com.a.goldtrack.customer.CustomerActivity;
 import com.a.goldtrack.register.RegistrationActivity;
 import com.a.goldtrack.databinding.ActivityLoginBinding;
+import com.a.goldtrack.trans.TransActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
@@ -70,6 +71,7 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
 
 //        Intent i = new Intent(LoginActivity.this, CustomerActivity.class);
         Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+//        Intent i = new Intent(LoginActivity.this, TransActivity.class);
         //        Intent i = new Intent(LoginActivity.this, CompanyActivity.class);
         //        Intent i = new Intent(LoginActivity.this, UserForCompanyActivity.class);
         //        Intent i = new Intent(LoginActivity.this, CompanyBranchesActivity.class);

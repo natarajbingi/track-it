@@ -92,14 +92,14 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         progressDialog.setMessage("in Progress...");
 
         binding.numbver.setText("Verify +91 9980766166");
-        binding.stepNext.setVisibility(View.VISIBLE);
+        binding.stepNextButton.setVisibility(View.VISIBLE);
         binding.bottomTotalLayout.setVisibility(View.GONE);
         binding.finalLayoutParent.finalLayoutChild.setVisibility(View.VISIBLE);
 
         setCurrentLayoutVisible();
-        binding.stepNext.setOnClickListener(this);
-        binding.addItemTrans.setOnClickListener(this);
-        binding.itemAddTransLayoutParent.addItem.setOnClickListener(this);
+        binding.stepNextButton.setOnClickListener(this);
+        binding.addItemTransIcon.setOnClickListener(this);
+        binding.itemAddTransLayoutParent.addItemButton.setOnClickListener(this);
         binding.itemAddTransLayoutParent.itemAddingLocalCalci.setOnClickListener(this);
         binding.itemAddTransLayoutParent.cancel.setOnClickListener(this);
         binding.stepLastSubmit.setText("Proceed");
@@ -107,15 +107,12 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         viewModel.onViewAvailable(this);
         GetCompany req = new GetCompany();
         req.companyId = Sessions.getUserString(context, Constants.companyId);
-        if (Constants.isConnection()) {
-            progressDialog.show();
-            viewModel.getDropdowns(req);
-        } else {
+         /*else {
             viewModel.dropdownList = new MutableLiveData<>();
             Gson gj = new Gson();
-            DropdownDataForCompanyRes res = gj.fromJson(Constants.listme, DropdownDataForCompanyRes.class);
+            DropdownDataForCompanyRes ress = gj.fromJson(Constants.listme, DropdownDataForCompanyRes.class);
             viewModel.dropdownList.postValue(res);
-        }
+        }*/
 
         viewModel.dropdownList.observe(this, new Observer<DropdownDataForCompanyRes>() {
             @Override
@@ -138,7 +135,13 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
             }
         });
-
+        DropdownDataForCompanyRes resDp = (DropdownDataForCompanyRes) Sessions.getUserObj(context, Constants.dorpDownSession, DropdownDataForCompanyRes.class);
+        if (resDp != null) {
+            viewModel.dropdownList.postValue(resDp);
+        } else if (Constants.isConnection()) {
+            progressDialog.show();
+            viewModel.getDropdowns(req);
+        }
     }
 
     private void setDropDowns() {
@@ -227,40 +230,45 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.step_next: {
+            case R.id.step_next_button: {
                 if (current == 1) {
                     CustomerWithOTPReq req = firstLayoutValidate();
                     if (req != null) {
-                        progressDialog.show();
-                        viewModel.verifyOtp(req);
+//                        progressDialog.show();
+//                        viewModel.verifyOtp(req);
+                        current = third;
+                        setCurrentLayoutVisible();
+                        binding.selectedCustomerName.setText("Customer: " + binding.autoCompleteSelectCustomer.getText().toString().split("-")[0]);
+                        binding.transitionCurrentDate.setText("Date: " + Constants.getDateNowyyyymmmdd());
+                        binding.selectedTextCommodity.setText("Commodity: " + binding.selectCommodity.getSelectedItem().toString());
+                        binding.selectedTextCommodityPrice.setText("Price: " + binding.commodityRate.getText().toString());
+                        binding.selectedBranch.setText("Branch: " + binding.selectBranch.getSelectedItem().toString());
+
+                        binding.itemAddTransLayoutParent.selectedCommodity.setText(
+                                "Commodity: " + binding.selectCommodity.getSelectedItem().toString());
+                        binding.itemAddTransLayoutParent.selectedCommodityAmount.setText(
+                                binding.commodityRate.getText().toString());
+
+
+                        binding.addItemTransIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove));
+                        binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.VISIBLE);
+                        binding.recyclerTransItems.setVisibility(View.GONE);
+                        binding.bottomTotalLayout.setVisibility(View.GONE);
+                        showingItemAdd = !showingItemAdd;
                     } else
                         Constants.Toasty(context, "Please select or Enter mandatory details.", Constants.warning);
+
+
                 } else if (current == 2) {
                     String otpeditStr = binding.otpedit.getText().toString();
                     if (otpeditStr.isEmpty()) {
                         Constants.Toasty(context, "Please enter OTP to proceed", Constants.error);
                     } else {
                         if (otp.equals(otpeditStr)) {
-                            current = third;
+                            // current = third;
                             timer.cancel();
-                            setCurrentLayoutVisible();
-                            binding.selectedCustomerName.setText("Customer: " + binding.autoCompleteSelectCustomer.getText().toString().split("-")[0]);
-                            binding.transitionCurrentDate.setText("Date: " + Constants.getDateNowyyyymmmdd());
-                            binding.selectedTextCommodity.setText("Commodity: " + binding.selectCommodity.getSelectedItem().toString());
-                            binding.selectedTextCommodityPrice.setText("Price: " + binding.commodityRate.getText().toString());
-                            binding.selectedBranch.setText("Branch: " + binding.selectBranch.getSelectedItem().toString());
-
-                            binding.itemAddTransLayoutParent.selectedCommodity.setText(
-                                    "Commodity: " + binding.selectCommodity.getSelectedItem().toString());
-                            binding.itemAddTransLayoutParent.selectedCommodityAmount.setText(
-                                    binding.commodityRate.getText().toString());
-
-
-                            binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove));
-                            binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.VISIBLE);
-                            binding.recyclerTransItems.setVisibility(View.GONE);
-                            binding.bottomTotalLayout.setVisibility(View.GONE);
-                            showingItemAdd = !showingItemAdd;
+                            progressDialog.show();
+                            viewModel.addTransreq(addTransactionReq);
                         } else {
                             Constants.Toasty(context, "Please enter Valid OTP, try again.", Constants.error);
                         }
@@ -268,16 +276,69 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
             break;
-            case R.id.add_item_trans: {
+            case R.id.step_last_submit: {
+                String str = binding.stepLastSubmit.getText().toString();
+                try {
+                    if (addTransactionReq.itemList != null && addTransactionReq.itemList.size() > 0) {
+                        if (str.equals("Proceed")) {
+                            Constants.alertDialogShowWithCancel(context, "Are you sure want to proceed.?", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    current = four;
+                                    setCurrentLayoutVisible();
+                                    settingFinalPageVals();
+                                    binding.stepLastSubmit.setText("SUBMIT");
+                                }
+                            });
+
+                        } else {
+                            addTransactionReq.paidAmountForRelease = binding.finalLayoutParent.paidAmountForRelease.getText().toString();
+                            addTransactionReq.roundOffAmount = binding.finalLayoutParent.roundOffAmount.getText().toString();
+                            addTransactionReq.comments = binding.finalLayoutParent.comments.getText().toString();
+
+                            binding.grandTotalAmtBottom.setText("Total: Rs. " + Constants.priceToString(addTransactionReq.roundOffAmount));
+                            if (addTransactionReq.paidAmountForRelease.isEmpty() || addTransactionReq.roundOffAmount.isEmpty() || addTransactionReq.comments.isEmpty()) {
+                                Constants.Toasty(context, "Please enter Mandatory details to submit.", Constants.warning);
+                                break;
+                            }
+                            if (Constants.isConnection()) {
+
+                                CustomerWithOTPReq req = firstLayoutValidate();
+                                if (req != null) {
+                                    String strR = "REQUEST OTP:\n\nReleasing amount: "
+                                            + Constants.priceToString(addTransactionReq.paidAmountForRelease)
+                                            + "\nRound off amount: " + Constants.priceToString(req.totalTransactionAmount);
+                                    Constants.alertDialogShowWithCancel(context, strR, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            progressDialog.show();
+                                            viewModel.verifyOtp(req);
+                                        }
+                                    });
+                                }
+
+                            } else
+                                Constants.Toasty(context, "Please check network connection.", Constants.info);
+                        }
+                    } else
+                        Constants.Toasty(context, "No Items Found to do transaction.", Constants.warning);
+                } catch (Exception e) {
+                    Constants.Toasty(context, "No Items Found to do transaction.", Constants.warning);
+                    e.printStackTrace();
+                    Log.d(TAG, e.getMessage());
+                }
+            }
+            break;
+            case R.id.add_item_trans_icon: {
                 // Constants.Toasty(context, "inProgress", Constants.info);
                 if (!showingItemAdd) {
-                    binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove));
+                    binding.addItemTransIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove));
                     binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.VISIBLE);
                     binding.recyclerTransItems.setVisibility(View.GONE);
                     binding.bottomTotalLayout.setVisibility(View.GONE);
                     resetInnerAddItem(false);
                 } else {
-                    binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
+                    binding.addItemTransIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
                     binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.GONE);
                     binding.recyclerTransItems.setVisibility(View.VISIBLE);
                     binding.bottomTotalLayout.setVisibility(View.VISIBLE);
@@ -286,7 +347,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             }
             break;
             case R.id.cancel: {
-                binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
+                binding.addItemTransIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
                 binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.GONE);
                 binding.recyclerTransItems.setVisibility(View.VISIBLE);
                 binding.bottomTotalLayout.setVisibility(View.VISIBLE);
@@ -297,6 +358,9 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             case R.id.item_adding_local_calci: {
                 if (binding.itemAddTransLayoutParent.selectedCommodityAmount.getText().toString().isEmpty() ||
                         binding.itemAddTransLayoutParent.commodityWeight.getText().toString().isEmpty() ||
+                        binding.itemAddTransLayoutParent.margin.getText().toString().isEmpty() ||
+                        binding.itemAddTransLayoutParent.purity.getText().toString().isEmpty() ||
+                        binding.itemAddTransLayoutParent.otherWastage.getText().toString().isEmpty() ||
                         binding.itemAddTransLayoutParent.stoneWastage.getText().toString().isEmpty()) {
                     Constants.Toasty(context, "Please enter Mandatory fields", Constants.warning);
                     break;
@@ -332,8 +396,9 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
             break;
-            case R.id.add_item: {
-                if (binding.itemAddTransLayoutParent.nettWeight.getText().toString().isEmpty() || binding.itemAddTransLayoutParent.nettWeight.getText().toString().equals("0.00")) {
+            case R.id.add_item_button: {
+                if (binding.itemAddTransLayoutParent.nettWeight.getText().toString().isEmpty()
+                        || binding.itemAddTransLayoutParent.nettWeight.getText().toString().equals("0.00")) {
                     Constants.Toasty(context, "Please check calculation before add ITEM", Constants.warning);
                     break;
                 }
@@ -344,6 +409,10 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 float purity1 = Float.parseFloat(binding.itemAddTransLayoutParent.purity.getText().toString());
                 float margin1 = Float.parseFloat(binding.itemAddTransLayoutParent.margin.getText().toString());
 
+                if (commodityWeight1 <= 0 || purity1 <= 0) {
+                    Constants.Toasty(context, "Please enter Commodity Weight and Purity Fields", Constants.warning);
+                    break;
+                }
 
                 float netWeight1 = (commodityWeight1 - (stoneWastage1 + otherWastage1));
                 float netWeight1WithPurity = (netWeight1 * purity1) / 100;
@@ -374,7 +443,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                     Constants.Toasty(context, "Please enter mandatory fields.", Constants.warning);
                     break;
                 } else {
-                    if (!binding.itemAddTransLayoutParent.addItem.getText().toString().equals("UPDATE")) {
+                    if (!binding.itemAddTransLayoutParent.addItemButton.getText().toString().equals("UPDATE")) {
                         list.add(nn);
                     } else {
                         list.remove(position);
@@ -385,45 +454,11 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
                     //  binding.itemAddTransLayoutParent.selectedCommodityAmount.setText("");
                     resetInnerAddItem(false);
-                    binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
+                    binding.addItemTransIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
                     binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.GONE);
                     binding.recyclerTransItems.setVisibility(View.VISIBLE);
                     binding.bottomTotalLayout.setVisibility(View.VISIBLE);
 
-                }
-            }
-            break;
-            case R.id.step_last_submit: {
-                String str = binding.stepLastSubmit.getText().toString();
-                try {
-                    if (addTransactionReq.itemList != null && addTransactionReq.itemList.size() > 0) {
-                        if (str.equals("Proceed")) {
-                            current = four;
-                            setCurrentLayoutVisible();
-                            settingFinalPageVals();
-                            binding.stepLastSubmit.setText("SUBMIT");
-
-                        } else {
-                            addTransactionReq.paidAmountForRelease = binding.finalLayoutParent.paidAmountForRelease.getText().toString();
-                            addTransactionReq.roundOffAmount = binding.finalLayoutParent.roundOffAmount.getText().toString();
-                            addTransactionReq.comments = binding.finalLayoutParent.comments.getText().toString();
-
-                            if (addTransactionReq.paidAmountForRelease.isEmpty() || addTransactionReq.roundOffAmount.isEmpty() || addTransactionReq.comments.isEmpty()) {
-                                Constants.Toasty(context, "Please enter Mandatory details to submit.", Constants.warning);
-                                break;
-                            }
-                            if (Constants.isConnection()) {
-                                progressDialog.show();
-                                viewModel.addTransreq(addTransactionReq);
-                            } else
-                                Constants.Toasty(context, "Please check network connection.", Constants.info);
-                        }
-                    } else
-                        Constants.Toasty(context, "No Items Found to do transaction.", Constants.warning);
-                } catch (Exception e) {
-                    Constants.Toasty(context, "No Items Found to do transaction.", Constants.warning);
-                    e.printStackTrace();
-                    Log.d(TAG, e.getMessage());
                 }
             }
             break;
@@ -432,7 +467,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
     void settingFinalPageVals() {
         binding.finalLayoutParent.customer.setText(binding.selectedCustomerName.getText().toString());
-        binding.selectedTextCommodityPrice.setText("Price: " + binding.commodityRate.getText().toString());
+        binding.selectedTextCommodityPrice.setText("Price: " + Constants.priceToString(binding.commodityRate.getText().toString()));
         binding.selectedBranch.setText("Branch: " + binding.selectBranch.getSelectedItem().toString());
 
         binding.finalLayoutParent.commodity.setText(binding.selectedTextCommodity.getText().toString());
@@ -441,10 +476,10 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         binding.finalLayoutParent.totalStoneWastage.setText("Stone Wst:\n" + addTransactionReq.totalStoneWastage);
         binding.finalLayoutParent.totalOtherWastage.setText("Other Wst:\n" + addTransactionReq.totalOtherWastage);
         binding.finalLayoutParent.totalNettWeight.setText("Total NetWeight: " + addTransactionReq.totalNettWeight);
-        binding.finalLayoutParent.totalAmount.setText("Total Amount: " + addTransactionReq.totalAmount);
-        binding.finalLayoutParent.grossAmount.setText("Gross Amount: " + addTransactionReq.grossAmount);
-        binding.finalLayoutParent.marginAmount.setText("Margin Amount: " + addTransactionReq.marginAmount);
-        binding.finalLayoutParent.nettAmount.setText("Net Amount: " + addTransactionReq.nettAmount);
+        binding.finalLayoutParent.totalAmount.setText("Total Amount: " + Constants.priceToString(addTransactionReq.totalAmount));
+        binding.finalLayoutParent.grossAmount.setText("Gross Amount: " + Constants.priceToString(addTransactionReq.grossAmount));
+        binding.finalLayoutParent.marginAmount.setText("Margin Amount: " + Constants.priceToString(addTransactionReq.marginAmount));
+        binding.finalLayoutParent.nettAmount.setText("Net Amount: " + Constants.priceToString(addTransactionReq.nettAmount));
         binding.finalLayoutParent.marginPercent.setText("Margin Percent: " + addTransactionReq.marginPercent);
 
         binding.finalLayoutParent.paidAmountForRelease.setText(addTransactionReq.paidAmountForRelease);
@@ -454,7 +489,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         String itemsDataRepeatStr = "ITEMS: \n";
 
         for (int i = 0; i < list.size(); i++) {
-            itemsDataRepeatStr += (i + 1) + ") " + list.get(i).commodity + "\t\t" + list.get(i).commodityWeight + "Grms\t\t Rs. " + list.get(i).amount + "\n\n";
+            itemsDataRepeatStr += (i + 1) + ") " + list.get(i).commodity + "\t\t\t" + list.get(i).commodityWeight + "Grms\t\t\t Rs. " + Constants.priceToString(list.get(i).amount) + "\n\n";
         }
         binding.finalLayoutParent.itemsDataRepeat.setText(itemsDataRepeatStr);
 
@@ -506,12 +541,12 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             binding.finalLayoutParent.itemsDataRepeat.setText("");
             setCurrentLayoutVisible();
         }
-        binding.itemAddTransLayoutParent.addItem.setText("ADD");
-        binding.itemAddTransLayoutParent.commodityWeight.setText("");
-        binding.itemAddTransLayoutParent.stoneWastage.setText("");
-        binding.itemAddTransLayoutParent.otherWastage.setText("");
-        binding.itemAddTransLayoutParent.purity.setText("");
-        binding.itemAddTransLayoutParent.margin.setText("");
+        binding.itemAddTransLayoutParent.addItemButton.setText("ADD");
+        binding.itemAddTransLayoutParent.commodityWeight.setText("0");
+        binding.itemAddTransLayoutParent.stoneWastage.setText("0");
+        binding.itemAddTransLayoutParent.otherWastage.setText("0");
+        binding.itemAddTransLayoutParent.purity.setText("0");
+        binding.itemAddTransLayoutParent.margin.setText("0");
         binding.itemAddTransLayoutParent.selectItem.setSelection(0);
         binding.itemAddTransLayoutParent.nettWeight.setText("Net Weight: 0.00");
         binding.itemAddTransLayoutParent.calculatedItemAmount.setText("Rs. 0.00");
@@ -520,46 +555,35 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     }
 
     void setCurrentLayoutVisible() {
+        binding.firstStepLayout.setVisibility(View.GONE);
+        binding.secondStepOtp.setVisibility(View.GONE);
+        binding.thirdStepDetails.setVisibility(View.GONE);
+        binding.stepNextButton.setVisibility(View.GONE);
+        binding.bottomTotalLayout.setVisibility(View.GONE);
+        binding.finalLayoutParent.finalLayoutChild.setVisibility(View.GONE);
         switch (current) {
             case first:
-                binding.firstStepLayout.setVisibility(View.VISIBLE);
-                binding.secondStepOtp.setVisibility(View.GONE);
-                binding.thirdStepDetails.setVisibility(View.GONE);
-                binding.finalLayoutParent.finalLayoutChild.setVisibility(View.GONE);
-
-                binding.stepNext.setVisibility(View.VISIBLE);
-                binding.bottomTotalLayout.setVisibility(View.GONE);
+                makeItemVisible(binding.firstStepLayout, binding.stepNextButton);
                 otp = Constants.getRandomNumberString();
                 break;
             case second:
-                binding.firstStepLayout.setVisibility(View.GONE);
-                binding.secondStepOtp.setVisibility(View.VISIBLE);
-                binding.thirdStepDetails.setVisibility(View.GONE);
-                binding.finalLayoutParent.finalLayoutChild.setVisibility(View.GONE);
+                makeItemVisible(binding.stepNextButton, binding.secondStepOtp);
                 break;
             case third:
-                binding.stepNext.setVisibility(View.GONE);
-
-                binding.firstStepLayout.setVisibility(View.GONE);
-                binding.secondStepOtp.setVisibility(View.GONE);
-                binding.thirdStepDetails.setVisibility(View.VISIBLE);
-                binding.finalLayoutParent.finalLayoutChild.setVisibility(View.GONE);
-
-                binding.bottomTotalLayout.setVisibility(View.VISIBLE);
-                binding.recyclerTransItems.setVisibility(View.VISIBLE);
+                makeItemVisible(binding.recyclerTransItems, binding.thirdStepDetails, binding.bottomTotalLayout);
                 //setmRecyclerView();
                 break;
             case four:
-                binding.stepNext.setVisibility(View.GONE);
-
-                binding.firstStepLayout.setVisibility(View.GONE);
-                binding.secondStepOtp.setVisibility(View.GONE);
-                binding.thirdStepDetails.setVisibility(View.GONE);
-
-                binding.finalLayoutParent.finalLayoutChild.setVisibility(View.VISIBLE);
-                // binding.stepLastSubmit.setText("SUBMIT");
-                //setmRecyclerView();
+                makeItemVisible(binding.finalLayoutParent.finalLayoutChild, binding.bottomTotalLayout);
+               /* binding.finalLayoutParent.finalLayoutChild.setVisibility(View.VISIBLE);
+                binding.bottomTotalLayout.setVisibility(View.VISIBLE);*/
                 break;
+        }
+    }
+
+    void makeItemVisible(View... v) {
+        for (View vv : v) {
+            vv.setVisibility(View.VISIBLE);
         }
     }
 
@@ -620,19 +644,20 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         req.companyID = Sessions.getUserString(context, Constants.companyId);
         req.userID = Sessions.getUserString(context, Constants.userId);
         String mob = binding.autoCompleteSelectCustomer.getText().toString();
+        String totalTransactionAmount = binding.finalLayoutParent.roundOffAmount.getText().toString();
         req.customerID = customersArr.get(mob);
         if (mob.isEmpty()) {
-
             return null;
         }
         req.customerMob = mob.split("-")[1];
         req.counter = (counter + 1) + "";
+        req.totalTransactionAmount = totalTransactionAmount;
         req.otp = otp;
 
         if (binding.selectBranch.getSelectedItem().toString().equals("Select")
                 || binding.selectCommodity.getSelectedItem().toString().equals("Select")
-                || req.customerMob.equals("Select")
                 || req.customerID.equals("Select")
+                || req.customerMob.equals("Select")
                 || binding.commodityRate.getText().toString().isEmpty()
         ) {
 
@@ -688,7 +713,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
                 addTransactionReq.itemList.add(itemList);
             }
-            binding.grandTotalAmtBottom.setText("Total: Rs. " + totalAmount);
+            binding.grandTotalAmtBottom.setText("Total: Rs. " + Constants.priceToString(totalAmount+""));
         } else {
             binding.grandTotalAmtBottom.setText("Total: Rs. 0.00");
         }
@@ -701,7 +726,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         addTransactionReq.customerID = customersArr.get(binding.autoCompleteSelectCustomer.getText().toString());
         addTransactionReq.branchID = branchesArr.get(binding.selectBranch.getSelectedItem().toString());
         addTransactionReq.commodity = binding.selectCommodity.getSelectedItem().toString();
-        addTransactionReq.createdBy = Sessions.getUserString(context, Constants.userIdID);
+        addTransactionReq.createdBy = Sessions.getUserString(context, Constants.userId);
         addTransactionReq.presentDayCommodityRate = binding.commodityRate.getText().toString();
 
         addTransactionReq.totalCommodityWeight = totalCommodityWeight + "";
@@ -766,11 +791,11 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         binding.itemAddTransLayoutParent.nettWeight.setText("Net Weight : " + list.get(position).nettWeight);
         binding.itemAddTransLayoutParent.calculatedItemAmount.setText("Rs. " + list.get(position).amount);
 
-        binding.addItemTrans.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove));
+        binding.addItemTransIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove));
         binding.itemAddTransLayoutParent.itemAddTransLayout.setVisibility(View.VISIBLE);
         binding.recyclerTransItems.setVisibility(View.GONE);
         binding.bottomTotalLayout.setVisibility(View.GONE);
-        binding.itemAddTransLayoutParent.addItem.setText("UPDATE");
+        binding.itemAddTransLayoutParent.addItemButton.setText("UPDATE");
     }
 
     @Override
@@ -787,8 +812,8 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onAddTransSuccess(AddTransactionRes res) {
         progressDialog.dismiss();
-        Constants.Toasty(context, res.response + "" + res.transactionID, Constants.success);
-        Constants.alertDialogShow(context, res.response + "\n" + res.transactionID,
+        Constants.Toasty(context, res.response.toUpperCase() + "\n\nBill No:" + res.transactionID, Constants.success);
+        Constants.alertDialogShowOneButton(context, res.response + "\n" + res.transactionID,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

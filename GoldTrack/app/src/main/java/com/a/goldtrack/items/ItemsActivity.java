@@ -112,7 +112,7 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
         mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
         if (mAdapter == null) {
-            mAdapter = new CustomItemsAdapter(mDataset);
+            mAdapter = new CustomItemsAdapter(context,mDataset);
             mAdapter.setClickListener(this);
             binding.recyclerItems.setAdapter(mAdapter);
         } else mAdapter.updateListNew(mDataset);

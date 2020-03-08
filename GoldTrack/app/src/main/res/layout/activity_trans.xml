@@ -363,11 +363,12 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerInParent="true"
                                     android:text="ITEMS"
-                                    android:textColor="@color/white"
-                                    android:textSize="20sp" />
+                                    android:textColor="@color/black"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
 
                                 <ImageView
-                                    android:id="@+id/add_item_trans"
+                                    android:id="@+id/add_item_trans_icon"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
@@ -431,7 +432,7 @@
             </RelativeLayout>
 
             <Button
-                android:id="@+id/step_next"
+                android:id="@+id/step_next_button"
                 style="@style/blueButton"
                 android:layout_width="155dp"
                 android:layout_height="wrap_content"
