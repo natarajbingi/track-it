@@ -18,13 +18,18 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddTransactionReq;
@@ -81,6 +86,8 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         init();
     }
 
+    double payableAmt = 0;
+
     private void init() {
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -135,6 +142,76 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
             }
         });
+        binding.finalLayoutParent.itemAddingLocalCalci.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String str = binding.finalLayoutParent.marginForTotal.getText().toString();
+                float marginForFinalTotal = Float.parseFloat(str.isEmpty() ? "0" : str);
+
+                float marginAmt = (Float.parseFloat(addTransactionReq.roundOffAmount) * marginForFinalTotal) / 100;// 2 / 100
+                float FinalAmt = Float.parseFloat(addTransactionReq.roundOffAmount) - marginAmt;
+                // float FinalAmtPer = FinalAmt / Float.parseFloat(addTransactionReq.totalAmount) * 100;
+                addTransactionReq.marginAmount = marginAmt + "";
+                addTransactionReq.marginPercent = str;
+                addTransactionReq.nettAmount = FinalAmt + "";
+                addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount + "";
+                //  binding.finalLayoutParent.marginAmount.setText("Margin Amount: " + marginAmt);
+                settingFinalPageVals();
+            }
+        });
+        binding.finalLayoutParent.roundOffAmount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (!b) {
+                    double rdAmt = Double.parseDouble(binding.finalLayoutParent.roundOffAmount.getText().toString());
+                    double tolAmt = Double.parseDouble(addTransactionReq.totalAmount);
+                    double marginAmt = 0.0, newMarginPer = 0.0;
+                    if (rdAmt != tolAmt) {
+                        newMarginPer = (1 - (rdAmt / tolAmt)) * 100;
+                        marginAmt = (rdAmt * newMarginPer) / 100;// 2 / 100
+                        double FinalAmt = rdAmt - marginAmt;
+                        addTransactionReq.marginPercent = newMarginPer + "";
+                        addTransactionReq.marginAmount = marginAmt + "";
+                        addTransactionReq.roundOffAmount = rdAmt + "";
+                        addTransactionReq.nettAmount = rdAmt + "";
+                        addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount + "";
+                    } else {
+                        addTransactionReq.roundOffAmount = addTransactionReq.totalAmount;
+                        // addTransactionReq.marginPercent = newMarginPer+"";
+                        //  addTransactionReq.marginAmount = marginAmt+"";
+                    }
+                    settingFinalPageVals();
+                }
+            }
+        });
+
+        binding.finalLayoutParent.nbfcReleaseAmtCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                binding.finalLayoutParent.paidAmountForRelease.setEnabled(b);
+                if (!b) {
+                    addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount;
+                    binding.finalLayoutParent.paidAmountForRelease.setText(addTransactionReq.paidAmountForRelease);
+                    payableAmt = Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease);
+                    binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + payableAmt);
+                }
+            }
+        });
+        binding.finalLayoutParent.paidAmountForRelease.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (!b) {
+                    String strNew = binding.finalLayoutParent.paidAmountForRelease.getText().toString();
+                    addTransactionReq.paidAmountForRelease = strNew;
+                    //  double strNewPAmt = strNew.isEmpty() ? 0 : Double.parseDouble(strNew);
+                    // if (strNewPAmt != Double.parseDouble(addTransactionReq.nettAmount)) {
+                    payableAmt = Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease);
+                    binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + payableAmt);
+                    //  }
+                }
+            }
+        });
+
         DropdownDataForCompanyRes resDp = (DropdownDataForCompanyRes) Sessions.getUserObj(context, Constants.dorpDownSession, DropdownDataForCompanyRes.class);
         if (resDp != null) {
             viewModel.dropdownList.postValue(resDp);
@@ -292,12 +369,12 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                             });
 
                         } else {
-                            addTransactionReq.paidAmountForRelease = binding.finalLayoutParent.paidAmountForRelease.getText().toString();
-                            addTransactionReq.roundOffAmount = binding.finalLayoutParent.roundOffAmount.getText().toString();
-                            addTransactionReq.comments = binding.finalLayoutParent.comments.getText().toString();
+                            // addTransactionReq.paidAmountForRelease = binding.finalLayoutParent.paidAmountForRelease.getText().toString();
+                            //  addTransactionReq.roundOffAmount = binding.finalLayoutParent.roundOffAmount.getText().toString();
+                            //   addTransactionReq.comments = binding.finalLayoutParent.comments.getText().toString();
 
                             binding.grandTotalAmtBottom.setText("Total: Rs. " + Constants.priceToString(addTransactionReq.roundOffAmount));
-                            if (addTransactionReq.paidAmountForRelease.isEmpty() || addTransactionReq.roundOffAmount.isEmpty() || addTransactionReq.comments.isEmpty()) {
+                            if (addTransactionReq.paidAmountForRelease.isEmpty() || addTransactionReq.roundOffAmount.isEmpty()) {
                                 Constants.Toasty(context, "Please enter Mandatory details to submit.", Constants.warning);
                                 break;
                             }
@@ -305,9 +382,14 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
                                 CustomerWithOTPReq req = firstLayoutValidate();
                                 if (req != null) {
-                                    String strR = "REQUEST OTP:\n\nReleasing amount: "
-                                            + Constants.priceToString(addTransactionReq.paidAmountForRelease)
-                                            + "\nRound off amount: " + Constants.priceToString(req.totalTransactionAmount);
+                                    req.totalTransactionAmount = addTransactionReq.nettAmount;
+                                    String strR = "REQUEST OTP:\n\n"
+                                            + "Gross Amt: " + Constants.priceToString(addTransactionReq.grossAmount)
+                                            + "\nMargin Amt: " + Constants.priceToString(addTransactionReq.marginAmount)
+                                            + "\nNet Amt: " + Constants.priceToString(addTransactionReq.nettAmount)
+                                            + "\nReleasing Amt: " + Constants.priceToString(addTransactionReq.paidAmountForRelease)
+                                            + "\nPayable Amt: " + Constants.priceToString(payableAmt + "");
+
                                     Constants.alertDialogShowWithCancel(context, strR, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -475,7 +557,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         binding.finalLayoutParent.totalCommodityWeight.setText("Cmd Weight:\n" + addTransactionReq.totalCommodityWeight);
         binding.finalLayoutParent.totalStoneWastage.setText("Stone Wst:\n" + addTransactionReq.totalStoneWastage);
         binding.finalLayoutParent.totalOtherWastage.setText("Other Wst:\n" + addTransactionReq.totalOtherWastage);
-        binding.finalLayoutParent.totalNettWeight.setText("Total NetWeight: " + addTransactionReq.totalNettWeight);
+        binding.finalLayoutParent.totalNettWeight.setText("Net Weight:\n" + addTransactionReq.totalNettWeight);
         binding.finalLayoutParent.totalAmount.setText("Total Amount: " + Constants.priceToString(addTransactionReq.totalAmount));
         binding.finalLayoutParent.grossAmount.setText("Gross Amount: " + Constants.priceToString(addTransactionReq.grossAmount));
         binding.finalLayoutParent.marginAmount.setText("Margin Amount: " + Constants.priceToString(addTransactionReq.marginAmount));
@@ -486,13 +568,27 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         binding.finalLayoutParent.roundOffAmount.setText(addTransactionReq.roundOffAmount);
         binding.finalLayoutParent.comments.setText(addTransactionReq.comments);
 
-        String itemsDataRepeatStr = "ITEMS: \n";
-
+        String itemsDataRepeatStr = "ITEMS:";
+        binding.finalLayoutParent.itemsDataRepeatLayout.removeAllViews();
+        payableAmt = Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease);
+        binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + payableAmt);
+        binding.grandTotalAmtBottom.setText("Total: Rs. " + Constants.priceToString(addTransactionReq.roundOffAmount));
         for (int i = 0; i < list.size(); i++) {
-            itemsDataRepeatStr += (i + 1) + ") " + list.get(i).commodity + "\t\t\t" + list.get(i).commodityWeight + "Grms\t\t\t Rs. " + Constants.priceToString(list.get(i).amount) + "\n\n";
+            addItem(list.get(i), i);
+            // itemsDataRepeatStr += (i + 1) + ") " + list.get(i).commodity + "\t\t\t" + list.get(i).commodityWeight + "Grms\t\t\t Rs. " + Constants.priceToString(list.get(i).amount) + "\n\n";
         }
         binding.finalLayoutParent.itemsDataRepeat.setText(itemsDataRepeatStr);
+    }
 
+    private void addItem(ItemsTrans data, int i) {
+        final ViewGroup newView1 = (ViewGroup) LayoutInflater.from(context)
+                .inflate(R.layout.last_list_text, binding.finalLayoutParent.itemsDataRepeatLayout, false);
+
+        ((TextView) newView1.findViewById(R.id.commodity)).setText((i + 1) + ") " + data.commodity);
+        ((TextView) newView1.findViewById(R.id.grms)).setText(data.commodityWeight + " gms");
+        ((TextView) newView1.findViewById(R.id.amt)).setText("Rs. " + data.amount);
+
+        binding.finalLayoutParent.itemsDataRepeatLayout.addView(newView1);
     }
 
     private void resetInnerAddItem(boolean finalReset) {
@@ -684,9 +780,11 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 totalStoneWastage = 0,
                 totalOtherWastage = 0,
                 totalNettWeight = 0,
+
                 totalAmount = 0,
                 grossAmount = 0,
                 marginAmount = 0,
+
                 nettAmount = 0,
                 paidAmountForRelease = 0,
                 marginPercent = 0,
@@ -713,13 +811,15 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
                 addTransactionReq.itemList.add(itemList);
             }
-            binding.grandTotalAmtBottom.setText("Total: Rs. " + Constants.priceToString(totalAmount+""));
+            binding.grandTotalAmtBottom.setText("Total: Rs. " + Constants.priceToString(totalAmount + ""));
         } else {
             binding.grandTotalAmtBottom.setText("Total: Rs. 0.00");
         }
 
         paidAmountForRelease = totalAmount;
         roundOffAmount = totalAmount;
+        grossAmount = totalAmount;
+        nettAmount = totalAmount;
         addTransactionReq.transValidOTP = otp;
         addTransactionReq.companyID = Sessions.getUserString(context, Constants.companyId);
         addTransactionReq.userID = Sessions.getUserString(context, Constants.userId);
@@ -741,7 +841,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         addTransactionReq.paidAmountForRelease = paidAmountForRelease + "";
         addTransactionReq.marginPercent = marginPercent + "";
         addTransactionReq.roundOffAmount = roundOffAmount + "";
-
+        payableAmt = Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease);
         addTransactionReq.referencePicData = "";
         addTransactionReq.nbfcReferenceNo = "DYU_" + Constants.getDateNowAll();
         addTransactionReq.comments = "";

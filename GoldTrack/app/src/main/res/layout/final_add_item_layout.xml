@@ -68,9 +68,36 @@
 
 
             <TextView
+                android:id="@+id/itemsDataRepeat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:text="ITEMS:"
+                android:textColor="@color/oil" />
+
+            <include
+                android:id="@+id/simply"
+                layout="@layout/last_list_text" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/monsoon" />
+
+            <LinearLayout
+                android:id="@+id/itemsDataRepeatLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:background="@color/light_me"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/iron"
                 android:padding="4dp"
                 android:text="Total Weights" />
 
@@ -117,6 +144,13 @@
                 android:text="Total Net Weight"
                 android:textColor="@color/oil" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/iron"
+                android:padding="4dp"
+                android:text="Total Amounts" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -139,28 +173,15 @@
                     android:padding="8dp"
                     android:text="grossAmount"
                     android:textColor="@color/oil" />
-            </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/nettAmount"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="8dp"
-                    android:text="nettAmount"
-                    android:textColor="@color/oil" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/marginPercent"
@@ -171,14 +192,6 @@
                     android:text="marginPercent"
                     android:textColor="@color/oil" />
 
-                <TextView
-                    android:id="@+id/marginAmount"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="8dp"
-                    android:text="marginAmount"
-                    android:textColor="@color/oil" />
 
             </LinearLayout>
 
@@ -200,34 +213,11 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/itemsDataRepeat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/light_me"
-                android:padding="8dp"
-                android:text="ITEMS: \n\nChain-01  22Grms Rs. 120000.0\nChain-01  22Grms Rs. 120000.0"
-                android:textColor="@color/oil" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/paidAmountForRelease"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Paid Amount For Release *"
-                        android:inputType="text|numberDecimal"
-                        android:text="" />
-                </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -242,6 +232,108 @@
                         android:inputType="text|numberDecimal"
                         android:text="" />
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.45">
+
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/marginForTotal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Margin %*"
+                            android:inputType="text|number"
+                            android:text="0" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageView
+                        android:id="@+id/item_adding_local_calci"
+                        android:layout_width="0dp"
+                        android:layout_height="45dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0.1"
+                        android:background="@drawable/button_bg"
+                        android:src="@drawable/ic_check_white_48dp" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/marginAmount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"
+                        android:text="Margin Amount"
+                        android:textColor="@color/oil"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/nettAmount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"
+                        android:text="nettAmount"
+                        android:textColor="@color/oil"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+
+                    <com.google.android.material.checkbox.MaterialCheckBox
+                        android:id="@+id/nbfcReleaseAmtCheckBox"
+                        android:layout_width="0dp"
+                        android:layout_height="45dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0.35"
+                        android:checked="false"
+                        android:text="NBFC - Yes/No" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.65">
+
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/paidAmountForRelease"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:hint="Paid Amount For Release *"
+                            android:inputType="text|numberDecimal"
+                            android:text="" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/payableAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:padding="8dp"
+                    android:text="payableAmount"
+                    android:textColor="@color/oil"
+                    android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"

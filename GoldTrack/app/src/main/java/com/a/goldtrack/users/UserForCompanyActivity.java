@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -37,7 +38,9 @@ import com.a.goldtrack.Model.GetUserForCompany;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.Model.UpdateCompanyDetails;
 import com.a.goldtrack.Model.UpdateUserDetails;
+import com.a.goldtrack.Model.User;
 import com.a.goldtrack.R;
+import com.a.goldtrack.camera.CamReqActivity;
 import com.a.goldtrack.databinding.ActivityUserForCompanyBinding;
 import com.a.goldtrack.network.APIService;
 import com.a.goldtrack.network.RetrofitClient;
@@ -80,18 +83,13 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
     List<String> rolesList = new ArrayList<>();
     private int userIdIfEditing = 0;
 
-    // Camera Actions
-    static final int REQUEST_TAKE_PHOTO = 1;
-    static final int REQUEST_GALLERY_PHOTO = 2;
-    File mPhotoFile;
-    FileCompressor mCompressor;
 
     void setmRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this);
         mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
         if (mAdapter == null) {
-            mAdapter = new CustomUsersAdapter(context,mDataset);
+            mAdapter = new CustomUsersAdapter(context, mDataset);
             mAdapter.setClickListener(this);
             binding.recyclerUserForCmpy.setAdapter(mAdapter);
         } else mAdapter.updateListNew(mDataset);
@@ -144,7 +142,6 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("in Progress...");
-        mCompressor = new FileCompressor(this);
 
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
@@ -250,201 +247,6 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
     }
 
 
-    /*  Camera Actions */
-
-    /**
-     * Alert dialog for capture or select from galley
-     */
-    private void selectImage() {
-        final CharSequence[] items = {
-                "Take Photo", "Choose from Library",
-                "Cancel"
-        };
-        AlertDialog.Builder builder = new AlertDialog.Builder(UserForCompanyActivity.this);
-        builder.setItems(items, (dialog, item) -> {
-            if (items[item].equals("Take Photo")) {
-                requestStoragePermission(true);
-            } else if (items[item].equals("Choose from Library")) {
-                requestStoragePermission(false);
-            } else if (items[item].equals("Cancel")) {
-                dialog.dismiss();
-            }
-        });
-        builder.show();
-
-    }
-
-    /**
-     * Capture image from camera
-     */
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                // Error occurred while creating the File
-            }
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        BuildConfig.APPLICATION_ID + ".provider",
-                        photoFile);
-                mPhotoFile = photoFile;
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
-        }
-    }
-
-    /**
-     * Select image fro gallery
-     */
-    private void dispatchGalleryIntent() {
-        Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickPhoto.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivityForResult(pickPhoto, REQUEST_GALLERY_PHOTO);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_TAKE_PHOTO) {
-                try {
-                    mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Glide.with(UserForCompanyActivity.this)
-                        .load(mPhotoFile)
-                        .apply(new RequestOptions()
-                                //  .centerCrop()
-                                //  .circleCrop()
-                                .placeholder(R.drawable.ic_menu_camera))
-                        .into(binding.selectedImg);
-            } else if (requestCode == REQUEST_GALLERY_PHOTO) {
-                Uri selectedImage = data.getData();
-                try {
-                    mPhotoFile = new File(getRealPathFromUri(selectedImage));
-                    mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Glide.with(UserForCompanyActivity.this)
-                        .load(mPhotoFile)
-                        .apply(new RequestOptions()
-                                //.centerCrop()
-                                // .circleCrop()
-                                .placeholder(R.drawable.ic_menu_camera))
-                        .into(binding.selectedImg);
-            }
-        }
-    }
-
-    /**
-     * Requesting multiple permissions (storage and camera) at once
-     * This uses multiple permission model from dexter
-     * On permanent denial opens settings dialog
-     */
-    private void requestStoragePermission(boolean isCamera) {
-        Dexter.withActivity(this)
-                .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.CAMERA)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        // check if all permissions are granted
-                        if (report.areAllPermissionsGranted()) {
-                            if (isCamera) {
-                                dispatchTakePictureIntent();
-                            } else {
-                                dispatchGalleryIntent();
-                            }
-                        }
-                        // check for permanent denial of any permission
-                        if (report.isAnyPermissionPermanentlyDenied()) {
-                            // show alert dialog navigating to Settings
-                            showSettingsDialog();
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(
-                            List<PermissionRequest> permissions,
-                            PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).withErrorListener(error -> Toast.makeText(getApplicationContext(),
-                "Error occurred! ", Toast.LENGTH_SHORT)
-                .show())
-                .onSameThread()
-                .check();
-    }
-
-    /**
-     * Showing Alert Dialog with Settings option
-     * Navigates user to app settings
-     * NOTE: Keep proper title and message depending on your app
-     */
-    private void showSettingsDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Need Permissions");
-        builder.setMessage(
-                "This app needs permission to use this feature. You can grant them in app settings.");
-        builder.setPositiveButton("GOTO SETTINGS", (dialog, which) -> {
-            dialog.cancel();
-            openSettings();
-        });
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-        builder.show();
-    }
-
-    // navigating user to app settings
-    private void openSettings() {
-        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", getPackageName(), null);
-        intent.setData(uri);
-        startActivityForResult(intent, 101);
-    }
-
-    /**
-     * Create file with current timestamp name
-     *
-     * @throws IOException
-     */
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        String mFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File mFile = File.createTempFile(mFileName, ".jpg", storageDir);
-        return mFile;
-    }
-
-    /**
-     * Get real file path from URI
-     */
-    public String getRealPathFromUri(Uri contentUri) {
-        Cursor cursor = null;
-        try {
-            String[] proj = {MediaStore.Images.Media.DATA};
-            cursor = getContentResolver().query(contentUri, proj, null, null, null);
-            assert cursor != null;
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -471,7 +273,8 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
                 viewOrEdit = !viewOrEdit;
                 break;
             case R.id.triggImgGet:
-                selectImage();
+                Intent cam = new Intent(UserForCompanyActivity.this, CamReqActivity.class);
+                startActivityForResult(cam, 501);
                 break;
         }
     }
@@ -576,128 +379,12 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
     }
 
 
-/*
-    private void addUserForCompany(AddUserForCompany req) {
-        Log.d(TAG, "addUserForCompany");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<AddUserForCompanyRes> call = apiService.addUserForCompany(req);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 501) {
 
-
-        progressDialog.show();
-        call.enqueue(new Callback<AddUserForCompanyRes>() {
-            @Override
-            public void onResponse(Call<AddUserForCompanyRes> call, Response<AddUserForCompanyRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            Constants.Toasty(context, "User Added successfully", Constants.success);
-                            resetAll();
-                            viewOrEdit = true;
-                            //getUserForCompany(user);
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AddUserForCompanyRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
+        }
     }
-
-    private void updateUserDetails(UpdateUserDetails req) {
-        Log.d(TAG, "addUserForCompany");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<AddUserForCompanyRes> call = apiService.updateUserDetails(req);
-
-
-        progressDialog.show();
-        call.enqueue(new Callback<AddUserForCompanyRes>() {
-            @Override
-            public void onResponse(Call<AddUserForCompanyRes> call, Response<AddUserForCompanyRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            Constants.Toasty(context, "User Updated successfully", Constants.success);
-                            resetAll();
-                            viewOrEdit = true;
-                            //getUserForCompany(user);
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AddUserForCompanyRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }
-
-    private void getUserForCompany(GetUserForCompany req) {
-        Log.d(TAG, "getUserForCompany");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<GetUserForCompanyRes> call = apiService.getUserForCompany(req);
-
-
-        progressDialog.show();
-        call.enqueue(new Callback<GetUserForCompanyRes>() {
-            @Override
-            public void onResponse(Call<GetUserForCompanyRes> call, Response<GetUserForCompanyRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            mDataset = response.body().resList;
-                            setmRecyclerView();
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GetUserForCompanyRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }
-*/
-
 
 }

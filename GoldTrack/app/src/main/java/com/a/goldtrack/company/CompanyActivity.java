@@ -326,10 +326,8 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
                 viewOrEdit = !viewOrEdit;
                 break;
             case R.id.triggImgGet:
-                CamReqActivity v = new CamReqActivity();
-                v.onICameraAvailable(this);
-                Intent i = new Intent(CompanyActivity.this, CamReqActivity.class);
-                startActivity(i);
+//                Intent i = new Intent(CompanyActivity.this, CamReqActivity.class);
+//                startActivity(i);
                 break;
         }
     }

@@ -408,7 +408,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_marginRight="5dp"
-                android:layout_marginBottom="10dp">
+                android:background="@drawable/background"
+                android:layout_marginBottom="5dp">
 
                 <TextView
                     android:id="@+id/grandTotalAmtBottom"
@@ -418,14 +419,14 @@
                     android:padding="8dp"
                     android:text="Total: Rs 0.00/-"
                     android:textColor="@color/start_color"
-                    android:textSize="24sp"
+                    android:textSize="21sp"
                     android:textStyle="bold" />
 
                 <Button
                     android:id="@+id/step_last_submit"
                     style="@style/greenButton"
-                    android:layout_width="155dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="115dp"
+                    android:layout_height="45dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:text="SUBMIT" />
@@ -434,10 +435,10 @@
             <Button
                 android:id="@+id/step_next_button"
                 style="@style/blueButton"
-                android:layout_width="155dp"
-                android:layout_height="wrap_content"
+                android:layout_width="115dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
+                android:layout_height="45dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="NEXT"

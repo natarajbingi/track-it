@@ -60,7 +60,7 @@
     <style name="purpoleButton" parent="AppTheme">
         <item name="android:background">@drawable/btn_bg_purpole</item>
         <item name="android:padding">10dp</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:clickable">true</item>
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
         <item name="android:textStyle">bold</item>
@@ -70,7 +70,7 @@
     <style name="greenButton" parent="AppTheme">
         <item name="android:background">@drawable/btn_bg_green</item>
         <item name="android:padding">10dp</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:clickable">true</item>
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
         <item name="android:textStyle">bold</item>
@@ -80,7 +80,7 @@
     <style name="blueButton" parent="AppTheme">
         <item name="android:background">@drawable/btn_bg_blue</item>
         <item name="android:padding">10dp</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:clickable">true</item>
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
         <item name="android:textStyle">bold</item>
@@ -90,7 +90,7 @@
     <style name="greyButton" parent="AppTheme">
         <item name="android:background">@drawable/btn_bg_grey</item>
         <item name="android:padding">10dp</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:clickable">true</item>
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
         <item name="android:textStyle">bold</item>

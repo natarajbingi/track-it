@@ -73,8 +73,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="5dp"
                     android:layout_marginTop="5dp"
+                    android:paddingLeft="5dp"
                     android:text="Select Item *"
                     android:textSize="12sp" />
 
@@ -82,7 +82,7 @@
                     android:id="@+id/select_item"
                     style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="50dp" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -94,8 +94,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Commodity Weight in Grms*"
-                        android:text="0"
-                        android:inputType="text|number" />
+                        android:inputType="text|number"
+                        android:text="0" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -116,8 +116,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Stone Wastage in Grms*"
-                            android:text="0"
-                            android:inputType="text|number" />
+                            android:inputType="text|number"
+                            android:text="0" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -131,8 +131,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Other Wastage in Grms*"
-                            android:text="0"
-                            android:inputType="text|number" />
+                            android:inputType="text|number"
+                            android:text="0" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
@@ -153,25 +153,26 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/purity"
                             android:layout_width="match_parent"
-                            android:text="0"
                             android:layout_height="wrap_content"
                             android:hint="Purity % *"
-                            android:inputType="text|number" />
+                            android:inputType="text|number"
+                            android:text="0" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.45">
+                        android:layout_weight="0.45"
+                        android:visibility="gone">
 
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/margin"
                             android:layout_width="match_parent"
-                            android:text="0"
                             android:layout_height="wrap_content"
                             android:hint="Margin *"
-                            android:inputType="text|number" />
+                            android:inputType="text|number"
+                            android:text="0" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <ImageView
