@@ -35,9 +35,10 @@ public class CustomDailyClosureAdapter extends RecyclerView.Adapter<CustomDailyC
     }
 
     public void updateListNew(List<GetUserDailyClosureRes.DataList> mDataset) {
-        this.mDataSet=(mDataset);
+        this.mDataSet = (mDataset);
         this.notifyDataSetChanged();
     }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final TextView textView, text_sub, text_date;
         private final ImageView logo_id;
@@ -78,8 +79,10 @@ public class CustomDailyClosureAdapter extends RecyclerView.Adapter<CustomDailyC
         } else {
             viewHolder.parent_tile_bg.setBackgroundColor(context.getResources().getColor(R.color.white));
         }
-        viewHolder.textView.setText(mDataSet.get(position).userName);
-        viewHolder.text_sub.setText("Fund Recieved: " +mDataSet.get(position).fundRecieved +"\t\tCash In Hand: " +mDataSet.get(position).cashInHand + "\nExpenses: " + mDataSet.get(position).expenses);
+        viewHolder.textView.setText(mDataSet.get(position).userName + "\t\tBranch: " + mDataSet.get(position).branchId);
+        viewHolder.text_sub.setText("Fund Received: " + mDataSet.get(position).fundRecieved
+                + "\t\tCash In Hand: " + mDataSet.get(position).cashInHand
+                + "\nExpenses: " + mDataSet.get(position).expenses);
         viewHolder.text_date.setText(mDataSet.get(position).date);
     }
 
