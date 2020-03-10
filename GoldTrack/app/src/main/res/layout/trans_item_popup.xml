@@ -29,7 +29,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background_one_"
                 android:orientation="horizontal">
 
                 <TextView
@@ -40,8 +39,7 @@
                     android:padding="6dp"
                     android:text="ReferenceNo: Dyu_4565431315416"
                     android:textColor="@color/black"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
+                    android:textSize="16sp" />
 
 
             </LinearLayout>
@@ -58,15 +56,7 @@
                     android:layout_weight="1"
                     android:padding="8dp"
                     android:text="customer"
-                    android:textColor="@color/oil"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                    android:textColor="@color/oil" />
 
                 <TextView
                     android:id="@+id/commodity"
@@ -75,28 +65,49 @@
                     android:layout_weight="1"
                     android:padding="8dp"
                     android:text="commodity"
-                    android:textColor="@color/oil"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/selectedTextCommodityPrice"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:padding="8dp"
-                    android:text="Price"
-                    android:textColor="@color/oil"
-                    android:textStyle="bold" />
-
-
+                    android:textColor="@color/oil" />
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/selectedTextCommodityPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="8dp"
+                android:text="Price"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/itemsDataRepeat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:text="ITEMS:"
+                android:textColor="@color/oil" />
+
+            <include
+                android:id="@+id/simply"
+                layout="@layout/last_list_text" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/monsoon" />
+
+            <LinearLayout
+                android:id="@+id/itemsDataRepeatLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@color/light_me"
+                android:orientation="vertical">
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/light_me"
+                android:background="@color/iron"
                 android:padding="4dp"
                 android:text="Total Weights" />
 
@@ -112,8 +123,7 @@
                     android:layout_weight="1"
                     android:padding="8dp"
                     android:text="Cmd Weight"
-                    android:textColor="@color/oil"
-                    android:textStyle="bold" />
+                    android:textColor="@color/oil" />
 
                 <TextView
                     android:id="@+id/totalStoneWastage"
@@ -122,8 +132,7 @@
                     android:layout_weight="1"
                     android:padding="8dp"
                     android:text="Stone Wst"
-                    android:textColor="@color/oil"
-                    android:textStyle="bold" />
+                    android:textColor="@color/oil" />
 
                 <TextView
                     android:id="@+id/totalOtherWastage"
@@ -132,71 +141,31 @@
                     android:layout_weight="1"
                     android:padding="8dp"
                     android:text="Other Wst"
-                    android:textColor="@color/oil"
-                    android:textStyle="bold" />
+                    android:textColor="@color/oil" />
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/totalNettWeight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="8dp"
+                android:text="Total Net Weight"
+                android:textColor="@color/oil" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/iron"
+                android:padding="4dp"
+                android:text="Total Amounts" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/totalNettWeight"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="8dp"
-                    android:text="Total Net Weight"
-                    android:textColor="@color/oil"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/nettAmount"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="8dp"
-                    android:text="nettAmount"
-                    android:textColor="@color/oil"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-
-                <TextView
-                    android:id="@+id/grossAmount"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="8dp"
-                    android:text="grossAmount"
-                    android:textColor="@color/oil"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/totalAmount"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="8dp"
-                    android:text="totalAmount"
-                    android:textColor="@color/oil"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="visible">
 
                 <TextView
                     android:id="@+id/marginPercent"
@@ -204,9 +173,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="8dp"
+                    android:textStyle="bold"
                     android:text="marginPercent"
-                    android:textColor="@color/oil"
-                    android:textStyle="bold" />
+                    android:textColor="@color/oil" />
 
                 <TextView
                     android:id="@+id/marginAmount"
@@ -214,11 +183,47 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="8dp"
-                    android:text="marginAmount"
+                    android:text="Margin Amount"
                     android:textColor="@color/oil"
                     android:textStyle="bold" />
 
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/totalAmount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="8dp"
+                    android:textStyle="bold"
+                    android:text="totalAmount"
+                    android:textColor="@color/oil" />
+
+                <TextView
+                    android:id="@+id/grossAmount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="8dp"
+                    android:textStyle="bold"
+                    android:text="grossAmount"
+                    android:textColor="@color/oil" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/nettAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="nettAmount"
+                android:textColor="@color/oil"
+                android:textStyle="bold" />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -226,10 +231,10 @@
                 android:orientation="horizontal"
                 android:visibility="gone">
 
-                <ImageView
+                <TextView
                     android:id="@+id/referencePicData"
                     android:layout_width="0dp"
-                    android:layout_height="75dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="8dp"
                     android:text="referencePicData"
@@ -237,16 +242,6 @@
 
 
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/itemsDataRepeat"
-                style="@style/blueButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/light_me"
-                android:padding="8dp"
-                android:text="ITEMS: \n\nChain-01  22Grms Rs. 120000.0\nChain-01  22Grms Rs. 120000.0"
-                android:textColor="@color/oil" />
 
             <LinearLayout
                 android:layout_width="match_parent"

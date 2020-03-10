@@ -48,6 +48,18 @@
                     android:textStyle="bold" />
             </RelativeLayout>
 
+            <EditText
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="@null"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/grey"
+                android:hint="Search..."
+                android:inputType="text"
+                android:padding="5dp" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_branches"
                 android:layout_width="match_parent"
@@ -60,8 +72,8 @@
         <ScrollView
             android:id="@+id/add_details_holder"
             android:layout_width="match_parent"
-            android:animateLayoutChanges="true"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -110,6 +122,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:visibility="gone" />
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -177,8 +190,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Branch Phone No *"
-                            android:maxLength="10"
-                            android:inputType="numberDecimal" />
+                            android:inputType="numberDecimal"
+                            android:maxLength="10" />
                     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -192,18 +205,18 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Branch Pincode *"
-                            android:maxLength="6"
-                            android:inputType="numberDecimal" />
+                            android:inputType="numberDecimal"
+                            android:maxLength="6" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <Button
                         android:id="@+id/btn_add_branch"
+                        style="@style/purpoleButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="32dp"
                         android:padding="15dp"
-                        android:text="ADD BRANCH"
-                        style="@style/purpoleButton" />
+                        android:text="ADD BRANCH" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </ScrollView>
@@ -212,8 +225,8 @@
             android:id="@+id/add_signal_branch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/nav_header_vertical_spacing"
             android:src="@drawable/ic_add" />

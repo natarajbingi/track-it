@@ -86,8 +86,7 @@
                         android:drawablePadding="10dp"
                         android:drawableTint="@color/grey"
                         android:hint="Search..."
-                        android:inputType="text"
-                        android:visibility="gone" />
+                        android:inputType="text" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_customer"
@@ -96,6 +95,10 @@
                         android:layout_marginTop="5dp"
                         android:paddingLeft="@dimen/recycle_padding"
                         android:paddingRight="@dimen/recycle_padding" />
+
+                    <include
+                        android:id="@+id/nodata_layout"
+                        layout="@layout/no_data" />
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

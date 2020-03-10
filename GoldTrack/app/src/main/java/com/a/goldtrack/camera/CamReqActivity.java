@@ -1,5 +1,6 @@
 package com.a.goldtrack.camera;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -19,6 +20,7 @@ import android.provider.Settings;
 import com.a.goldtrack.BuildConfig;
 import com.a.goldtrack.R;
 import com.a.goldtrack.users.UserForCompanyActivity;
+import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.FileCompressor;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -30,7 +32,11 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import android.content.Intent;
 import android.util.Base64;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
@@ -43,6 +49,15 @@ import java.util.List;
 public class CamReqActivity extends AppCompatActivity {
 
     private Context myContext;
+    /*  Camera Actions */
+    // Camera Actions
+    static final int REQUEST_TAKE_PHOTO = 1;
+    static final int REQUEST_GALLERY_PHOTO = 2;
+    File mPhotoFile;
+    FileCompressor mCompressor;
+    ImageView selectedImg;
+    public static final int CAM_REQ_Code = 501;
+    public static final String CAM_REQ_ImgData = "ImgData";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,17 +65,31 @@ public class CamReqActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cam_req);
         myContext = this;
         mCompressor = new FileCompressor(this);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        final ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+
+        selectedImg = findViewById(R.id.imageView);
         selectImage();
+
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.home_none, menu);
+        return true;
+    }
 
-    /*  Camera Actions */
-    // Camera Actions
-    static final int REQUEST_TAKE_PHOTO = 1;
-    static final int REQUEST_GALLERY_PHOTO = 2;
-    File mPhotoFile;
-    FileCompressor mCompressor;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (android.R.id.home == item.getItemId()) // API 5+ solution
+        {
+            finish();//  onBackPressed();
+        }
+        return true;
+    }
 
     /**
      * Alert dialog for capture or select from galley
@@ -79,6 +108,7 @@ public class CamReqActivity extends AppCompatActivity {
                 requestStoragePermission(false);
             } else if (items[item].equals("Cancel")) {
                 dialog.dismiss();
+                finish();
             }
         });
         builder.show();
@@ -123,77 +153,84 @@ public class CamReqActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("requestCodeCR", requestCode + "");
+        Log.d("resultCodeCR", resultCode + "");
         if (resultCode == RESULT_OK) {
             Intent resultIntent = new Intent();
             if (requestCode == REQUEST_TAKE_PHOTO) {
                 try {
-                    mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
+                  //  mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
 
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 // TODO Add extras or a data URI to this intent as appropriate.
-                resultIntent.putExtras(data);
+                resultIntent.putExtra(CAM_REQ_ImgData, fileToStringOfBitmap(mPhotoFile));
             } else if (requestCode == REQUEST_GALLERY_PHOTO) {
                 Uri selectedImage = data.getData();
                 try {
                     mPhotoFile = new File(getRealPathFromUri(selectedImage));
-                    mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
-                } catch (IOException e) {
+                   // mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                resultIntent.putExtras(data);
+                resultIntent.putExtra(CAM_REQ_ImgData, fileToStringOfBitmap(mPhotoFile));
             }
-            setResult(Activity.RESULT_OK, resultIntent);
-            finish();
+            setValNgoBack(resultIntent);
         }
-        if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_TAKE_PHOTO) {
-                try {
-                    mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                /*Glide.with(UserForCompanyActivity.this)
-                        .load(mPhotoFile)
-                        .apply(new RequestOptions()
-                                //  .centerCrop()
-                                //  .circleCrop()
-                                .placeholder(R.drawable.ic_menu_camera))
-                        .into(binding.selectedImg);*/
-            } else if (requestCode == REQUEST_GALLERY_PHOTO) {
-                Uri selectedImage = data.getData();
-                try {
-                    mPhotoFile = new File(getRealPathFromUri(selectedImage));
-                    mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                /*Glide.with(UserForCompanyActivity.this)
-                        .load(mPhotoFile)
-                        .apply(new RequestOptions()
-                                //.centerCrop()
-                                // .circleCrop()
-                                .placeholder(R.drawable.ic_menu_camera))
-                        .into(binding.selectedImg);*/
-            }
-        }
+
     }
 
-    private String encodeImage(Bitmap bm) {
+
+    private void setValNgoBack(Intent resultIntent) {
+        /*Glide.with(CamReqActivity.this)
+                .load(mPhotoFile)
+                .apply(new RequestOptions()
+                        //  .centerCrop()
+                        //  .circleCrop()
+                        .placeholder(R.drawable.placeholder))
+                .into(selectedImg);*/
+        setResult(CAM_REQ_Code, resultIntent);
+        finish();
+    }
+
+    public static byte[] fileToStringOfBitmap(File mPhotoFile) {
+        // File mSaveBit; // Your image file
+        String filePath = mPhotoFile.getPath();
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+        // mImageView.setImageBitmap(bitmap);
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 40, baos);
         byte[] b = baos.toByteArray();
         String encImage = Base64.encodeToString(b, Base64.DEFAULT);
-       // imgHmWork.setVisibility(View.VISIBLE);
-      //  GSNUtils.ToastMsg(this, "Cropping successful, Sample: " /*+ bm.getSampleSize()*/);
 
-        File mSaveBit; // Your image file
-//        String filePath = mSaveBit.getPath();
-//        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-//        mImageView.setImageBitmap(bitmap);
+        return b;
+//        return "Data";
+    }
+
+    public static Bitmap stringToBitmap(String imageString) {
+        //decode base64 string to image
+        byte[] imageBytes = Base64.decode(imageString, Base64.DEFAULT);
+        Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+        //image.setImageBitmap(decodedImage);
+        return decodedImage;
+    }
+
+    private String encodeImage() {
+        // File mSaveBit; // Your image file
+        String filePath = mPhotoFile.getPath();
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+        // mImageView.setImageBitmap(bitmap);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+
         return encImage;
     }
+
     /**
      * Requesting multiple permissions (storage and camera) at once
      * This uses multiple permission model from dexter

@@ -22,6 +22,7 @@ public class CustomerViewModel extends ViewModel implements ICustomerCallBacs {
     }
 
     public void onViewAvailable(ICustomerhandler view) {
+        list = new MutableLiveData<>();
         this.view = view;
     }
 

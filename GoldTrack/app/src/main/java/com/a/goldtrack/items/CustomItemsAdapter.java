@@ -35,8 +35,7 @@ public class CustomItemsAdapter extends RecyclerView.Adapter<CustomItemsAdapter.
     }
 
     public void updateListNew(List<GetItemsRes.ResList> mDataset) {
-        this.mDataSet.clear();
-        this.mDataSet.addAll(mDataset);
+        this.mDataSet=(mDataset);
         this.notifyDataSetChanged();
     }
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

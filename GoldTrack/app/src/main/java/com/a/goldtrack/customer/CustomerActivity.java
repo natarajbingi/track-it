@@ -1,5 +1,6 @@
 package com.a.goldtrack.customer;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -12,9 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +33,7 @@ import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.UpdateCustomerReq;
 import com.a.goldtrack.Model.UpdateCustomerRes;
 import com.a.goldtrack.R;
+import com.a.goldtrack.camera.CamReqActivity;
 import com.a.goldtrack.databinding.ActivityCustomerBinding;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
@@ -48,6 +54,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
     protected RecyclerView.LayoutManager mLayoutManager;
     protected List<GetCustomerRes.ResList> mDataset;
     GetCustomerReq custReq;
+    String ImgData = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,22 +89,25 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         //  custReq.companyID = Sessions.getUserString(context, Constants.companyId);
         custReq.customerId = "0";
         viewModel.onViewAvailable(this);
-        binding.progressbar.setVisibility(View.VISIBLE);
-        viewModel.getCustomer(custReq);
+        if (Constants.isConnection()) {
+            binding.progressbar.setVisibility(View.VISIBLE);
+            viewModel.getCustomer(custReq);
+        } else {
+            Constants.Toasty(context, "No Internet connection.", Constants.info);
+        }
         viewModel.list.observe(this, new Observer<GetCustomerRes>() {
             @Override
             public void onChanged(GetCustomerRes resList) {
                 mDataset = resList.resList;
                 //progressDialog.dismiss();
+                if (mDataset.size() == 0) binding.nodataLayout.setVisibility(View.VISIBLE);
+                else binding.nodataLayout.setVisibility(View.GONE);
+
                 setmRecyclerView();
             }
         });
 
-        try {
-            binding.search.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
         binding.listDetailsHolder.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -107,7 +117,12 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-
+        binding.triggImgGet.setOnClickListener(this);
+        try {
+            binding.search.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         binding.search.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -151,7 +166,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         req.pin = binding.pin.getText().toString();
         req.companyID = Sessions.getUserString(context, Constants.companyId);
         req.createdBy = Sessions.getUserString(context, Constants.userId);
-        req.profilePicData = "";
+        req.profilePicData = ImgData;
 
         if (req.firstName.isEmpty() || req.mobileNum.isEmpty() || req.address1.isEmpty() || req.pin.isEmpty()) {
             Constants.Toasty(context, "Please fill the mandatory fields.", Constants.warning);
@@ -184,12 +199,43 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         viewModel.updateCustomer(req);
     }
 
+    /*@Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+        Log.d("resultCode", resultCode + "");
+        if (resultCode == CamReqActivity.CAM_REQ_Code) {
+            byte[] b = getIntent().getByteArrayExtra(CamReqActivity.CAM_REQ_ImgData);
+            Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
+            ImgData = Base64.encodeToString(b, Base64.DEFAULT);
+            // ImgData = data.getExtras().getString(CamReqActivity.CAM_REQ_ImgData);
+            Log.d("ImgData", ImgData);
+
+            binding.selectedImg.setImageBitmap(bmp);
+        }
+    }*/
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("resultCode", resultCode + "");
+        if (resultCode == CamReqActivity.CAM_REQ_Code) {
+            byte[] b = getIntent().getByteArrayExtra(CamReqActivity.CAM_REQ_ImgData);
+            Bitmap bmp = BitmapFactory.decodeByteArray(b, 80, b.length);
+            ImgData = Base64.encodeToString(b, Base64.DEFAULT);
+            // ImgData = data.getExtras().getString(CamReqActivity.CAM_REQ_ImgData);
+            Log.d("ImgData", ImgData);
+
+            binding.selectedImg.setImageBitmap(bmp);
+        }
+
+    }
+
     private void setmRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this);
         mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
         if (mAdapter == null) {
-            mAdapter = new CustomCustomersAdapter(context,mDataset);
+            mAdapter = new CustomCustomersAdapter(context, mDataset);
             mAdapter.setClickListener(this);
             binding.recyclerCustomer.setAdapter(mAdapter);
         } else mAdapter.updateListNew(mDataset);
@@ -301,6 +347,10 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
                     setValidateAdd();
                 else
                     setValidateUpdate();
+                break;
+            case R.id.triggImgGet:
+                Intent i = new Intent(CustomerActivity.this, CamReqActivity.class);
+                startActivityForResult(i, CamReqActivity.CAM_REQ_Code);
                 break;
             case R.id.add_signal_customer:
                 if (viewOrEdit) {

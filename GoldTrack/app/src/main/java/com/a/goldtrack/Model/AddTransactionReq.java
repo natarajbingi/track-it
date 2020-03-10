@@ -19,6 +19,7 @@ public class AddTransactionReq {
     public String marginAmount;
     public String nettAmount;
     public String paidAmountForRelease;
+    public String amountPayable;
     public String marginPercent;
     public String referencePicData;
     public String roundOffAmount;

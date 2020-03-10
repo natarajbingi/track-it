@@ -47,6 +47,17 @@
                     android:textStyle="bold" />
             </RelativeLayout>
 
+            <EditText
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="@null"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/grey"
+                android:hint="Search..."
+                android:inputType="text"
+                android:padding="5dp" />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_items"
                 android:layout_width="match_parent"

@@ -18,6 +18,8 @@ import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +31,7 @@ import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddCompany;
 import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetCompanyRes;
+import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.UpdateCompanyDetails;
 import com.a.goldtrack.R;
 import com.a.goldtrack.camera.CamReqActivity;
@@ -113,10 +116,43 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
                 viewModel.getCompany(reqGet);
             }
         });
+        try {
+            binding.search.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        binding.search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
-       // binding.triggImgGet.setOnClickListener(this);
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filter(s.toString());
+            }
+        });
+        // binding.triggImgGet.setOnClickListener(this);
     }
 
+    public void filter(String s) {
+        Log.d("mDataset", "" + mDataset.size());
+        List<GetCompanyRes.ResList> temp = new ArrayList<>();
+        if (mDataset != null && mDataset.size() > 0) {
+            for (GetCompanyRes.ResList d : mDataset) {
+
+                if (d.name.toLowerCase().contains(s.toLowerCase())) {
+                    temp.add(d);
+                }
+            }
+            if (mAdapter != null) {
+                mAdapter.updateListNew(temp);
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -242,7 +278,7 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
         if (mAdapter == null) {
-            mAdapter = new CustomCompanyAdapter(context,mDataset);
+            mAdapter = new CustomCompanyAdapter(context, mDataset);
             binding.recyclerBranches.setAdapter(mAdapter);
             mAdapter.setClickListener(this);
         } else

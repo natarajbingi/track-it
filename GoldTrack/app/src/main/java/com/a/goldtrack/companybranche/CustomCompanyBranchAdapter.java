@@ -34,8 +34,7 @@ public class CustomCompanyBranchAdapter extends RecyclerView.Adapter<CustomCompa
     }
 
     public void updateListNew(List<GetCompanyBranchesRes.ResList> mDataset) {
-        this.mDataSet.clear();
-        this.mDataSet.addAll(mDataset);
+        this.mDataSet=(mDataset);
         this.notifyDataSetChanged();
     }
 

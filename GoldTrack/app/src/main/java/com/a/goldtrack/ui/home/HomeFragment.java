@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -35,8 +38,10 @@ import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetCompanyRes;
+import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.GetTransactionReq;
 import com.a.goldtrack.Model.GetTransactionRes;
+import com.a.goldtrack.Model.ItemsTrans;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.FragmentHomeBinding;
 import com.a.goldtrack.databinding.TransItemPopupBinding;
@@ -51,6 +56,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -109,6 +115,12 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         });
         viewModel.onViewAvailable(this);
 
+        try {
+            binding.search.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         req = new GetTransactionReq();
         req.companyID = Sessions.getUserString(context, Constants.companyId);
         String role = Sessions.getUserString(context, Constants.roles);
@@ -143,17 +155,48 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         reqDrop = new GetCompany();
         reqDrop.companyId = Sessions.getUserString(context, Constants.companyId);
         viewModel.getDropdown(reqDrop);
+        binding.search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filter(s.toString());
+            }
+        });
         return binding.getRoot();
+    }
+
+    public void filter(String s) {
+        Log.d("mDataset", "" + mDataset.size());
+        List<GetTransactionRes.DataList> temp = new ArrayList<>();
+        if (mDataset != null && mDataset.size() > 0) {
+            for (GetTransactionRes.DataList d : mDataset) {
+
+                if (d.customerName.toLowerCase().contains(s.toLowerCase()) || d.billNumber.toLowerCase().contains(s.toLowerCase())) {
+                    temp.add(d);
+                }
+            }
+            if (mAdapter != null) {
+                mAdapter.updateListNew(temp);
+            }
+        }
     }
 
     private void setmRecyclerView() {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
-        mAdapter = new CustomHomeAdapter(context, mDataset);
-        mAdapter.setItemClicked(this);
-        binding.recyclerView.setAdapter(mAdapter);
+        if (mAdapter == null) {
+            mAdapter = new CustomHomeAdapter(context, mDataset);
+            mAdapter.setItemClicked(this);
+            binding.recyclerView.setAdapter(mAdapter);
+        } else mAdapter.updateListNew(mDataset);
     }
 
     private void setRecyclerViewLayoutManager(Constants.LayoutManagerType layoutManagerType) {
@@ -248,11 +291,12 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         final TextView nettAmount = (TextView) popupView.findViewById(R.id.nettAmount);
         final TextView marginPercent = (TextView) popupView.findViewById(R.id.marginPercent);
         final TextView marginAmount = (TextView) popupView.findViewById(R.id.marginAmount);
-        final ImageView referencePicData = (ImageView) popupView.findViewById(R.id.referencePicData);
+        // final ImageView referencePicData = (ImageView) popupView.findViewById(R.id.referencePicData);
         final TextView itemsDataRepeat = (TextView) popupView.findViewById(R.id.itemsDataRepeat);
         final TextView paidAmountForRelease = (TextView) popupView.findViewById(R.id.paidAmountForRelease);
         final TextView roundOffAmount = (TextView) popupView.findViewById(R.id.roundOffAmount);
         final TextView comments = (TextView) popupView.findViewById(R.id.comments);
+        final LinearLayout itemsDataRepeatLayout = (LinearLayout) popupView.findViewById(R.id.itemsDataRepeatLayout);
 
         Button buttonRequestADD = (Button) popupView.findViewById(R.id.TestButton);
 
@@ -271,15 +315,16 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
             nettAmount.setText("Net Amt: " + Constants.priceToString(res.nettAmount));
             marginPercent.setText("Margin %: " + res.marginPercent);
             marginAmount.setText("Margin Amt: " + Constants.priceToString(res.marginAmount));
-            paidAmountForRelease.setText("Released Amt: " + Constants.priceToString(res.paidAmountForRelease));
+            paidAmountForRelease.setText("Released Amt: " + Constants.priceToString(res.paidAmountForRelease)+"\nPayable Amount: "+Constants.priceToString(res.amountPayable));
             roundOffAmount.setText("Round Off Amt: " + Constants.priceToString(res.roundOffAmount));
             comments.setText("Comments:\n " + res.comments);
 
 
-            String itemsDataRepeatStr = "ITEMS: \n";
+            String itemsDataRepeatStr = "ITEMS:";
 
             for (int i = 0; i < res.itemList.size(); i++) {
-                itemsDataRepeatStr += (i + 1) + ") " + res.itemList.get(i).itemName + "\t\t\t" + res.itemList.get(i).commodityWeight + "Grms\t\t\t Rs. " + Constants.priceToString(res.itemList.get(i).amount) + "\n\n";
+                addItem(res.itemList.get(i),i,itemsDataRepeatLayout);
+               // itemsDataRepeatStr += (i + 1) + ") " + res.itemList.get(i).itemName + "\t\t\t" + res.itemList.get(i).commodityWeight + "Grms\t\t\t Rs. " + Constants.priceToString(res.itemList.get(i).amount) + "\n\n";
             }
 
             itemsDataRepeat.setText(itemsDataRepeatStr);
@@ -299,6 +344,16 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         popupWindow.showAsDropDown(binding.recyclerView, 0, 0);
     }
 
+    private void addItem(GetTransactionRes.ItemList data, int i, ViewGroup view) {
+        final ViewGroup newView1 = (ViewGroup) LayoutInflater.from(context)
+                .inflate(R.layout.last_list_text, view, false);
+
+        ((TextView) newView1.findViewById(R.id.commodity)).setText((i + 1) + ") " + data.itemName);
+        ((TextView) newView1.findViewById(R.id.grms)).setText(data.commodityWeight + " gms");
+        ((TextView) newView1.findViewById(R.id.amt)).setText("Rs. " + data.amount);
+
+        view.addView(newView1);
+    }
 
     @Override
     public void onDestroyView() {

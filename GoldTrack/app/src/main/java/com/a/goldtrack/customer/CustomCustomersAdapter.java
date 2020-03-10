@@ -37,8 +37,7 @@ public class CustomCustomersAdapter extends RecyclerView.Adapter<CustomCustomers
     }
 
     public void updateListNew(List<GetCustomerRes.ResList> mDataset) {
-        this.mDataSet.clear();
-        this.mDataSet.addAll(mDataset);
+        this.mDataSet = (mDataset);
         this.notifyDataSetChanged();
     }
 

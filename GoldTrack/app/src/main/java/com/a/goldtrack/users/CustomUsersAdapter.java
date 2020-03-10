@@ -34,8 +34,7 @@ public class CustomUsersAdapter extends RecyclerView.Adapter<CustomUsersAdapter.
     }
 
     public void updateListNew(List<GetUserForCompanyRes.ResList> mDataset) {
-        this.mDataSet.clear();
-        this.mDataSet.addAll(mDataset);
+        this.mDataSet=(mDataset);
         this.notifyDataSetChanged();
     }
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

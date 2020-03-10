@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +22,7 @@ import android.view.View;
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddItemReq;
 import com.a.goldtrack.Model.AddItemRes;
+import com.a.goldtrack.Model.GetCompanyBranchesRes;
 import com.a.goldtrack.Model.GetItemsReq;
 import com.a.goldtrack.Model.GetItemsRes;
 import com.a.goldtrack.Model.UpdateItemReq;
@@ -28,6 +32,7 @@ import com.a.goldtrack.databinding.ActivityItemsBinding;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -88,6 +93,42 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
                 setmRecyclerView();
             }
         });
+        try {
+            binding.search.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        binding.search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filter(s.toString());
+            }
+        });
+        // binding.triggImgGet.setOnClickListener(this);
+    }
+
+    public void filter(String s) {
+        Log.d("mDataset", "" + mDataset.size());
+        List<GetItemsRes.ResList> temp = new ArrayList<>();
+        if (mDataset != null && mDataset.size() > 0) {
+            for (GetItemsRes.ResList d : mDataset) {
+
+                if (d.itemName.toLowerCase().contains(s.toLowerCase())) {
+                    temp.add(d);
+                }
+            }
+            if (mAdapter != null) {
+                mAdapter.updateListNew(temp);
+            }
+        }
     }
 
     @Override
@@ -112,7 +153,7 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
         mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
         if (mAdapter == null) {
-            mAdapter = new CustomItemsAdapter(context,mDataset);
+            mAdapter = new CustomItemsAdapter(context, mDataset);
             mAdapter.setClickListener(this);
             binding.recyclerItems.setAdapter(mAdapter);
         } else mAdapter.updateListNew(mDataset);

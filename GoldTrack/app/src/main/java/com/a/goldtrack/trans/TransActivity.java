@@ -86,7 +86,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         init();
     }
 
-    double payableAmt = 0;
+   // double payableAmt = 0;
 
     private void init() {
 
@@ -192,8 +192,8 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 if (!b) {
                     addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount;
                     binding.finalLayoutParent.paidAmountForRelease.setText(addTransactionReq.paidAmountForRelease);
-                    payableAmt = Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease);
-                    binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + payableAmt);
+                    addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease))+"";
+                    binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + addTransactionReq.amountPayable);
                 }
             }
         });
@@ -205,8 +205,8 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                     addTransactionReq.paidAmountForRelease = strNew;
                     //  double strNewPAmt = strNew.isEmpty() ? 0 : Double.parseDouble(strNew);
                     // if (strNewPAmt != Double.parseDouble(addTransactionReq.nettAmount)) {
-                    payableAmt = Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease);
-                    binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + payableAmt);
+                    addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease))+"";
+                    binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + addTransactionReq.amountPayable);
                     //  }
                 }
             }
@@ -388,7 +388,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                                             + "\nMargin Amt: " + Constants.priceToString(addTransactionReq.marginAmount)
                                             + "\nNet Amt: " + Constants.priceToString(addTransactionReq.nettAmount)
                                             + "\nReleasing Amt: " + Constants.priceToString(addTransactionReq.paidAmountForRelease)
-                                            + "\nPayable Amt: " + Constants.priceToString(payableAmt + "");
+                                            + "\nPayable Amt: " + Constants.priceToString(addTransactionReq.amountPayable);
 
                                     Constants.alertDialogShowWithCancel(context, strR, new DialogInterface.OnClickListener() {
                                         @Override
@@ -570,8 +570,8 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
         String itemsDataRepeatStr = "ITEMS:";
         binding.finalLayoutParent.itemsDataRepeatLayout.removeAllViews();
-        payableAmt = Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease);
-        binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + payableAmt);
+        addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease))+"";
+        binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + addTransactionReq.amountPayable);
         binding.grandTotalAmtBottom.setText("Total: Rs. " + Constants.priceToString(addTransactionReq.roundOffAmount));
         for (int i = 0; i < list.size(); i++) {
             addItem(list.get(i), i);
@@ -841,7 +841,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         addTransactionReq.paidAmountForRelease = paidAmountForRelease + "";
         addTransactionReq.marginPercent = marginPercent + "";
         addTransactionReq.roundOffAmount = roundOffAmount + "";
-        payableAmt = Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease);
+        addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease))+"";
         addTransactionReq.referencePicData = "";
         addTransactionReq.nbfcReferenceNo = "DYU_" + Constants.getDateNowAll();
         addTransactionReq.comments = "";

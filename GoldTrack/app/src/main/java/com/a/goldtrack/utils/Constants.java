@@ -31,6 +31,7 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 
 import com.a.goldtrack.GTrackApplication;
+import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.R;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
@@ -42,8 +43,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.TimeZone;
 
@@ -163,6 +166,29 @@ public class Constants {
 
         // this will convert any number sequence into 6 character.
         return String.format("%06d", number);
+    }
+
+    public static String fileToStringOfBitmap(File mPhotoFile) {
+        // File mSaveBit; // Your image file
+        String filePath = mPhotoFile.getPath();
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+        // mImageView.setImageBitmap(bitmap);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+
+        return encImage;
+    }
+
+  
+    public static Bitmap stringToBitmap(String imageString) {
+        //decode base64 string to image
+        byte[] imageBytes = Base64.decode(imageString, Base64.DEFAULT);
+        Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+        //image.setImageBitmap(decodedImage);
+        return decodedImage;
     }
 
     public static void Toasty(Context ctx, String Msg, int type) {

@@ -48,6 +48,19 @@
                 android:text="@string/grid_layout_manager" />
         </RadioGroup>
 
+        <EditText
+            android:id="@+id/search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@null"
+            android:padding="5dp"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/grey"
+            android:hint="Search..."
+            android:inputType="text"
+            app:layout_constraintTop_toBottomOf="@+id/radioGrp" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
@@ -55,7 +68,7 @@
             android:layout_marginTop="5dp"
             android:paddingLeft="@dimen/recycle_padding"
             android:paddingRight="@dimen/recycle_padding"
-            app:layout_constraintTop_toBottomOf="@+id/radioGrp" />
+            app:layout_constraintTop_toBottomOf="@+id/search" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
+import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.utils.Constants;
@@ -84,6 +85,11 @@ public class CustomHomeAdapter extends RecyclerView.Adapter<CustomHomeAdapter.Vi
         viewHolder.text_date.setText("Bill No: " + mDataSet.get(position).billNumber);
         viewHolder.text_sub.setText("Commodity: " + mDataSet.get(position).commodity
                 + "\t\t\tTotal Amt: " + Constants.priceToString(mDataSet.get(position).totalAmount));
+    }
+
+    public void updateListNew(List<GetTransactionRes.DataList> mDataset) {
+        this.mDataSet = (mDataset);
+        this.notifyDataSetChanged();
     }
 
     @Override
