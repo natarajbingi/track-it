@@ -16,6 +16,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
+import android.text.method.LinkMovementMethod;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -352,6 +353,7 @@ public class Constants {
         alertDialog.setTitle(context.getResources().getString(R.string.app_name));
         alertDialog.setMessage(message);
         alertDialog.setCancelable(false);
+
         alertDialog.setIcon(R.mipmap.ic_launcher);
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override

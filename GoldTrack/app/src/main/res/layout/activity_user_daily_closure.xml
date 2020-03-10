@@ -53,13 +53,14 @@
                 android:id="@+id/search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:background="@null"
+                android:layout_margin="10dp"
+                android:background="@drawable/ediittext_selector"
                 android:drawablePadding="10dp"
                 android:drawableTint="@color/grey"
                 android:hint="Search..."
                 android:inputType="text"
-                android:padding="5dp" />
+                android:padding="10dp" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_daily_closures"
                 android:layout_width="match_parent"
@@ -143,8 +144,8 @@
                         android:id="@+id/select_branch"
                         style="@style/Widget.AppCompat.Spinner.Underlined"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:entries="@array/commodity" />
+                        android:layout_height="50dp"
+                        android:entries="@array/example" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"

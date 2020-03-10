@@ -17,6 +17,10 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -45,6 +49,7 @@ import com.a.goldtrack.databinding.ActivityTransBinding;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -58,7 +63,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     ProgressDialog progressDialog;
     Context context;
     CountDownTimer timer;
-    private final int first = 1, second = 2, third = 3, four = 4;
+    private final int first = 1, second = 2, third = 3, four = 4, five = 5;
     private int current = 1;
     List<ItemsTrans> list;
     private static final String TAG = "TransActivity";
@@ -86,7 +91,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         init();
     }
 
-   // double payableAmt = 0;
+    // double payableAmt = 0;
 
     private void init() {
 
@@ -148,17 +153,25 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 String str = binding.finalLayoutParent.marginForTotal.getText().toString();
                 float marginForFinalTotal = Float.parseFloat(str.isEmpty() ? "0" : str);
 
-                float marginAmt = (Float.parseFloat(addTransactionReq.roundOffAmount) * marginForFinalTotal) / 100;// 2 / 100
-                float FinalAmt = Float.parseFloat(addTransactionReq.roundOffAmount) - marginAmt;
+                float marginAmt = (Float.parseFloat(addTransactionReq.grossAmount) * marginForFinalTotal) / 100;// 2 / 100
+                float FinalAmt = Float.parseFloat(addTransactionReq.grossAmount) - marginAmt;
                 // float FinalAmtPer = FinalAmt / Float.parseFloat(addTransactionReq.totalAmount) * 100;
                 addTransactionReq.marginAmount = marginAmt + "";
                 addTransactionReq.marginPercent = str;
                 addTransactionReq.nettAmount = FinalAmt + "";
+                addTransactionReq.roundOffAmount = addTransactionReq.nettAmount + "";
                 addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount + "";
                 //  binding.finalLayoutParent.marginAmount.setText("Margin Amount: " + marginAmt);
                 settingFinalPageVals();
             }
         });
+        binding.finalLayoutParent.itemRoundOffEdit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                binding.finalLayoutParent.roundOffAmount.setEnabled(b);
+            }
+        });
+        binding.fifthLayoutParent.dismissLastBtn.setOnClickListener(this);
         binding.finalLayoutParent.roundOffAmount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -167,20 +180,21 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                     double tolAmt = Double.parseDouble(addTransactionReq.totalAmount);
                     double marginAmt = 0.0, newMarginPer = 0.0;
                     if (rdAmt != tolAmt) {
-                        newMarginPer = (1 - (rdAmt / tolAmt)) * 100;
-                        marginAmt = (rdAmt * newMarginPer) / 100;// 2 / 100
+                        newMarginPer = ((1 - (rdAmt / tolAmt)) * 100);
+                        marginAmt = (tolAmt * newMarginPer) / 100;// 2 / 100
                         double FinalAmt = rdAmt - marginAmt;
                         addTransactionReq.marginPercent = newMarginPer + "";
                         addTransactionReq.marginAmount = marginAmt + "";
                         addTransactionReq.roundOffAmount = rdAmt + "";
                         addTransactionReq.nettAmount = rdAmt + "";
                         addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount + "";
-                    } else {
-                        addTransactionReq.roundOffAmount = addTransactionReq.totalAmount;
+                        addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease)) + "";
+                        settingFinalPageVals();
+                    } /*else {
+                        addTransactionReq.roundOffAmount = addTransactionReq.nettAmount;
                         // addTransactionReq.marginPercent = newMarginPer+"";
                         //  addTransactionReq.marginAmount = marginAmt+"";
-                    }
-                    settingFinalPageVals();
+                    }*/
                 }
             }
         });
@@ -192,7 +206,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 if (!b) {
                     addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount;
                     binding.finalLayoutParent.paidAmountForRelease.setText(addTransactionReq.paidAmountForRelease);
-                    addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease))+"";
+                    addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease)) + "";
                     binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + addTransactionReq.amountPayable);
                 }
             }
@@ -205,7 +219,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                     addTransactionReq.paidAmountForRelease = strNew;
                     //  double strNewPAmt = strNew.isEmpty() ? 0 : Double.parseDouble(strNew);
                     // if (strNewPAmt != Double.parseDouble(addTransactionReq.nettAmount)) {
-                    addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease))+"";
+                    addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease)) + "";
                     binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + addTransactionReq.amountPayable);
                     //  }
                 }
@@ -437,6 +451,10 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 showingItemAdd = !showingItemAdd;
             }
             break;
+            case R.id.dismiss_last_btn: {
+                resetInnerAddItem(true);
+            }
+            break;
             case R.id.item_adding_local_calci: {
                 if (binding.itemAddTransLayoutParent.selectedCommodityAmount.getText().toString().isEmpty() ||
                         binding.itemAddTransLayoutParent.commodityWeight.getText().toString().isEmpty() ||
@@ -547,7 +565,10 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    int imc = 0;
+
     void settingFinalPageVals() {
+        imc++;
         binding.finalLayoutParent.customer.setText(binding.selectedCustomerName.getText().toString());
         binding.selectedTextCommodityPrice.setText("Price: " + Constants.priceToString(binding.commodityRate.getText().toString()));
         binding.selectedBranch.setText("Branch: " + binding.selectBranch.getSelectedItem().toString());
@@ -563,6 +584,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         binding.finalLayoutParent.marginAmount.setText("Margin Amount: " + Constants.priceToString(addTransactionReq.marginAmount));
         binding.finalLayoutParent.nettAmount.setText("Net Amount: " + Constants.priceToString(addTransactionReq.nettAmount));
         binding.finalLayoutParent.marginPercent.setText("Margin Percent: " + addTransactionReq.marginPercent);
+        binding.finalLayoutParent.marginForTotal.setText(Constants.priceToString(addTransactionReq.marginPercent));
 
         binding.finalLayoutParent.paidAmountForRelease.setText(addTransactionReq.paidAmountForRelease);
         binding.finalLayoutParent.roundOffAmount.setText(addTransactionReq.roundOffAmount);
@@ -570,7 +592,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
         String itemsDataRepeatStr = "ITEMS:";
         binding.finalLayoutParent.itemsDataRepeatLayout.removeAllViews();
-        addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease))+"";
+        addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease)) + "";
         binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + addTransactionReq.amountPayable);
         binding.grandTotalAmtBottom.setText("Total: Rs. " + Constants.priceToString(addTransactionReq.roundOffAmount));
         for (int i = 0; i < list.size(); i++) {
@@ -578,6 +600,10 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             // itemsDataRepeatStr += (i + 1) + ") " + list.get(i).commodity + "\t\t\t" + list.get(i).commodityWeight + "Grms\t\t\t Rs. " + Constants.priceToString(list.get(i).amount) + "\n\n";
         }
         binding.finalLayoutParent.itemsDataRepeat.setText(itemsDataRepeatStr);
+
+        Gson gj = new Gson();
+        String jj = gj.toJson(addTransactionReq);
+        //  Log.d(TAG + ":Json" + imc, jj);
     }
 
     private void addItem(ItemsTrans data, int i) {
@@ -633,7 +659,8 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             binding.finalLayoutParent.paidAmountForRelease.setText("");
             binding.finalLayoutParent.roundOffAmount.setText("");
             binding.finalLayoutParent.comments.setText("");
-
+            binding.fifthLayoutParent.customMsg.setText("");
+            binding.fifthLayoutParent.linkMsg.setText("");
             binding.finalLayoutParent.itemsDataRepeat.setText("");
             setCurrentLayoutVisible();
         }
@@ -651,28 +678,33 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     }
 
     void setCurrentLayoutVisible() {
+        binding.nestedScroll.setVisibility(View.GONE);
         binding.firstStepLayout.setVisibility(View.GONE);
         binding.secondStepOtp.setVisibility(View.GONE);
         binding.thirdStepDetails.setVisibility(View.GONE);
         binding.stepNextButton.setVisibility(View.GONE);
         binding.bottomTotalLayout.setVisibility(View.GONE);
         binding.finalLayoutParent.finalLayoutChild.setVisibility(View.GONE);
+        binding.fifthLayoutParent.finalLayoutChild.setVisibility(View.GONE);
         switch (current) {
             case first:
-                makeItemVisible(binding.firstStepLayout, binding.stepNextButton);
+                makeItemVisible(binding.nestedScroll, binding.firstStepLayout, binding.stepNextButton);
                 otp = Constants.getRandomNumberString();
                 break;
             case second:
-                makeItemVisible(binding.stepNextButton, binding.secondStepOtp);
+                makeItemVisible(binding.nestedScroll, binding.stepNextButton, binding.secondStepOtp);
                 break;
             case third:
-                makeItemVisible(binding.recyclerTransItems, binding.thirdStepDetails, binding.bottomTotalLayout);
+                makeItemVisible(binding.nestedScroll, binding.recyclerTransItems, binding.thirdStepDetails, binding.bottomTotalLayout);
                 //setmRecyclerView();
                 break;
             case four:
-                makeItemVisible(binding.finalLayoutParent.finalLayoutChild, binding.bottomTotalLayout);
+                makeItemVisible(binding.nestedScroll, binding.finalLayoutParent.finalLayoutChild, binding.bottomTotalLayout);
                /* binding.finalLayoutParent.finalLayoutChild.setVisibility(View.VISIBLE);
                 binding.bottomTotalLayout.setVisibility(View.VISIBLE);*/
+                break;
+            case five:
+                makeItemVisible(binding.fifthLayoutParent.finalLayoutChild);
                 break;
         }
     }
@@ -841,7 +873,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         addTransactionReq.paidAmountForRelease = paidAmountForRelease + "";
         addTransactionReq.marginPercent = marginPercent + "";
         addTransactionReq.roundOffAmount = roundOffAmount + "";
-        addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease))+"";
+        addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease)) + "";
         addTransactionReq.referencePicData = "";
         addTransactionReq.nbfcReferenceNo = "DYU_" + Constants.getDateNowAll();
         addTransactionReq.comments = "";
@@ -905,7 +937,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         binding.numbver.setText("Verify +91 " + binding.autoCompleteSelectCustomer.getText().toString().split("-")[1]);
         startCounter();
         setCurrentLayoutVisible();
-        binding.otpedit.setText(otp);
+        // binding.otpedit.setText(otp);
 
     }
 
@@ -913,13 +945,22 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     public void onAddTransSuccess(AddTransactionRes res) {
         progressDialog.dismiss();
         Constants.Toasty(context, res.response.toUpperCase() + "\n\nBill No:" + res.transactionID, Constants.success);
-        Constants.alertDialogShowOneButton(context, res.response + "\n" + res.transactionID,
+        final SpannableString s = new SpannableString(res.transactionInvoiceURL);
+        Linkify.addLinks(s, Linkify.ALL);
+        binding.fifthLayoutParent.customMsg.setText(res.response + "\n" + res.transactionID);
+        // TextView textView = view.findViewById(R.id.textView);
+//        binding.fifthLayoutParent.linkMsg.setText(Html.fromHtml(res.transactionInvoiceURL));
+        binding.fifthLayoutParent.linkMsg.setText(s);
+        binding.fifthLayoutParent.linkMsg.setMovementMethod(LinkMovementMethod.getInstance());
+        current = five;
+        setCurrentLayoutVisible();
+        /*Constants.alertDialogShowOneButton(context, res.response + "\n" + res.transactionID + "\nfor Receipt:\n" + s,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         resetInnerAddItem(true);
                     }
-                });
+                });*/
     }
 
     @Override

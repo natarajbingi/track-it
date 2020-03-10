@@ -278,7 +278,8 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
         reqData.updatedBy = Sessions.getUserString(context, Constants.userId);
         reqData.delete = false;
 
-        if (reqData.date.isEmpty() || reqData.fundRecieved.isEmpty() || reqData.comments.isEmpty() || reqData.cashInHand.isEmpty()) {
+        if (reqData.date.isEmpty() || reqData.fundRecieved.isEmpty() || reqData.comments.isEmpty()
+                || reqData.cashInHand.isEmpty()) {
             Constants.Toasty(context, "Please Enter mandatory Fields", Constants.warning);
             return;
         }

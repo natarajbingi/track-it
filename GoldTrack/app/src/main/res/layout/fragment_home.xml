@@ -8,23 +8,20 @@
             type="com.a.goldtrack.ui.home.HomeViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/text_home"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
             android:textAlignment="center"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textSize="20sp" />
 
         <RadioGroup
             android:id="@+id/radioGrp"
@@ -32,8 +29,7 @@
             android:layout_height="wrap_content"
             android:checkedButton="@+id/linear_layout_rb"
             android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/text_home">
+            android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/linear_layout_rb"
@@ -52,14 +48,13 @@
             android:id="@+id/search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:background="@null"
-            android:padding="5dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/ediittext_selector"
             android:drawablePadding="10dp"
             android:drawableTint="@color/grey"
             android:hint="Search..."
             android:inputType="text"
-            app:layout_constraintTop_toBottomOf="@+id/radioGrp" />
+            android:padding="10dp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
@@ -67,8 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:paddingLeft="@dimen/recycle_padding"
-            android:paddingRight="@dimen/recycle_padding"
-            app:layout_constraintTop_toBottomOf="@+id/search" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:paddingRight="@dimen/recycle_padding" />
+    </LinearLayout>
 
 </layout>

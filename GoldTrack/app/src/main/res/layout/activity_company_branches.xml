@@ -52,13 +52,13 @@
                 android:id="@+id/search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:background="@null"
+                android:layout_margin="10dp"
+                android:background="@drawable/ediittext_selector"
                 android:drawablePadding="10dp"
                 android:drawableTint="@color/grey"
                 android:hint="Search..."
                 android:inputType="text"
-                android:padding="5dp" />
+                android:padding="10dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_branches"
