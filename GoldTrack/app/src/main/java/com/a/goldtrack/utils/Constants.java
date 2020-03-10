@@ -70,6 +70,7 @@ public class Constants {
     public static final String pwdId = "pwdId";
     public static final String roles = "roles";
     public static final String dorpDownSession = "dorpDownSession";
+    public static final String sesImgData = "sesImgData";
     public static final int error = 0;
     public static final int success = 1;
     public static final int info = 2;
@@ -191,6 +192,9 @@ public class Constants {
         return decodedImage;
     }
 
+    public static void Toasty(Context ctx, String Msg){
+        Toasty.info(ctx, Msg, Toast.LENGTH_LONG, true).show();
+    }
     public static void Toasty(Context ctx, String Msg, int type) {
         switch (type) {
             case error:

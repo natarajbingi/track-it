@@ -22,6 +22,7 @@ import com.a.goldtrack.R;
 import com.a.goldtrack.users.UserForCompanyActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.FileCompressor;
+import com.a.goldtrack.utils.Sessions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.karumi.dexter.Dexter;
@@ -159,23 +160,24 @@ public class CamReqActivity extends AppCompatActivity {
             Intent resultIntent = new Intent();
             if (requestCode == REQUEST_TAKE_PHOTO) {
                 try {
-                  //  mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
+                      mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 // TODO Add extras or a data URI to this intent as appropriate.
-                resultIntent.putExtra(CAM_REQ_ImgData, fileToStringOfBitmap(mPhotoFile));
+                resultIntent.putExtra(CAM_REQ_ImgData, "Success");
             } else if (requestCode == REQUEST_GALLERY_PHOTO) {
                 Uri selectedImage = data.getData();
                 try {
                     mPhotoFile = new File(getRealPathFromUri(selectedImage));
-                   // mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
+                    // mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                resultIntent.putExtra(CAM_REQ_ImgData, fileToStringOfBitmap(mPhotoFile));
+                resultIntent.putExtra(CAM_REQ_ImgData, "Success");
             }
+            Sessions.setUserString(myContext, fileToStringOfBitmap(mPhotoFile), Constants.sesImgData);
             setValNgoBack(resultIntent);
         }
 
@@ -194,7 +196,7 @@ public class CamReqActivity extends AppCompatActivity {
         finish();
     }
 
-    public static byte[] fileToStringOfBitmap(File mPhotoFile) {
+    public static String fileToStringOfBitmap(File mPhotoFile) {
         // File mSaveBit; // Your image file
         String filePath = mPhotoFile.getPath();
         Bitmap bitmap = BitmapFactory.decodeFile(filePath);
@@ -205,8 +207,8 @@ public class CamReqActivity extends AppCompatActivity {
         byte[] b = baos.toByteArray();
         String encImage = Base64.encodeToString(b, Base64.DEFAULT);
 
-        return b;
-//        return "Data";
+        //        return b;
+        return encImage;
     }
 
     public static Bitmap stringToBitmap(String imageString) {

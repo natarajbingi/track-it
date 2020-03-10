@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -117,6 +118,14 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
+        binding.selectedImg.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Bitmap image = ((BitmapDrawable) binding.selectedImg.getDrawable()).getBitmap();
+                Constants.popUpImg(context, null, "Selected Image", "", image, "bitMap");
+                return false;
+            }
+        });
         binding.triggImgGet.setOnClickListener(this);
         try {
             binding.search.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
@@ -219,13 +228,13 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("resultCode", resultCode + "");
         if (resultCode == CamReqActivity.CAM_REQ_Code) {
-            byte[] b = getIntent().getByteArrayExtra(CamReqActivity.CAM_REQ_ImgData);
-            Bitmap bmp = BitmapFactory.decodeByteArray(b, 80, b.length);
-            ImgData = Base64.encodeToString(b, Base64.DEFAULT);
-            // ImgData = data.getExtras().getString(CamReqActivity.CAM_REQ_ImgData);
-            Log.d("ImgData", ImgData);
-
-            binding.selectedImg.setImageBitmap(bmp);
+            String Res = data.getStringExtra(CamReqActivity.CAM_REQ_ImgData);
+            if (Res.equals("Success")) {
+                ImgData = Sessions.getUserString(context, Constants.sesImgData);
+            }
+            if (ImgData != null)
+                binding.selectedImg.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
+            else Constants.Toasty(context, "Image Loading have problem try again.");
         }
 
     }

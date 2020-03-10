@@ -31,6 +31,7 @@ import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.Model.UpdateUserDetails;
 import com.a.goldtrack.R;
 import com.a.goldtrack.camera.CamReqActivity;
+import com.a.goldtrack.customer.CustomerActivity;
 import com.a.goldtrack.databinding.ActivityUserForCompanyBinding;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
@@ -54,6 +55,7 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
     GetUserForCompany user;
     List<String> rolesList = new ArrayList<>();
     private int userIdIfEditing = 0;
+    String ImgData = "";
 
 
     void setmRecyclerView() {
@@ -282,7 +284,7 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
                 break;
             case R.id.triggImgGet:
                 Intent cam = new Intent(UserForCompanyActivity.this, CamReqActivity.class);
-                startActivityForResult(cam, 501);
+                startActivityForResult(cam, CamReqActivity.CAM_REQ_Code);
                 break;
         }
     }
@@ -390,8 +392,15 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == 501) {
-
+        Log.d("resultCode", resultCode + "");
+        if (resultCode == CamReqActivity.CAM_REQ_Code) {
+            String Res = data.getStringExtra(CamReqActivity.CAM_REQ_ImgData);
+            if (Res.equals("Success")) {
+                ImgData = Sessions.getUserString(context, Constants.sesImgData);
+            }
+            if (ImgData != null)
+                binding.selectedImg.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
+            else Constants.Toasty(context, "Image Loading have problem try again.");
         }
     }
 
