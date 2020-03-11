@@ -95,7 +95,7 @@
                         android:layout_height="wrap_content"
                         android:hint="Commodity Weight in Grms*"
                         android:inputType="text|number"
-                        android:text="0" />
+                        android:text="" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -115,9 +115,9 @@
                             android:id="@+id/stone_wastage"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Stone Wastage in Grms*"
+                            android:hint="Stone Wastage in Grms"
                             android:inputType="text|number"
-                            android:text="0" />
+                            android:text="" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -130,9 +130,9 @@
                             android:id="@+id/other_wastage"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Other Wastage in Grms*"
+                            android:hint="Other Wastage in Grms"
                             android:inputType="text|number"
-                            android:text="0" />
+                            android:text="" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
@@ -156,7 +156,7 @@
                             android:layout_height="wrap_content"
                             android:hint="Purity % *"
                             android:inputType="text|number"
-                            android:text="0" />
+                            android:text="" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -170,9 +170,9 @@
                             android:id="@+id/margin"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Margin *"
+                            android:hint="Margin "
                             android:inputType="text|number"
-                            android:text="0" />
+                            android:text="" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <ImageView

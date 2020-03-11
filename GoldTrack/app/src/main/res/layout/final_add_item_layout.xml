@@ -236,7 +236,7 @@
                             android:layout_height="wrap_content"
                             android:hint="Margin %*"
                             android:inputType="text|number"
-                            android:text="0" />
+                            android:text="" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <ImageView

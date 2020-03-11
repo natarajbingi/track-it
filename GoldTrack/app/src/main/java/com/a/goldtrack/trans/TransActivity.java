@@ -150,14 +150,13 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         binding.finalLayoutParent.itemAddingLocalCalci.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String str = binding.finalLayoutParent.marginForTotal.getText().toString();
-                float marginForFinalTotal = Float.parseFloat(str.isEmpty() ? "0" : str);
+                float marginForFinalTotal = Float.parseFloat(isEmptyReturn0(binding.finalLayoutParent.marginForTotal.getText().toString()));
 
                 float marginAmt = (Float.parseFloat(addTransactionReq.grossAmount) * marginForFinalTotal) / 100;// 2 / 100
                 float FinalAmt = Float.parseFloat(addTransactionReq.grossAmount) - marginAmt;
                 // float FinalAmtPer = FinalAmt / Float.parseFloat(addTransactionReq.totalAmount) * 100;
                 addTransactionReq.marginAmount = marginAmt + "";
-                addTransactionReq.marginPercent = str;
+                addTransactionReq.marginPercent = marginForFinalTotal + "";
                 addTransactionReq.nettAmount = FinalAmt + "";
                 addTransactionReq.roundOffAmount = addTransactionReq.nettAmount + "";
                 addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount + "";
@@ -458,19 +457,16 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             case R.id.item_adding_local_calci: {
                 if (binding.itemAddTransLayoutParent.selectedCommodityAmount.getText().toString().isEmpty() ||
                         binding.itemAddTransLayoutParent.commodityWeight.getText().toString().isEmpty() ||
-                        binding.itemAddTransLayoutParent.margin.getText().toString().isEmpty() ||
-                        binding.itemAddTransLayoutParent.purity.getText().toString().isEmpty() ||
-                        binding.itemAddTransLayoutParent.otherWastage.getText().toString().isEmpty() ||
-                        binding.itemAddTransLayoutParent.stoneWastage.getText().toString().isEmpty()) {
+                        binding.itemAddTransLayoutParent.purity.getText().toString().isEmpty()) {
                     Constants.Toasty(context, "Please enter Mandatory fields", Constants.warning);
                     break;
                 }
-                float amount = Float.parseFloat(binding.itemAddTransLayoutParent.selectedCommodityAmount.getText().toString());
-                float commodityWeight = Float.parseFloat(binding.itemAddTransLayoutParent.commodityWeight.getText().toString());
-                float stoneWastage = Float.parseFloat(binding.itemAddTransLayoutParent.stoneWastage.getText().toString());
-                float otherWastage = Float.parseFloat(binding.itemAddTransLayoutParent.otherWastage.getText().toString());
-                float purity = Float.parseFloat(binding.itemAddTransLayoutParent.purity.getText().toString());
-                float margin = Float.parseFloat(binding.itemAddTransLayoutParent.margin.getText().toString());
+                float amount = Float.parseFloat(isEmptyReturn0(binding.itemAddTransLayoutParent.selectedCommodityAmount.getText().toString()));
+                float commodityWeight = Float.parseFloat(isEmptyReturn0(binding.itemAddTransLayoutParent.commodityWeight.getText().toString()));
+                float stoneWastage = Float.parseFloat(isEmptyReturn0(binding.itemAddTransLayoutParent.stoneWastage.getText().toString()));
+                float otherWastage = Float.parseFloat(isEmptyReturn0(binding.itemAddTransLayoutParent.otherWastage.getText().toString()));
+                float purity = Float.parseFloat(isEmptyReturn0(binding.itemAddTransLayoutParent.purity.getText().toString()));
+                float margin = Float.parseFloat(isEmptyReturn0(binding.itemAddTransLayoutParent.margin.getText().toString()));
 
                 float netWeight = (commodityWeight - (stoneWastage + otherWastage));
                 float netWeight1WithPurity = (netWeight * purity) / 100;
@@ -502,12 +498,12 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                     Constants.Toasty(context, "Please check calculation before add ITEM", Constants.warning);
                     break;
                 }
-                float amount1 = Float.parseFloat(binding.itemAddTransLayoutParent.selectedCommodityAmount.getText().toString());
-                float commodityWeight1 = Float.parseFloat(binding.itemAddTransLayoutParent.commodityWeight.getText().toString());
-                float stoneWastage1 = Float.parseFloat(binding.itemAddTransLayoutParent.stoneWastage.getText().toString());
-                float otherWastage1 = Float.parseFloat(binding.itemAddTransLayoutParent.otherWastage.getText().toString());
-                float purity1 = Float.parseFloat(binding.itemAddTransLayoutParent.purity.getText().toString());
-                float margin1 = Float.parseFloat(binding.itemAddTransLayoutParent.margin.getText().toString());
+                float amount1 = Float.parseFloat(isEmptyReturn0(binding.itemAddTransLayoutParent.selectedCommodityAmount.getText().toString()));
+                float commodityWeight1 = Float.parseFloat(isEmptyReturn0(binding.itemAddTransLayoutParent.commodityWeight.getText().toString()));
+                float stoneWastage1 = Float.parseFloat(isEmptyReturn0(binding.itemAddTransLayoutParent.stoneWastage.getText().toString()));
+                float otherWastage1 = Float.parseFloat(isEmptyReturn0(binding.itemAddTransLayoutParent.otherWastage.getText().toString()));
+                float purity1 = Float.parseFloat(isEmptyReturn0(binding.itemAddTransLayoutParent.purity.getText().toString()));
+                float margin1 = Float.parseFloat(isEmptyReturn0(binding.itemAddTransLayoutParent.margin.getText().toString()));
 
                 if (commodityWeight1 <= 0 || purity1 <= 0) {
                     Constants.Toasty(context, "Please enter Commodity Weight and Purity Fields", Constants.warning);
@@ -522,6 +518,8 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 float marginAmt = (netWeightAmount * margin1) / 100;// 2 / 100
                 float FinalAmt = netWeightAmount - marginAmt;
 
+                binding.itemAddTransLayoutParent.nettWeight.setText("Net Weight: " + netWeight1);
+                binding.itemAddTransLayoutParent.calculatedItemAmount.setText("Rs. " + FinalAmt);
 
                 ItemsTrans nn = new ItemsTrans();
                 nn.itemID = itemsArr.get(binding.itemAddTransLayoutParent.selectItem.getSelectedItem().toString());
@@ -529,14 +527,13 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 nn.commodityWeight = commodityWeight1 + "";
                 nn.stoneWastage = stoneWastage1 + "";
                 nn.otherWastage = otherWastage1 + "";
-                nn.nettWeight = binding.itemAddTransLayoutParent.nettWeight.getText().toString().split(":")[1];
-                nn.purity = binding.itemAddTransLayoutParent.purity.getText().toString();
+                nn.nettWeight = netWeight1 + "";//binding.itemAddTransLayoutParent.nettWeight.getText().toString().split(":")[1];
+                nn.purity = purity1 + "";
                 nn.commodity = binding.itemAddTransLayoutParent.selectItem.getSelectedItem().toString();
-                nn.margin = binding.itemAddTransLayoutParent.margin.getText().toString();
+                nn.margin = margin1 + "";//binding.itemAddTransLayoutParent.margin.getText().toString();
 
 
                 if (nn.amount.isEmpty() || nn.commodityWeight.isEmpty()
-                        || nn.stoneWastage.isEmpty() || nn.otherWastage.isEmpty() || nn.margin.isEmpty()
                         || nn.nettWeight.isEmpty() || nn.purity.isEmpty()
                         || nn.commodity.equals("Select")
                 ) {
@@ -565,10 +562,13 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-   // int imc = 0;
+    String isEmptyReturn0(String str) {
+        return str.isEmpty() ? "0" : str;
+    }
+    // int imc = 0;
 
     void settingFinalPageVals() {
-      //  imc++;
+        //  imc++;
         binding.finalLayoutParent.customer.setText(binding.selectedCustomerName.getText().toString());
         binding.selectedTextCommodityPrice.setText("Price: " + Constants.priceToString(binding.commodityRate.getText().toString()));
         binding.selectedBranch.setText("Branch: " + binding.selectBranch.getSelectedItem().toString());
@@ -665,11 +665,11 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             setCurrentLayoutVisible();
         }
         binding.itemAddTransLayoutParent.addItemButton.setText("ADD");
-        binding.itemAddTransLayoutParent.commodityWeight.setText("0");
-        binding.itemAddTransLayoutParent.stoneWastage.setText("0");
-        binding.itemAddTransLayoutParent.otherWastage.setText("0");
-        binding.itemAddTransLayoutParent.purity.setText("0");
-        binding.itemAddTransLayoutParent.margin.setText("0");
+        binding.itemAddTransLayoutParent.commodityWeight.setText("");
+        binding.itemAddTransLayoutParent.stoneWastage.setText("");
+        binding.itemAddTransLayoutParent.otherWastage.setText("");
+        binding.itemAddTransLayoutParent.purity.setText("");
+        binding.itemAddTransLayoutParent.margin.setText("");
         binding.itemAddTransLayoutParent.selectItem.setSelection(0);
         binding.itemAddTransLayoutParent.nettWeight.setText("Net Weight: 0.00");
         binding.itemAddTransLayoutParent.calculatedItemAmount.setText("Rs. 0.00");
