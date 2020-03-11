@@ -298,18 +298,25 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.checkbox.MaterialCheckBox
-                        android:id="@+id/item_round_off_edit"
                         android:layout_width="0dp"
                         android:layout_height="45dp"
                         android:layout_gravity="center_vertical"
                         android:layout_weight="0.17"
-                        android:gravity="center"
+                        android:background="@drawable/button_bg"
+                        android:visibility="gone" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/item_round_off_edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.17"
+                        android:layout_gravity="center_vertical"
                         android:checked="false"
+                        android:textStyle="bold"
+                        android:gravity="center"
                         android:src="@drawable/ic_edit"
                         android:text="Edit"
-                        android:background="@drawable/button_bg"
-                        android:textColor="@color/white" />
-
+                        android:textColor="@color/oil" />
                 </LinearLayout>
 
 
@@ -330,22 +337,30 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:enabled="false"
-                            android:hint="Paid Amount For Release *"
+                            android:hint="Paid Amount For Release "
                             android:inputType="text|numberDecimal"
                             android:text="" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.checkbox.MaterialCheckBox
-                        android:id="@+id/nbfcReleaseAmtCheckBox"
                         android:layout_width="0dp"
                         android:layout_height="45dp"
                         android:layout_gravity="center_vertical"
-                        android:layout_weight="0.17"
                         android:background="@drawable/button_bg"
-                        android:textColor="@color/white"
-                        android:gravity="center"
+                        android:text=""
+                        android:visibility="gone" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/nbfcReleaseAmtCheckBox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.17"
+                        android:layout_gravity="center_vertical"
                         android:checked="false"
-                        android:text="NBFC - \nYes / No" />
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:text="NBFC - \nYes / No"
+                        android:textColor="@color/oil" />
                 </LinearLayout>
 
 
