@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -228,7 +229,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
 
     @Override
     public void oncItemClicked(View view, int position) {
-        Constants.Toasty(context, mDataset.get(position).customerName, Constants.info);
+      //  Constants.Toasty(context, mDataset.get(position).customerName, Constants.info);
         popupWindow(mDataset.get(position));
     }
 
@@ -279,6 +280,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
 
         popupView.setFocusable(true);
         final TextView nbfcReferenceNo = (TextView) popupView.findViewById(R.id.nbfcReferenceNo);
+        final TextView createdDt = (TextView) popupView.findViewById(R.id.createdDt);
         final TextView customer = (TextView) popupView.findViewById(R.id.customer);
         final TextView presentDayCommodityRate = (TextView) popupView.findViewById(R.id.selectedTextCommodityPrice);
         final TextView commodity = (TextView) popupView.findViewById(R.id.commodity);
@@ -292,10 +294,13 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         final TextView marginPercent = (TextView) popupView.findViewById(R.id.marginPercent);
         final TextView marginAmount = (TextView) popupView.findViewById(R.id.marginAmount);
         // final ImageView referencePicData = (ImageView) popupView.findViewById(R.id.referencePicData);
+        final ImageView pdf_link = (ImageView) popupView.findViewById(R.id.pdf_link);
         final TextView itemsDataRepeat = (TextView) popupView.findViewById(R.id.itemsDataRepeat);
         final TextView paidAmountForRelease = (TextView) popupView.findViewById(R.id.paidAmountForRelease);
         final TextView roundOffAmount = (TextView) popupView.findViewById(R.id.roundOffAmount);
         final TextView comments = (TextView) popupView.findViewById(R.id.comments);
+        final TextView empName = (TextView) popupView.findViewById(R.id.empName);
+        final TextView branchName = (TextView) popupView.findViewById(R.id.branchName);
         final LinearLayout itemsDataRepeatLayout = (LinearLayout) popupView.findViewById(R.id.itemsDataRepeatLayout);
 
         Button buttonRequestADD = (Button) popupView.findViewById(R.id.TestButton);
@@ -303,7 +308,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
 
         try {
             nbfcReferenceNo.setText("Ref No: " + res.nbfcReferenceNo + "\nBill No: " + res.billNumber);
-            customer.setText("Customer: " + res.customerName);
+            customer.setText("Customer: " + res.customerName.toUpperCase());
             commodity.setText("Commodity: " + res.commodity);
             presentDayCommodityRate.setText("Commodity Rate: " + Constants.priceToString(res.presentDayCommodityRate));
             totalCommodityWeight.setText("Cmd Weight:\n" + res.totalCommodityWeight);
@@ -315,19 +320,34 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
             nettAmount.setText("Net Amt: " + Constants.priceToString(res.nettAmount));
             marginPercent.setText("Margin %: " + res.marginPercent);
             marginAmount.setText("Margin Amt: " + Constants.priceToString(res.marginAmount));
-            paidAmountForRelease.setText("Released Amt: " + Constants.priceToString(res.paidAmountForRelease)+"\nPayable Amount: "+Constants.priceToString(res.amountPayable));
+            paidAmountForRelease.setText("Released Amt: " + Constants.priceToString(res.paidAmountForRelease) + "\n\nPayable Amount: " + Constants.priceToString(res.amountPayable));
             roundOffAmount.setText("Round Off Amt: " + Constants.priceToString(res.roundOffAmount));
             comments.setText("Comments:\n " + res.comments);
+            createdDt.setText("Date: " + res.createdDt);
+            branchName.setText("Branck: " + res.branchName);
+            empName.setText("Emp: " + res.empName);
 
 
             String itemsDataRepeatStr = "ITEMS:";
 
             for (int i = 0; i < res.itemList.size(); i++) {
-                addItem(res.itemList.get(i),i,itemsDataRepeatLayout);
-               // itemsDataRepeatStr += (i + 1) + ") " + res.itemList.get(i).itemName + "\t\t\t" + res.itemList.get(i).commodityWeight + "Grms\t\t\t Rs. " + Constants.priceToString(res.itemList.get(i).amount) + "\n\n";
+                addItem(res.itemList.get(i), i, itemsDataRepeatLayout);
+                // itemsDataRepeatStr += (i + 1) + ") " + res.itemList.get(i).itemName + "\t\t\t" + res.itemList.get(i).commodityWeight + "Grms\t\t\t Rs. " + Constants.priceToString(res.itemList.get(i).amount) + "\n\n";
             }
 
             itemsDataRepeat.setText(itemsDataRepeatStr);
+            pdf_link.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (res.billPdfPath != null && !res.billPdfPath.isEmpty()) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(Uri.parse(res.billPdfPath), "text/html");
+                        startActivity(intent);
+                    } else {
+                        Constants.Toasty(context, "Sorry, No PDF Link available for selected transaction.");
+                    }
+                }
+            });
 
         } catch (Exception e) {
             e.printStackTrace();

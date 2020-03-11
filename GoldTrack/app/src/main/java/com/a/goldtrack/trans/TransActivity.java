@@ -103,7 +103,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("in Progress...");
 
-        binding.numbver.setText("Verify +91 9980766166");
+        //binding.numbver.setText("Verify +91 ");
         binding.stepNextButton.setVisibility(View.VISIBLE);
         binding.bottomTotalLayout.setVisibility(View.GONE);
         binding.finalLayoutParent.finalLayoutChild.setVisibility(View.VISIBLE);
@@ -159,7 +159,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 addTransactionReq.marginPercent = marginForFinalTotal + "";
                 addTransactionReq.nettAmount = FinalAmt + "";
                 addTransactionReq.roundOffAmount = addTransactionReq.nettAmount + "";
-                addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount + "";
+                // addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount + "";
                 //  binding.finalLayoutParent.marginAmount.setText("Margin Amount: " + marginAmt);
                 settingFinalPageVals();
             }
@@ -186,9 +186,15 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                         addTransactionReq.marginAmount = marginAmt + "";
                         addTransactionReq.roundOffAmount = rdAmt + "";
                         addTransactionReq.nettAmount = rdAmt + "";
-                        addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount + "";
-                        addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease)) + "";
+                        // addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount + "";
+                        if (binding.finalLayoutParent.nbfcReleaseAmtCheckBox.isChecked()) {
+                            addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(isEmptyReturn0(addTransactionReq.paidAmountForRelease))) + "";
+                        } else {
+                            addTransactionReq.amountPayable = addTransactionReq.nettAmount;
+                        }
                         settingFinalPageVals();
+
+
                     } /*else {
                         addTransactionReq.roundOffAmount = addTransactionReq.nettAmount;
                         // addTransactionReq.marginPercent = newMarginPer+"";
@@ -203,10 +209,8 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 binding.finalLayoutParent.paidAmountForRelease.setEnabled(b);
                 if (!b) {
-                    addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount;
-                    binding.finalLayoutParent.paidAmountForRelease.setText(addTransactionReq.paidAmountForRelease);
-                    addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease)) + "";
-                    binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + addTransactionReq.amountPayable);
+                    //  addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount;
+                    //  binding.finalLayoutParent.paidAmountForRelease.setText(addTransactionReq.paidAmountForRelease);
                 }
             }
         });
@@ -215,11 +219,13 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             public void onFocusChange(View view, boolean b) {
                 if (!b) {
                     String strNew = binding.finalLayoutParent.paidAmountForRelease.getText().toString();
-                    addTransactionReq.paidAmountForRelease = strNew;
+                    addTransactionReq.paidAmountForRelease = isEmptyReturn0(strNew);
                     //  double strNewPAmt = strNew.isEmpty() ? 0 : Double.parseDouble(strNew);
                     // if (strNewPAmt != Double.parseDouble(addTransactionReq.nettAmount)) {
                     addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease)) + "";
                     binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + addTransactionReq.amountPayable);
+                    // addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease)) + "";
+                    // binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + addTransactionReq.amountPayable);
                     //  }
                 }
             }
@@ -387,8 +393,12 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                             //   addTransactionReq.comments = binding.finalLayoutParent.comments.getText().toString();
 
                             binding.grandTotalAmtBottom.setText("Total: Rs. " + Constants.priceToString(addTransactionReq.roundOffAmount));
-                            if (addTransactionReq.paidAmountForRelease.isEmpty() || addTransactionReq.roundOffAmount.isEmpty()) {
+                            if (addTransactionReq.roundOffAmount.isEmpty()) {
                                 Constants.Toasty(context, "Please enter Mandatory details to submit.", Constants.warning);
+                                break;
+                            }
+                            if (binding.finalLayoutParent.nbfcReleaseAmtCheckBox.isChecked() && addTransactionReq.paidAmountForRelease.isEmpty()) {
+                                Constants.Toasty(context, "Please enter paid amount For release to submit.", Constants.warning);
                                 break;
                             }
                             if (Constants.isConnection()) {
@@ -407,6 +417,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             progressDialog.show();
+                                            addTransactionReq.paidAmountForRelease = isEmptyReturn0(addTransactionReq.paidAmountForRelease);
                                             viewModel.verifyOtp(req);
                                         }
                                     });
@@ -586,14 +597,15 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         binding.finalLayoutParent.marginPercent.setText("Margin Percent: " + addTransactionReq.marginPercent);
         binding.finalLayoutParent.marginForTotal.setText(Constants.priceToString(addTransactionReq.marginPercent));
 
-        binding.finalLayoutParent.paidAmountForRelease.setText(addTransactionReq.paidAmountForRelease);
+        if (binding.finalLayoutParent.nbfcReleaseAmtCheckBox.isChecked())
+            binding.finalLayoutParent.paidAmountForRelease.setText(addTransactionReq.paidAmountForRelease);
         binding.finalLayoutParent.roundOffAmount.setText(addTransactionReq.roundOffAmount);
         binding.finalLayoutParent.comments.setText(addTransactionReq.comments);
 
         String itemsDataRepeatStr = "ITEMS:";
         binding.finalLayoutParent.itemsDataRepeatLayout.removeAllViews();
-        addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease)) + "";
-        binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + addTransactionReq.amountPayable);
+        addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(isEmptyReturn0(addTransactionReq.paidAmountForRelease))) + "";
+        binding.finalLayoutParent.payableAmount.setText("Payable Amt: Rs. " + Constants.priceToString(addTransactionReq.amountPayable));
         binding.grandTotalAmtBottom.setText("Total: Rs. " + Constants.priceToString(addTransactionReq.roundOffAmount));
         for (int i = 0; i < list.size(); i++) {
             addItem(list.get(i), i);
@@ -870,10 +882,14 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         addTransactionReq.grossAmount = grossAmount + "";
         addTransactionReq.marginAmount = marginAmount + "";
         addTransactionReq.nettAmount = nettAmount + "";
-        addTransactionReq.paidAmountForRelease = paidAmountForRelease + "";
+        if (binding.finalLayoutParent.nbfcReleaseAmtCheckBox.isChecked())
+            addTransactionReq.paidAmountForRelease = paidAmountForRelease + "";
+        else
+            addTransactionReq.paidAmountForRelease = "";
+
         addTransactionReq.marginPercent = marginPercent + "";
         addTransactionReq.roundOffAmount = roundOffAmount + "";
-        addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(addTransactionReq.paidAmountForRelease)) + "";
+        addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(isEmptyReturn0(addTransactionReq.paidAmountForRelease))) + "";
         addTransactionReq.referencePicData = "";
         addTransactionReq.nbfcReferenceNo = "DYU_" + Constants.getDateNowAll();
         addTransactionReq.comments = "";

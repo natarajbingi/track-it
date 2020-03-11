@@ -34,6 +34,7 @@ public class GetTransactionRes {
         public String transValidOTP;
         public String nbfcReferenceNo;
         public String comments;
+        public String billPdfPath;
         public String branchID;
         public String companyID;
         public String commodity;
