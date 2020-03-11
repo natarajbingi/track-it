@@ -317,16 +317,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
-                    <TextView
-                        android:id="@+id/referencePicData"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                    <ImageView
+                        android:id="@+id/referencePicPath"
+                        android:layout_width="match_parent"
+                        android:layout_height="75dp"
                         android:layout_weight="1"
                         android:padding="8dp"
-                        android:text="referencePicData"
-                        android:textColor="@color/oil" />
+                        android:src="@drawable/ic_menu_camera"/>
 
 
                 </LinearLayout>

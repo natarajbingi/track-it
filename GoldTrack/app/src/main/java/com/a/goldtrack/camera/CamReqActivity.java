@@ -168,7 +168,7 @@ public class CamReqActivity extends AppCompatActivity {
                     String filePath = mPhotoFile.getPath();
                     Bitmap bitmap = BitmapFactory.decodeFile(filePath);
                     saveImage(bitmap);
-                    mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
+                   // mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -183,14 +183,13 @@ public class CamReqActivity extends AppCompatActivity {
                     String filePath = mPhotoFile.getPath();
                     Bitmap bitmap = BitmapFactory.decodeFile(filePath);
                     saveImage(bitmap);
-                    mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
+                   // mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 resultIntent.putExtra(CAM_REQ_ImgData, "Success");
             }
             Sessions.setUserString(myContext, fileToStringOfBitmap(mPhotoFile), Constants.sesImgData);
-
             setValNgoBack(resultIntent);
         }
 
@@ -216,12 +215,13 @@ public class CamReqActivity extends AppCompatActivity {
         // mImageView.setImageBitmap(bitmap);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 80, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
 
         byte[] b = baos.toByteArray();
         String encImage = Base64.encodeToString(b, Base64.DEFAULT);
 
         //        return b;
+        encImage = encImage == null ? "" : encImage.trim().replace("\n", "");
         return encImage;
     }
 

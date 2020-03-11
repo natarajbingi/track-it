@@ -210,7 +210,7 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
         req.branchCity = binding.branchCity.getText().toString();
         req.branchPin = binding.branchPin.getText().toString();
         req.branchPhNumber = binding.branchPhNumber.getText().toString();
-        req.createdBy = "USER";
+        req.createdBy = Sessions.getUserString(context, Constants.userId);
 
 
         if (req.branchName.isEmpty() || req.branchPhNumber.isEmpty() || req.branchPin.isEmpty()) {

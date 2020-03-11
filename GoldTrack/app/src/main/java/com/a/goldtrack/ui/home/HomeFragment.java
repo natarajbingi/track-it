@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -52,6 +54,8 @@ import com.a.goldtrack.network.RetrofitClient;
 import com.a.goldtrack.trans.IDropdownDataCallBacks;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -229,7 +233,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
 
     @Override
     public void oncItemClicked(View view, int position) {
-      //  Constants.Toasty(context, mDataset.get(position).customerName, Constants.info);
+        //  Constants.Toasty(context, mDataset.get(position).customerName, Constants.info);
         popupWindow(mDataset.get(position));
     }
 
@@ -295,6 +299,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         final TextView marginAmount = (TextView) popupView.findViewById(R.id.marginAmount);
         // final ImageView referencePicData = (ImageView) popupView.findViewById(R.id.referencePicData);
         final ImageView pdf_link = (ImageView) popupView.findViewById(R.id.pdf_link);
+        final ImageView referencePicPath = (ImageView) popupView.findViewById(R.id.referencePicPath);
         final TextView itemsDataRepeat = (TextView) popupView.findViewById(R.id.itemsDataRepeat);
         final TextView paidAmountForRelease = (TextView) popupView.findViewById(R.id.paidAmountForRelease);
         final TextView roundOffAmount = (TextView) popupView.findViewById(R.id.roundOffAmount);
@@ -327,6 +332,24 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
             branchName.setText("Branck: " + res.branchName);
             empName.setText("Emp: " + res.empName);
 
+            if (res.referencePicData != null) {
+                Glide.with(context)
+                        .load(res.referencePicData)
+                        .apply(new RequestOptions()
+                                //  .centerCrop()
+                                //  .circleCrop()
+                                .placeholder(R.drawable.placeholder))
+                        .into(referencePicPath);
+                referencePicPath.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Bitmap image = ((BitmapDrawable) referencePicPath.getDrawable()).getBitmap();
+                        Constants.popUpImg(context, null, "Selected Image", "", image, "bitMap");
+                    }
+                });
+            } else {
+                referencePicPath.setVisibility(View.GONE);
+            }
 
             String itemsDataRepeatStr = "ITEMS:";
 

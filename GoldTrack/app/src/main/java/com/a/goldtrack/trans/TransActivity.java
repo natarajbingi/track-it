@@ -1,5 +1,6 @@
 package com.a.goldtrack.trans;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,7 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Html;
@@ -45,6 +49,8 @@ import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.Model.ItemsTrans;
 import com.a.goldtrack.R;
+import com.a.goldtrack.camera.CamReqActivity;
+import com.a.goldtrack.customer.CustomerActivity;
 import com.a.goldtrack.databinding.ActivityTransBinding;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
@@ -72,7 +78,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     protected RecyclerView.LayoutManager mLayoutManager;
     boolean showingItemAdd = false;
     int counter = 0;
-    String otp = "";
+    String otp = "", ImgData = null;
     DropdownDataForCompanyRes dropdownRes;
 
     Map<String, String> branchesArr = null;
@@ -214,6 +220,13 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
         });
+        binding.finalLayoutParent.selectedImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bitmap image = ((BitmapDrawable) binding.finalLayoutParent.selectedImg.getDrawable()).getBitmap();
+                Constants.popUpImg(context, null, "Selected Image", "", image, "bitMap");
+            }
+        });
         binding.finalLayoutParent.paidAmountForRelease.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -231,6 +244,13 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
+        binding.finalLayoutParent.triggImgGet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(TransActivity.this, CamReqActivity.class);
+                startActivityForResult(i, CamReqActivity.CAM_REQ_Code);
+            }
+        });
         DropdownDataForCompanyRes resDp = (DropdownDataForCompanyRes) Sessions.getUserObj(context, Constants.dorpDownSession, DropdownDataForCompanyRes.class);
         if (resDp != null) {
             viewModel.dropdownList.postValue(resDp);
@@ -238,6 +258,25 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             progressDialog.show();
             viewModel.getDropdowns(req);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("resultCode", resultCode + "");
+
+        if (resultCode == CamReqActivity.CAM_REQ_Code) {
+            String Res = data.getStringExtra(CamReqActivity.CAM_REQ_ImgData);
+            if (Res.equals("Success")) {
+                ImgData = Sessions.getUserString(context, Constants.sesImgData);
+            }
+            if (ImgData != null) {
+                addTransactionReq.referencePicData = ImgData;
+                binding.finalLayoutParent.selectedImg.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
+                binding.finalLayoutParent.selectedImg.setVisibility(View.VISIBLE);
+            } else Constants.Toasty(context, "Image Loading have a problem try again.");
+        }
+
     }
 
     private void setDropDowns() {
@@ -574,7 +613,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     }
 
     String isEmptyReturn0(String str) {
-        return str.isEmpty() ? "0" : str;
+        return str == null ? "0" : str.isEmpty() ? "0" : str;
     }
     // int imc = 0;
 
@@ -650,7 +689,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             binding.selectedTextCommodityPrice.setText("");
             binding.grandTotalAmtBottom.setText("Rs. 0.00");
             binding.stepLastSubmit.setText("Proceed");
-
+            ImgData = null;
 
             binding.finalLayoutParent.customer.setText("");
             binding.selectedTextCommodityPrice.setText("");
@@ -698,6 +737,8 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         binding.bottomTotalLayout.setVisibility(View.GONE);
         binding.finalLayoutParent.finalLayoutChild.setVisibility(View.GONE);
         binding.fifthLayoutParent.finalLayoutChild.setVisibility(View.GONE);
+        binding.finalLayoutParent.selectedImg.setVisibility(View.GONE);
+
         switch (current) {
             case first:
                 makeItemVisible(binding.nestedScroll, binding.firstStepLayout, binding.stepNextButton);

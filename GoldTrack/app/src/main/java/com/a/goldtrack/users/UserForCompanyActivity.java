@@ -205,8 +205,8 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         AddUserForCompany req = new AddUserForCompany();
         req.companyId = Sessions.getUserString(context, Constants.companyId);
         req.user_UID = "DYU_USER_" + Constants.getDateNowAll();
-        req.profilePicUrl = "";
-        req.createdBy = "User";
+        req.profilePicUrl = ImgData;
+        req.createdBy = Sessions.getUserString(context, Constants.userId);
 
         req.userName = binding.emailID.getText().toString();
         req.emailID = binding.emailID.getText().toString();
@@ -302,6 +302,7 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         binding.roleListEditTime.setVisibility(View.GONE);
         binding.role.setSelection(0);
         userIdIfEditing = 0;
+        ImgData = null;
 
         binding.addSignalUserForCmpy.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
