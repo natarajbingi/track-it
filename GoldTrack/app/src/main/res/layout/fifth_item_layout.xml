@@ -27,24 +27,24 @@
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/success" />
+                android:src="@drawable/ic_check_circle_success" />
 
             <TextView
                 android:id="@+id/custom_msg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginTop="25dp"
-                android:text="Transaction Success \nBill No:37/20200310/DYU_20200309160518"
-                android:textColor="@color/button_success_text"
-                android:textSize="18sp"
+                android:gravity="center"
+                android:text="Transaction Success \n\nBill No:37/20200310/DYU_20200309160518"
+                android:textColor="@color/success_text"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginTop="25dp"
+                android:gravity="center"
                 android:text="Click below link for PDF Receipt."
                 android:textColor="@color/monsoon"
                 android:textSize="10sp"
@@ -54,9 +54,9 @@
                 android:id="@+id/link_msg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginTop="25dp"
                 android:autoLink="web"
+                android:gravity="center"
                 android:linksClickable="true"
                 android:text="http://helloworld.com/helop/sdjkd/pdf.pdf"
                 android:textColor="@color/monsoon"

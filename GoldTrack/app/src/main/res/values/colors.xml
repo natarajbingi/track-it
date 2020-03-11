@@ -12,6 +12,7 @@
     <color name="button_default_text">#EBBB42</color>
     <color name="button_success">#7CF184</color>
     <color name="button_success_text">#44B451</color>
+    <color name="success_text">#52E657</color>
     <color name="button_red">#F44336</color>
 
 

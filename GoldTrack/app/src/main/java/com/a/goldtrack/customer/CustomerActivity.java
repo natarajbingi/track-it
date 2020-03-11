@@ -34,6 +34,7 @@ import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.UpdateCustomerReq;
 import com.a.goldtrack.Model.UpdateCustomerRes;
 import com.a.goldtrack.R;
+import com.a.goldtrack.camera.BytePojo;
 import com.a.goldtrack.camera.CamReqActivity;
 import com.a.goldtrack.databinding.ActivityCustomerBinding;
 import com.a.goldtrack.utils.Constants;
@@ -227,10 +228,12 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("resultCode", resultCode + "");
+
         if (resultCode == CamReqActivity.CAM_REQ_Code) {
             String Res = data.getStringExtra(CamReqActivity.CAM_REQ_ImgData);
             if (Res.equals("Success")) {
                 ImgData = Sessions.getUserString(context, Constants.sesImgData);
+                //   ImgData = Sessions.getUserString(context, Constants.sesImgData);
             }
             if (ImgData != null)
                 binding.selectedImg.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));

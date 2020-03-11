@@ -944,23 +944,14 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onAddTransSuccess(AddTransactionRes res) {
         progressDialog.dismiss();
-        Constants.Toasty(context, res.response.toUpperCase() + "\n\nBill No:" + res.transactionID, Constants.success);
+        Constants.Toasty(context, res.response.toUpperCase() + "\nBill No:" + res.transactionID, Constants.success);
         final SpannableString s = new SpannableString(res.transactionInvoiceURL);
         Linkify.addLinks(s, Linkify.ALL);
-        binding.fifthLayoutParent.customMsg.setText(res.response + "\n" + res.transactionID);
-        // TextView textView = view.findViewById(R.id.textView);
-//        binding.fifthLayoutParent.linkMsg.setText(Html.fromHtml(res.transactionInvoiceURL));
+        binding.fifthLayoutParent.customMsg.setText(res.response + "\n\nBill No: " + res.transactionID);
         binding.fifthLayoutParent.linkMsg.setText(s);
         binding.fifthLayoutParent.linkMsg.setMovementMethod(LinkMovementMethod.getInstance());
         current = five;
         setCurrentLayoutVisible();
-        /*Constants.alertDialogShowOneButton(context, res.response + "\n" + res.transactionID + "\nfor Receipt:\n" + s,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        resetInnerAddItem(true);
-                    }
-                });*/
     }
 
     @Override

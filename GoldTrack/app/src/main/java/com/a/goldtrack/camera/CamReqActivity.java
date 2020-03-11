@@ -18,10 +18,12 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 
 import com.a.goldtrack.BuildConfig;
+import com.a.goldtrack.GTrackApplication;
 import com.a.goldtrack.R;
 import com.a.goldtrack.users.UserForCompanyActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.FileCompressor;
+import com.a.goldtrack.utils.ImageUtil;
 import com.a.goldtrack.utils.Sessions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -42,6 +44,8 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -160,7 +164,11 @@ public class CamReqActivity extends AppCompatActivity {
             Intent resultIntent = new Intent();
             if (requestCode == REQUEST_TAKE_PHOTO) {
                 try {
-                      mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
+
+                    String filePath = mPhotoFile.getPath();
+                    Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+                    saveImage(bitmap);
+                    mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -170,14 +178,19 @@ public class CamReqActivity extends AppCompatActivity {
             } else if (requestCode == REQUEST_GALLERY_PHOTO) {
                 Uri selectedImage = data.getData();
                 try {
+
                     mPhotoFile = new File(getRealPathFromUri(selectedImage));
-                    // mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
+                    String filePath = mPhotoFile.getPath();
+                    Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+                    saveImage(bitmap);
+                    mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 resultIntent.putExtra(CAM_REQ_ImgData, "Success");
             }
             Sessions.setUserString(myContext, fileToStringOfBitmap(mPhotoFile), Constants.sesImgData);
+
             setValNgoBack(resultIntent);
         }
 
@@ -203,13 +216,66 @@ public class CamReqActivity extends AppCompatActivity {
         // mImageView.setImageBitmap(bitmap);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 40, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 80, baos);
+
         byte[] b = baos.toByteArray();
         String encImage = Base64.encodeToString(b, Base64.DEFAULT);
 
         //        return b;
         return encImage;
     }
+
+    public static byte[] fileToStringOfBitmapMap(File mPhotoFile) {
+        // File mSaveBit; // Your image file
+        String filePath = mPhotoFile.getPath();
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+        // mImageView.setImageBitmap(bitmap);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 40, baos);
+        byte[] b = baos.toByteArray();
+        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+
+        return b;
+//        return encImage;
+    }
+
+
+    private static void saveImage(Bitmap image) {
+        File pictureFile = getOutputMediaFile();
+        if (pictureFile == null) {
+            return;
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.PNG, 90, fos);
+            fos.close();
+        } catch (FileNotFoundException ignore) {
+
+        } catch (IOException ignore) {
+
+        }
+    }
+
+    private static File getOutputMediaFile() {
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                + "/Android/data/"
+                + GTrackApplication.getInstance().getPackageName()
+                + "/Files");
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                return null;
+            }
+        }
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+        File mediaFile;
+        String mImageName = "gold_track" + timeStamp + ".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+        //String checkValidDataThumb = mediaFile.getAbsolutePath();
+
+        return mediaFile;
+    }
+
 
     public static Bitmap stringToBitmap(String imageString) {
         //decode base64 string to image
