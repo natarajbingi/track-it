@@ -297,26 +297,19 @@
                             android:text="" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.checkbox.MaterialCheckBox
-                        android:layout_width="0dp"
-                        android:layout_height="45dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="0.17"
-                        android:background="@drawable/button_bg"
-                        android:visibility="gone" />
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/item_round_off_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.17"
                         android:layout_gravity="center_vertical"
+                        android:layout_weight="0.17"
                         android:checked="false"
-                        android:textStyle="bold"
                         android:gravity="center"
                         android:src="@drawable/ic_edit"
                         android:text="Edit"
-                        android:textColor="@color/oil" />
+                        android:textColor="@color/oil"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
 
@@ -342,36 +335,62 @@
                             android:text="" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.checkbox.MaterialCheckBox
-                        android:layout_width="0dp"
-                        android:layout_height="45dp"
-                        android:layout_gravity="center_vertical"
-                        android:background="@drawable/button_bg"
-                        android:text=""
-                        android:visibility="gone" />
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/nbfcReleaseAmtCheckBox"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.17"
                         android:layout_gravity="center_vertical"
+                        android:layout_weight="0.17"
                         android:checked="false"
-                        android:textStyle="bold"
                         android:gravity="center"
                         android:text="NBFC - \nYes / No"
-                        android:textColor="@color/oil" />
+                        android:textColor="@color/oil"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
-
-                <TextView
-                    android:id="@+id/payableAmount"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:text="payableAmount"
-                    android:textColor="@color/oil"
-                    android:textStyle="bold" />
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/payableAmount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:padding="8dp"
+                        android:text="payableAmount"
+                        android:textColor="@color/oil"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        android:padding="8dp"
+                        android:text="Capture Img"
+                        android:textColor="@color/oil"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/triggImgGet"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.15"
+                        android:padding="8dp"
+                        android:src="@drawable/add_a_photo" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/selectedImg"
+                    android:layout_width="match_parent"
+                    android:layout_height="85dp"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:src="@drawable/ic_menu_camera"
+                    android:visibility="gone" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"

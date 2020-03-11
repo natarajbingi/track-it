@@ -228,7 +228,6 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("resultCode", resultCode + "");
-
         if (resultCode == CamReqActivity.CAM_REQ_Code) {
             String Res = data.getStringExtra(CamReqActivity.CAM_REQ_ImgData);
             if (Res.equals("Success")) {
@@ -290,6 +289,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         binding.address2.setText("");
         binding.state.setText("");
         binding.pin.setText("");
+        ImgData = null;
 
         binding.addSignalCustomer.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
