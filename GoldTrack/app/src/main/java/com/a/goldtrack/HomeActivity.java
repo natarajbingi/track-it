@@ -92,6 +92,7 @@ public class HomeActivity extends AppCompatActivity
         nav_Menu.findItem(R.id.nav_gallery).setVisible(false);
 
         String role = Sessions.getUserString(context, Constants.roles);
+
         switch (role) {
             case "ADMIN":
                 break;

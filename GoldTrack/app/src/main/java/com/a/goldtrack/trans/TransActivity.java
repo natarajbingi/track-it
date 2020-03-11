@@ -565,20 +565,20 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    int imc = 0;
+   // int imc = 0;
 
     void settingFinalPageVals() {
-        imc++;
+      //  imc++;
         binding.finalLayoutParent.customer.setText(binding.selectedCustomerName.getText().toString());
         binding.selectedTextCommodityPrice.setText("Price: " + Constants.priceToString(binding.commodityRate.getText().toString()));
         binding.selectedBranch.setText("Branch: " + binding.selectBranch.getSelectedItem().toString());
 
         binding.finalLayoutParent.commodity.setText(binding.selectedTextCommodity.getText().toString());
         binding.finalLayoutParent.nbfcReferenceNo.setText("Ref No: " + addTransactionReq.nbfcReferenceNo);
-        binding.finalLayoutParent.totalCommodityWeight.setText("Cmd Weight:\n" + addTransactionReq.totalCommodityWeight);
-        binding.finalLayoutParent.totalStoneWastage.setText("Stone Wst:\n" + addTransactionReq.totalStoneWastage);
-        binding.finalLayoutParent.totalOtherWastage.setText("Other Wst:\n" + addTransactionReq.totalOtherWastage);
-        binding.finalLayoutParent.totalNettWeight.setText("Net Weight:\n" + addTransactionReq.totalNettWeight);
+        binding.finalLayoutParent.totalCommodityWeight.setText("Cmd Weight:\n" + Constants.priceToString(addTransactionReq.totalCommodityWeight));
+        binding.finalLayoutParent.totalStoneWastage.setText("Stone Wst:\n" + Constants.priceToString(addTransactionReq.totalStoneWastage));
+        binding.finalLayoutParent.totalOtherWastage.setText("Other Wst:\n" + Constants.priceToString(addTransactionReq.totalOtherWastage));
+        binding.finalLayoutParent.totalNettWeight.setText("Net Weight:\n" + Constants.priceToString(addTransactionReq.totalNettWeight));
         binding.finalLayoutParent.totalAmount.setText("Total Amount: " + Constants.priceToString(addTransactionReq.totalAmount));
         binding.finalLayoutParent.grossAmount.setText("Gross Amount: " + Constants.priceToString(addTransactionReq.grossAmount));
         binding.finalLayoutParent.marginAmount.setText("Margin Amount: " + Constants.priceToString(addTransactionReq.marginAmount));
