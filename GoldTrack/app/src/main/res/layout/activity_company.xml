@@ -35,8 +35,8 @@
 
         </com.google.android.material.appbar.AppBarLayout>-->
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:layout_width="match_parent"
             android:id="@+id/list_details_holder"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:animateLayoutChanges="true">
 
@@ -86,6 +86,7 @@
                         android:hint="Search..."
                         android:inputType="text"
                         android:padding="10dp" />
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_branches"
                         android:layout_width="match_parent"
@@ -105,7 +106,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:animateLayoutChanges="true" >
+            android:animateLayoutChanges="true">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/addDetailsHolder"
@@ -341,6 +342,45 @@
                                 android:hint="Pincode *"
                                 android:inputType="numberDecimal"
                                 android:maxLength="6" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/gstNo"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="GST No"
+                                android:inputType="text"
+                                android:maxLength="22" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/smsSenderID"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="SMS Sender ID *"
+                                android:inputType="numberDecimal"
+                                android:maxLength="10" />
                         </com.google.android.material.textfield.TextInputLayout>
 
 
