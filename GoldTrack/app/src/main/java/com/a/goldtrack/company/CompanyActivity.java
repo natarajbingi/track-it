@@ -1,5 +1,6 @@
 package com.a.goldtrack.company;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -38,6 +39,9 @@ import com.a.goldtrack.camera.CamReqActivity;
 import com.a.goldtrack.camera.ICameraUtil;
 import com.a.goldtrack.databinding.ActivityCompanyBinding;
 import com.a.goldtrack.utils.Constants;
+import com.a.goldtrack.utils.Sessions;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -56,7 +60,7 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
     GetCompany reqGet;
     private static final String TAG = "CompanyActivity";
     protected CustomCompanyAdapter mAdapter;
-
+    String ImgData = null;
     protected Constants.LayoutManagerType mCurrentLayoutManagerType;
 
 
@@ -187,8 +191,10 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         req.district = binding.district.getText().toString();
         req.state = binding.state.getText().toString();
         req.pin = binding.pin.getText().toString();
-        req.logoImageData = "";
+        req.logoImageData = ImgData;
         req.logoImagePath = "";
+        req.smsSenderID = binding.smsSenderID.getText().toString();
+        req.gstNo = binding.gstNo.getText().toString();
 
         if (req.name.isEmpty() || req.mobileNo.isEmpty() || req.address1.isEmpty() || req.pin.isEmpty()) {
             Constants.Toasty(context, "Please Enter mandatory Fields", Constants.warning);
@@ -223,9 +229,11 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         req.modify = true;
         req.add = false;
         req.updatedDt = Constants.getDateNowyyyymmmdd();
-        req.updatedBy = "USER";
-        req.logoImageData = "";
+        req.updatedBy = Sessions.getUserString(context, Constants.userId);
+        req.logoImageData = ImgData;
         req.logoImagePath = "";
+        req.smsSenderID = binding.smsSenderID.getText().toString();
+        req.gstNo = binding.gstNo.getText().toString();
         if (req.name.isEmpty() || req.mobileNo.isEmpty() || req.address1.isEmpty() || req.pin.isEmpty()) {
             Constants.Toasty(context, "Please Enter mandatory Fields", Constants.warning);
             return;
@@ -327,7 +335,13 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         binding.district.setText("");
         binding.state.setText("");
         binding.pin.setText("");
-
+        binding.smsSenderID.setText("");
+        binding.gstNo.setText("");
+        Glide.with(context)
+                .load("")
+                .apply(new RequestOptions()
+                        .placeholder(R.drawable.placeholder))
+                .into(binding.selectedImg);
         binding.addSignalCompany.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
@@ -362,12 +376,22 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
                 viewOrEdit = !viewOrEdit;
                 break;
             case R.id.triggImgGet:
-//                Intent i = new Intent(CompanyActivity.this, CamReqActivity.class);
-//                startActivity(i);
+                Intent i = new Intent(CompanyActivity.this, CamReqActivity.class);
+                startActivityForResult(i, CamReqActivity.CAM_REQ_Code);
                 break;
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == CamReqActivity.CAM_REQ_Code) {
+            ImgData = Sessions.getUserString(context, CamReqActivity.CAM_REQ_ImgData);
+            if (ImgData != null)
+                binding.selectedImg.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
+            else Constants.Toasty(context, "Image Loading have problem try again.");
+        }
+    }
 
     @Override
     public void oncItemClicked(View view, int position) {
@@ -389,7 +413,16 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         binding.district.setText(mDataset.get(position).district);
         binding.state.setText(mDataset.get(position).state);
         binding.pin.setText(mDataset.get(position).pin);
+        binding.gstNo.setText(mDataset.get(position).gstNo);
+        binding.smsSenderID.setText(mDataset.get(position).smsSenderID);
 
+        Glide.with(context)
+                .load(mDataset.get(position).logoImagePath)
+                .apply(new RequestOptions()
+                        //  .centerCrop()
+                        //  .circleCrop()
+                        .placeholder(R.drawable.placeholder))
+                .into(binding.selectedImg);
         binding.btnAddCompany.setText("Update");
         binding.textView.setText("Update");
 

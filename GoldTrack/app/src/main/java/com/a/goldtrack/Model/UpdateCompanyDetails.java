@@ -25,6 +25,8 @@ public class UpdateCompanyDetails {
         public boolean delete;
         public boolean modify;
         public boolean add;
+        public String smsSenderID;
+        public String gstNo;
         public String createdDt;
         public String createdBy;
         public String updatedDt;

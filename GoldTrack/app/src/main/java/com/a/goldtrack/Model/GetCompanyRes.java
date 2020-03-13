@@ -10,7 +10,7 @@ public class GetCompanyRes {
 
     public class ResList {
 
-        public String desc;
+        public String desc; 
         public String mobileNo;
         public String website;
         public String address1;
@@ -22,6 +22,8 @@ public class GetCompanyRes {
         public String landline;
         public String logoImagePath;
         public String logoImageData;
+        public String smsSenderID;
+        public String gstNo;
         public String name;
         public String id;
         public String state;

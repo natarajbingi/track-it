@@ -16,4 +16,6 @@ public class AddCompany {
     public String pin;
     public String logoImageData;
     public String logoImagePath;
+    public String smsSenderID;
+    public String gstNo;
 }
