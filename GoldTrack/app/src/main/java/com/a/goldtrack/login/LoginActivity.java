@@ -16,9 +16,11 @@ import com.a.goldtrack.Model.UserLoginReq;
 import com.a.goldtrack.Model.UserLoginRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.customer.CustomerActivity;
+import com.a.goldtrack.dailyclosure.UserDailyClosureActivity;
 import com.a.goldtrack.register.RegistrationActivity;
 import com.a.goldtrack.databinding.ActivityLoginBinding;
 import com.a.goldtrack.trans.TransActivity;
+import com.a.goldtrack.users.UserForCompanyActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
@@ -67,15 +69,17 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
 
 
     public void onLoginSuccess() {
+        Intent i;
         binding.btnLogin.setEnabled(true);
 
-//        Intent i = new Intent(LoginActivity.this, CustomerActivity.class);
-        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-//        Intent i = new Intent(LoginActivity.this, TransActivity.class);
-        //        Intent i = new Intent(LoginActivity.this, CompanyActivity.class);
-        //        Intent i = new Intent(LoginActivity.this, UserForCompanyActivity.class);
-        //        Intent i = new Intent(LoginActivity.this, CompanyBranchesActivity.class);
-        //        Intent i = new Intent(LoginActivity.this, ItemsActivity.class);
+//          i = new Intent(LoginActivity.this, CustomerActivity.class);
+        i = new Intent(LoginActivity.this, HomeActivity.class);
+//          i = new Intent(LoginActivity.this, TransActivity.class);
+        //          i = new Intent(LoginActivity.this, CompanyActivity.class);
+//                  i = new Intent(LoginActivity.this, UserForCompanyActivity.class);
+//          i = new Intent(LoginActivity.this, UserDailyClosureActivity.class);
+        //          i = new Intent(LoginActivity.this, CompanyBranchesActivity.class);
+        //          i = new Intent(LoginActivity.this, ItemsActivity.class);
         startActivity(i);
         finish();
     }
@@ -150,7 +154,7 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
             Sessions.setUserString(context, loginRes.data.roles.get(0), Constants.roles);
             onLoginSuccess();
         } else {
-            Constants.alertDialogShow(context, loginRes.response);
+            Constants.alertDialogShow(context, " Entered credentials are incorrect, Please try again.");
         }
     }
 

@@ -328,7 +328,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
             paidAmountForRelease.setText("Released Amt: " + Constants.priceToString(res.paidAmountForRelease) + "\n\nPayable Amount: " + Constants.priceToString(res.amountPayable));
             roundOffAmount.setText("Round Off Amt: " + Constants.priceToString(res.roundOffAmount));
             comments.setText("Comments:\n " + res.comments);
-            createdDt.setText("Date: " + res.createdDt);
+            createdDt.setText("Date: " + Constants.getMiliToDateyyyymmmdd(res.createdDt));
             branchName.setText("Branck: " + res.branchName);
             empName.setText("Emp: " + res.empName);
 

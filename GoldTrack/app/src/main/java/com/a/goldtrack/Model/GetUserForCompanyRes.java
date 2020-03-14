@@ -26,6 +26,7 @@ public class GetUserForCompanyRes {
         public String mobileDevName;
         public String mobileIMEINo;
         public String profilePicUrl;
+        public String profilePicData;
         public List<String> roles;
         public String id;
         public boolean modify;

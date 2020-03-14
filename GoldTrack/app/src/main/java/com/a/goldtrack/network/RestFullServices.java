@@ -208,6 +208,7 @@ public class RestFullServices {
         DropdownDataForCompanyRes res = gj.fromJson(Constants.listme, DropdownDataForCompanyRes.class);
         callBacks.onDropDownSuccess(res);*/
     }
+
     public static void getDropdownDataForCompanyHome(GetCompany req, IDropdownDataCallBacks callBacks) {
         getClient().getDropdownDataForCompany(req).enqueue(new Callback<DropdownDataForCompanyRes>() {
             @Override
@@ -459,26 +460,31 @@ public class RestFullServices {
         });
     }
 
-    public static void getTransaction(GetTransactionReq req, ITransCallBacks callBacks, IHomeFragCallbacks callbacks) {
+    public static void getTransaction(GetTransactionReq req, ITransCallBacks callTransBacks, IHomeFragCallbacks callHomebacks, IDailyClosureCallBacks callClosureBacks) {
         getClient().getTransactionForFilters(req).enqueue(new Callback<GetTransactionRes>() {
             @Override
             public void onResponse(Call<GetTransactionRes> call, Response<GetTransactionRes> response) {
                 Constants.logPrint(call.request().toString(), req, response.body());
                 if (response.isSuccessful()) {
-                    if (callBacks != null) callBacks.onGetTransSuccess(response.body());
-                    if (callbacks != null) callbacks.onGetTransSuccess(response.body());
+                    if (callTransBacks != null) callTransBacks.onGetTransSuccess(response.body());
+                    if (callHomebacks != null) callHomebacks.onGetTransSuccess(response.body());
+                    if (callClosureBacks != null)
+                        callClosureBacks.onGetTransSuccess(response.body());
                 } else {
-                    if (callBacks != null)
-                        callBacks.onErrorComplete("Something went wrong, Server Error");
-                    if (callbacks != null)
-                        callbacks.onErrorComplete("Something went wrong, Server Error");
+                    if (callTransBacks != null)
+                        callTransBacks.onErrorComplete("Something went wrong, Server Error");
+                    if (callHomebacks != null)
+                        callHomebacks.onErrorComplete("Something went wrong, Server Error");
+                    if (callClosureBacks != null)
+                        callClosureBacks.onErrorComplete("Something went wrong, Server Error");
                 }
             }
 
             @Override
             public void onFailure(Call<GetTransactionRes> call, Throwable t) {
-                if (callBacks != null) callBacks.onError(t.getMessage());
-                if (callbacks != null) callbacks.onError(t.getMessage());
+                if (callTransBacks != null) callTransBacks.onError(t.getMessage());
+                if (callHomebacks != null) callHomebacks.onError(t.getMessage());
+                if (callClosureBacks != null) callClosureBacks.onError(t.getMessage());
             }
         });
     }

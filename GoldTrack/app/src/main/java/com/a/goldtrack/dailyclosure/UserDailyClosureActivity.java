@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +25,8 @@ import com.a.goldtrack.Model.AddUserDailyClosureReq;
 import com.a.goldtrack.Model.AddUserDailyClosureRes;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetItemsRes;
+import com.a.goldtrack.Model.GetTransactionReq;
+import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.Model.GetUserDailyClosureReq;
 import com.a.goldtrack.Model.GetUserDailyClosureRes;
 import com.a.goldtrack.Model.UpdateItemReq;
@@ -38,6 +41,7 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,11 +55,13 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
     Context context;
     GetUserDailyClosureReq req;
     boolean viewOrEdit = true;
+    boolean role = false;
 
     protected Constants.LayoutManagerType mCurrentLayoutManagerType;
 
     protected RecyclerView.LayoutManager mLayoutManager;
     protected List<GetUserDailyClosureRes.DataList> mDataset;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,12 +76,14 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
     Map<String, String> branchesArr = null;
 
     void init() {
-
+        String str = Sessions.getUserString(context, Constants.roles);
+        role = str.equals("ADMIN") || str.equals("SUPER_ADMIN");
         progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("in Progress...");
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
+        binding.progressBarForTrans.setVisibility(View.GONE);
         viewModel.onViewAvailable(this);
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -98,17 +106,33 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
             Constants.Toasty(context, "Please refresh home screen to load details", Constants.error);
         }
 
-        binding.dateClosure.setOnClickListener(new View.OnClickListener() {
+        binding.imgDateClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Calendar now = Calendar.getInstance();
-                DatePickerDialog dpd = DatePickerDialog.newInstance(
-                        UserDailyClosureActivity.this,
-                        now.get(Calendar.YEAR), // Initial year selection
-                        now.get(Calendar.MONTH), // Initial month selection
-                        now.get(Calendar.DAY_OF_MONTH) // Inital day selection
-                );
-                dpd.show(getSupportFragmentManager(), "Datepickerdialog");
+                if (binding.btnAddClosure.getText().toString().equalsIgnoreCase("Add")) {
+                    Calendar now = Calendar.getInstance();
+                    DatePickerDialog dpd = DatePickerDialog.newInstance(
+                            UserDailyClosureActivity.this,
+                            now.get(Calendar.YEAR), // Initial year selection
+                            now.get(Calendar.MONTH), // Initial month selection
+                            now.get(Calendar.DAY_OF_MONTH) // Inital day selection
+                    );
+                    dpd.setMaxDate(now);
+                    dpd.show(getSupportFragmentManager(), "Datepickerdialog");
+                }
+            }
+        });
+        viewModel.totalAmt.observe(this, new Observer<Double>() {
+            @Override
+            public void onChanged(Double totTrans) {
+                binding.totalAmt.setText("" + totTrans);
+//                if (totTrans > 0) {
+                String str = binding.expenses.getText().toString();
+                double expesnse = Double.parseDouble(str.isEmpty() ? "0" : str);
+                String recFund = binding.fundRecieved.getText().toString();
+                str = (Double.parseDouble(recFund.isEmpty() ? "0" : recFund) - (totTrans + expesnse)) + "";
+                binding.cashInHand.setText(str);
+//                }
             }
         });
         viewModel.list.observe(this, new Observer<GetUserDailyClosureRes>() {
@@ -122,11 +146,21 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
         binding.addSignalClosure.setOnClickListener(this);
         binding.btnAddClosure.setOnClickListener(this);
 
+        binding.expenses.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (!role && !b) {
+                    gettingTrans();
+                } else if (binding.btnAddClosure.getText().toString().equalsIgnoreCase("Add") && !b) {
+                    gettingTrans();
+                }
+            }
+        });
+
         req = new GetUserDailyClosureReq();
         req.companyID = Sessions.getUserString(context, Constants.companyId);
         req.branchID = "0";//Sessions.getUserString(context, Constants.companyId);
-        String role = Sessions.getUserString(context, Constants.roles);
-        if (role.equals("ADMIN") || role.equals("SUPER_ADMIN")) {
+        if (role) {
             req.userID = "0";
         } else
             req.userID = Sessions.getUserString(context, Constants.userId);
@@ -134,6 +168,27 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
         progressDialog.show();
         viewModel.getDailyClosures(req);
         setSpinners(binding.selectBranch, branchesArr.keySet().toArray(new String[0]));
+
+    }
+
+    void gettingTrans() {
+        GetTransactionReq reqTrans = new GetTransactionReq();
+        String recFund = binding.fundRecieved.getText().toString();
+        reqTrans.branchID = branchesArr.get(binding.selectBranch.getSelectedItem().toString());
+        reqTrans.transactionDate = binding.dateClosure.getText().toString();
+        reqTrans.companyID = Sessions.getUserString(context, Constants.companyId);
+        reqTrans.employeeID = Sessions.getUserString(context, Constants.userId);
+        if (recFund.isEmpty()) {
+            Constants.Toasty(context, "Please enter Fund received amount.");
+            return;
+        }
+        if (reqTrans.branchID.equals("Select") || reqTrans.transactionDate.isEmpty()) {
+            Constants.Toasty(context, "Please select Branch and date");
+        } else {
+            binding.progressBarForTrans.setVisibility(View.VISIBLE);
+            binding.btnAddClosure.setEnabled(false);
+            viewModel.getTrans(reqTrans);
+        }
     }
 
     private void setSpinners(Spinner spr, String[] array) {
@@ -206,12 +261,21 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
 
         switch (view.getId()) {
             case R.id.btn_add_closure:
-                if (binding.btnAddClosure.getText().toString().equals("ADD"))
-                    setValidateAdd();
-                else {
-                    String role = Sessions.getUserString(context, Constants.roles);
-                    if (role.equals("ADMIN") || role.equals("SUPER_ADMIN")) {
-                        setValidateUpdate();
+                if (binding.btnAddClosure.getText().toString().equals("ADD")) {
+                    Constants.alertDialogShowWithCancel(context, "Are you sure want to proceed?", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            setValidateAdd();
+                        }
+                    });
+                } else {
+                    if (role) {
+                        Constants.alertDialogShowWithCancel(context, "Are you sure want to proceed to update?", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                setValidateUpdate();
+                            }
+                        });
                     } else
                         Constants.Toasty(context, "Only Admin can update Daily Closure details.", Constants.info);
                 }
@@ -241,7 +305,7 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
 
 
         req.companyId = Sessions.getUserString(context, Constants.companyId);
-        req.branchId = binding.selectBranch.getSelectedItem().toString().split("-")[1];
+        req.branchId = branchesArr.get(binding.selectBranch.getSelectedItem().toString());//.split("-")[1];
         req.userId = Sessions.getUserString(context, Constants.userId);
 
         req.date = binding.dateClosure.getText().toString();
@@ -253,7 +317,8 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
         req.createdBy = Sessions.getUserString(context, Constants.userId);
 
 
-        if (req.comments.isEmpty() || req.date.isEmpty() || req.cashInHand.isEmpty() || req.fundRecieved.isEmpty() || req.branchId.equalsIgnoreCase("Select")) {
+        if (req.comments.isEmpty() || req.date.isEmpty() || req.cashInHand.isEmpty()
+                || req.fundRecieved.isEmpty() || req.branchId.equalsIgnoreCase("Select")) {
             Constants.Toasty(context, "Please Enter mandatory Fields", Constants.warning);
             return;
         }
@@ -278,8 +343,7 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
         reqData.updatedBy = Sessions.getUserString(context, Constants.userId);
         reqData.delete = false;
 
-        if (reqData.date.isEmpty() || reqData.fundRecieved.isEmpty() || reqData.comments.isEmpty()
-                || reqData.cashInHand.isEmpty()) {
+        if (reqData.date.isEmpty() || reqData.fundRecieved.isEmpty() || reqData.comments.isEmpty()) {
             Constants.Toasty(context, "Please Enter mandatory Fields", Constants.warning);
             return;
         }
@@ -301,7 +365,10 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
         binding.expensesDesc.setText("");
         binding.comments.setText("");
         binding.btnAddClosure.setText("ADD");
+        binding.btnAddClosure.setEnabled(true);
         binding.textView.setText("Add today's closure");
+        binding.totalAmt.setText("");
+        viewModel.totalAmt.postValue(0.0);
 
         binding.addSignalClosure.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
@@ -332,10 +399,18 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
                 ).getPosition(mDataset.get(position).branchId));
 
 
-        String extra =
-                "User Name: " + mDataset.get(position).userName
-                        + "\nCompany Name: " + mDataset.get(position).companyName+"\n";
+        String extra = "User Name: " + mDataset.get(position).userName
+                + "\nCompany Name: " + mDataset.get(position).companyName + "\n";
         binding.extraData.setText(extra);
+
+        double expesnse = Double.parseDouble(mDataset.get(position).expenses.isEmpty() ? "0" : mDataset.get(position).expenses);
+        double cashinHd = Double.parseDouble(mDataset.get(position).cashInHand.isEmpty() ? "0" : mDataset.get(position).cashInHand);
+        double recFund = Double.parseDouble(mDataset.get(position).fundRecieved.isEmpty() ? "0" : mDataset.get(position).fundRecieved);
+        String totTrans = (recFund - (cashinHd + expesnse)) + "";
+
+
+        binding.totalAmt.setText("" + totTrans);
+
         binding.extraData.setVisibility(View.VISIBLE);
         binding.btnAddClosure.setText("Update");
         binding.textView.setText("Update");
@@ -354,14 +429,14 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
 
     @Override
     public void onGetDailyClosureSuccess(GetUserDailyClosureRes res) {
-
+        //   progressDialog.dismiss();
     }
 
     @Override
     public void onAddDailyClousureSuccess(AddUserDailyClosureRes res) {
         if (res.success) {
-            Constants.Toasty(context, "Today's Closure Added successfully", Constants.success);
             resetAll();
+            Constants.Toasty(context, "Today's Closure Added successfully", Constants.success);
             viewModel.getDailyClosures(req);
         } else {
             Constants.alertDialogShow(context, res.response);
@@ -369,6 +444,7 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
         }
     }
 
+    //.
     @Override
     public void onUpdateDailyClousureSuccess(UpdateUserDailyClosureRes res) {
         if (res.success) {
@@ -380,6 +456,12 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
             progressDialog.dismiss();
         }
 
+    }
+
+    @Override
+    public void onGetTransSuccess(GetTransactionRes res) {
+        binding.progressBarForTrans.setVisibility(View.GONE);
+        binding.btnAddClosure.setEnabled(true);
     }
 
     @Override

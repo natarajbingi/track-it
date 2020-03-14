@@ -23,5 +23,6 @@ public class GetCustomerRes {
         public String updatedBy;
         public String createdDt;
         public String updatedDt;
+        public String profile_pic_url;
     }
 }

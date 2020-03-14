@@ -82,7 +82,8 @@ public class CustomHomeAdapter extends RecyclerView.Adapter<CustomHomeAdapter.Vi
 
         Log.d(TAG, "Element " + position + " set.");
         viewHolder.textView.setText(mDataSet.get(position).customerName);
-        viewHolder.text_date.setText("Bill No: " + mDataSet.get(position).billNumber);
+        viewHolder.text_date.setText("Date: " + Constants.getMiliToDateyyyymmmdd(mDataSet.get(position).createdDt)
+                + "\nBill No: " + mDataSet.get(position).billNumber);
         viewHolder.text_sub.setText("Commodity: " + mDataSet.get(position).commodity
                 + "\t\t\tTotal Amt: " + Constants.priceToString(mDataSet.get(position).totalAmount));
     }

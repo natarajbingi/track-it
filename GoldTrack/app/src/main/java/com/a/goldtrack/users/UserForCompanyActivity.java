@@ -32,15 +32,18 @@ import com.a.goldtrack.Model.UpdateUserDetails;
 import com.a.goldtrack.R;
 import com.a.goldtrack.camera.CamReqActivity;
 import com.a.goldtrack.customer.CustomerActivity;
+import com.a.goldtrack.dailyclosure.UserDailyClosureActivity;
 import com.a.goldtrack.databinding.ActivityUserForCompanyBinding;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
-public class UserForCompanyActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, UserCompanyHandler {
+public class UserForCompanyActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, DatePickerDialog.OnDateSetListener, UserCompanyHandler {
 
     ActivityUserForCompanyBinding binding;
     UserForCompanyViewModel viewModel;
@@ -132,7 +135,20 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
                 return false;
             }
         });
-
+        binding.imgDateClick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar now = Calendar.getInstance();
+                DatePickerDialog dpd = DatePickerDialog.newInstance(
+                        UserForCompanyActivity.this,
+                        now.get(Calendar.YEAR), // Initial year selection
+                        now.get(Calendar.MONTH), // Initial month selection
+                        now.get(Calendar.DAY_OF_MONTH) // Inital day selection
+                );
+                dpd.setMaxDate(now);
+                dpd.show(getSupportFragmentManager(), "Datepickerdialog");
+            }
+        });
         user = new GetUserForCompany();
         user.companyId = Sessions.getUserString(context, Constants.companyId);
         user.userId = "0";
@@ -405,4 +421,9 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         }
     }
 
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+        String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+        binding.dob.setText(date);
+    }
 }

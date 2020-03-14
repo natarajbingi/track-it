@@ -86,6 +86,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
 
         binding.addSignalCustomer.setOnClickListener(this);
         binding.btnAddCustomer.setOnClickListener(this);
+        binding.triggImgGet.setOnClickListener(this);
 
         custReq = new GetCustomerReq();
         //  custReq.companyID = Sessions.getUserString(context, Constants.companyId);
@@ -127,7 +128,6 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
                 return false;
             }
         });
-        binding.triggImgGet.setOnClickListener(this);
         try {
             binding.search.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
         } catch (Exception e) {
@@ -306,10 +306,11 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         binding.address2.setText(mDataset.get(position).address2);
         binding.state.setText(mDataset.get(position).state);
         binding.pin.setText(mDataset.get(position).pin);
-
+        ImgData = "";
         binding.btnAddCustomer.setText("Update");
         binding.textView.setText("Update");
 
+        Constants.setGilde(mDataset.get(position).profile_pic_url, binding.selectedImg);
         binding.addSignalCustomer.setImageDrawable(getResources().getDrawable(R.drawable.ic_arrow_back));
         binding.listDetailsHolder.setVisibility(View.GONE);
         binding.addDetailsHolder.setVisibility(View.VISIBLE);

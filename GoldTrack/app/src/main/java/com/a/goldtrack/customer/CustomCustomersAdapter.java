@@ -18,6 +18,7 @@ import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.R;
+import com.a.goldtrack.utils.Constants;
 
 import java.util.List;
 
@@ -89,6 +90,9 @@ public class CustomCustomersAdapter extends RecyclerView.Adapter<CustomCustomers
         viewHolder.text_sub.setText("Mobile No: " + mDataSet.get(position).mobileNum
                 + "\nEmail: " + mDataSet.get(position).emailId);
         viewHolder.text_date.setText("Unique ID: " + mDataSet.get(position).uniqueId);
+        viewHolder.logo_id.setVisibility(View.VISIBLE);
+        Constants.setGilde(mDataSet.get(position).profile_pic_url, viewHolder.logo_id);
+
     }
 
     @Override
