@@ -1,5 +1,6 @@
 package com.a.goldtrack.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -34,6 +35,8 @@ import androidx.core.content.ContextCompat;
 import com.a.goldtrack.GTrackApplication;
 import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.R;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
@@ -165,9 +168,10 @@ public class Constants {
         // from 0 to 999999
         Random rnd = new Random();
         int number = rnd.nextInt(999999);
-
+        String str = String.format("%06d", number);
+        if (str.split("")[0].equals("0")) getRandomNumberString();
         // this will convert any number sequence into 6 character.
-        return String.format("%06d", number);
+        return str;
     }
 
     public static String fileToStringOfBitmap(File mPhotoFile) {
@@ -184,7 +188,7 @@ public class Constants {
         return encImage;
     }
 
-  
+
     public static Bitmap stringToBitmap(String imageString) {
         //decode base64 string to image
         byte[] imageBytes = Base64.decode(imageString, Base64.DEFAULT);
@@ -193,9 +197,10 @@ public class Constants {
         return decodedImage;
     }
 
-    public static void Toasty(Context ctx, String Msg){
+    public static void Toasty(Context ctx, String Msg) {
         Toasty.info(ctx, Msg, Toast.LENGTH_LONG, true).show();
     }
+
     public static void Toasty(Context ctx, String Msg, int type) {
         switch (type) {
             case error:
@@ -248,11 +253,34 @@ public class Constants {
         return s.format(date1);
     }
 
+    public static String getMiliToDateyyyymmmdd(String dte) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        long milliSeconds = Long.parseLong(dte);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+
+        return formatter.format(calendar.getTime());
+    }
+
     public static String getDateNowyyyymmmdd() {
         Date date1 = new Date();
         SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
 
         return s.format(date1);
+    }
+
+    public static void setGilde(String logoImagePath, ImageView view) {
+
+        Glide.with(GTrackApplication.getInstance())
+                .load(logoImagePath)
+
+                .apply(new RequestOptions()
+                        //  .centerCrop()
+                        //  .circleCrop()
+                        .error(R.drawable.profile_icon_menu)
+                        .placeholder(R.drawable.placeholder))
+                .into(view);
     }
 
     public static String getDateNowAll() {

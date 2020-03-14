@@ -4,21 +4,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="4dp"
+    android:layout_marginLeft="0dp"
     android:layout_marginTop="0dp"
     android:layout_marginRight="0dp"
     android:clickable="true"
+    android:elevation="4dp"
     android:focusable="true"
     android:foreground="?selectableItemBackground"
-    android:layout_marginLeft="0dp"
     app:cardUseCompatPadding="true">
 
     <RelativeLayout
         android:id="@+id/parent_tile_bg"
-        android:background="@color/light_me"
-        android:padding="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/light_me"
+        android:padding="10dp">
 
         <ImageView
             android:id="@+id/logo_id"
@@ -69,6 +69,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_marginTop="5dp"
+            android:gravity="right"
             android:text="Date: 12-06-2019"
             android:textColor="@color/jet"
             android:textSize="12sp" />

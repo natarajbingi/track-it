@@ -33,7 +33,7 @@ public class HomeViewModel extends ViewModel implements IHomeFragCallbacks , IDr
 
     public void getTransactions(GetTransactionReq req) {
         if (transList != null)
-            RestFullServices.getTransaction(req, null, this);
+            RestFullServices.getTransaction(req, null, this,null);
     }
     public void getDropdown(GetCompany req) {
         RestFullServices.getDropdownDataForCompanyHome(req, this);

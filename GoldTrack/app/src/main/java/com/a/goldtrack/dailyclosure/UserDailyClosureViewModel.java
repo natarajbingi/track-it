@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.a.goldtrack.Model.AddUserDailyClosureReq;
 import com.a.goldtrack.Model.AddUserDailyClosureRes;
+import com.a.goldtrack.Model.GetTransactionReq;
+import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.Model.GetUserDailyClosureReq;
 import com.a.goldtrack.Model.GetUserDailyClosureRes;
 import com.a.goldtrack.Model.UpdateUserDailyClosureReq;
@@ -19,14 +21,21 @@ public class UserDailyClosureViewModel extends ViewModel implements IDailyClosur
 
     MutableLiveData<GetUserDailyClosureRes> list;
     IDailyClosureView view;
+    public MutableLiveData<Double> totalAmt;
+    public MutableLiveData<Double> cashInHand;
 
     public void onViewAvailable(IDailyClosureView view) {
         this.view = view;
         list = new MutableLiveData<>();
+        totalAmt = new MutableLiveData<>();
     }
 
     public void getDailyClosures(GetUserDailyClosureReq req) {
         RestFullServices.getDailyClosures(req, this);
+    }
+
+    public void getTrans(GetTransactionReq req) {
+        RestFullServices.getTransaction(req, null, null, this);
     }
 
     public void addDailyClosure(AddUserDailyClosureReq req) {
@@ -54,6 +63,12 @@ public class UserDailyClosureViewModel extends ViewModel implements IDailyClosur
     }
 
     @Override
+    public void onGetTransSuccess(GetTransactionRes res) {
+        calTransTotalAmt(res);
+        view.onGetTransSuccess(res);
+    }
+
+    @Override
     public void onError(String message) {
         view.onError(message);
     }
@@ -61,5 +76,14 @@ public class UserDailyClosureViewModel extends ViewModel implements IDailyClosur
     @Override
     public void onErrorComplete(String s) {
         view.onErrorComplete(s);
+    }
+
+
+    private void calTransTotalAmt(GetTransactionRes res) {
+        double amt = 0;
+        for (int i = 0; i < res.dataList.size(); i++) {
+            amt = amt + (Double.parseDouble(res.dataList.get(i).amountPayable));
+        }
+        totalAmt.postValue(amt);
     }
 }

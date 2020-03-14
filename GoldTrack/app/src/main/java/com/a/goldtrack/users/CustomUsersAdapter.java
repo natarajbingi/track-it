@@ -15,6 +15,7 @@ import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.GetCompanyRes;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.R;
+import com.a.goldtrack.utils.Constants;
 
 import java.util.List;
 
@@ -34,9 +35,10 @@ public class CustomUsersAdapter extends RecyclerView.Adapter<CustomUsersAdapter.
     }
 
     public void updateListNew(List<GetUserForCompanyRes.ResList> mDataset) {
-        this.mDataSet=(mDataset);
+        this.mDataSet = (mDataset);
         this.notifyDataSetChanged();
     }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final TextView textView, text_sub, text_date;
         private final ImageView logo_id;
@@ -86,6 +88,8 @@ public class CustomUsersAdapter extends RecyclerView.Adapter<CustomUsersAdapter.
                 + "\t\t\tEmail: " + mDataSet.get(position).emailID
                 + "\nMobile: " + mDataSet.get(position).mobileNo);
         viewHolder.text_date.setText("DOB: " + mDataSet.get(position).dob);
+        viewHolder.logo_id.setVisibility(View.VISIBLE);
+        Constants.setGilde(mDataSet.get(position).profilePicUrl, viewHolder.logo_id);
     }
 
     @Override
