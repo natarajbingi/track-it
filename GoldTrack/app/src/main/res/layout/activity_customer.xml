@@ -40,7 +40,8 @@
             android:id="@+id/list_details_holder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:animateLayoutChanges="true">
+            android:animateLayoutChanges="true"
+            android:visibility="gone">
 
 
             <androidx.core.widget.NestedScrollView
@@ -117,214 +118,405 @@
                 android:elevation="4dp"
                 app:cardUseCompatPadding="true">
 
-
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="10dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="55dp"
                     android:orientation="vertical">
 
-                    <RelativeLayout
+                    <LinearLayout
+                        android:id="@+id/second_step_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="14dp">
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/textView"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Add Customer"
-                            android:textColor="@android:color/black"
-                            android:textSize="28sp"
-                            android:textStyle="bold" />
+                            android:gravity="center"
+                            android:padding="10dp"
+                            android:text="Please Attach KYC images by capture or select image to complete Customer Registration."
+                            android:textColor="@color/jet"
+                            android:textSize="15sp" />
 
                         <TextView
-                            android:id="@+id/txtsignup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:text="Select KYC Type *"
+                            android:textSize="12sp" />
+
+                        <Spinner
+                            android:id="@+id/kycSpnner"
+                            style="@style/Spinner.Underlined"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:entries="@array/kycArray" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.7"
+                                android:padding="10dp"
+                                android:text="Select KYC Images"
+                                android:textSize="14sp" />
+                            <!--Capture / -->
+                            <ImageView
+                                android:id="@+id/triggImgKYC"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="0.3"
+                                android:background="@color/background_one_"
+                                android:padding="10dp"
+                                android:src="@drawable/add_a_photo" />
+
+
+                        </LinearLayout>
+
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp">
+
+                            <LinearLayout
+                                android:id="@+id/imgHolderInLastSetTrans"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/background"
+                                android:orientation="horizontal"
+                                android:padding="5dp">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.5"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:foreground="?selectableItemBackground"
+                                    android:orientation="vertical">
+
+                                    <ImageView
+                                        android:id="@+id/selectedImgOne"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="125dp"
+                                        android:src="@drawable/placeholder" />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center"
+                                        android:text="Attachment 1" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_weight="0.5"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:foreground="?selectableItemBackground"
+                                    android:orientation="vertical">
+
+                                    <ImageView
+                                        android:id="@+id/selectedImgTwo"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="125dp"
+                                        android:src="@drawable/placeholder" />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center"
+                                        android:text="Attachment 2" />
+                                </LinearLayout>
+
+
+                            </LinearLayout>
+                        </HorizontalScrollView>
+
+
+                        <TextView
+                            android:id="@+id/removeAll"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginTop="4dp"
-                            android:text=""
-                            android:textColor="#9C27B0"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
+                            android:layout_gravity="right"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?selectableItemBackground"
+                            android:padding="8dp"
+                            android:text="Remove all."
+                            android:textColor="@color/dark_theme"
+                            android:textSize="15sp"
+                            android:visibility="gone" />
 
-                            />
-                    </RelativeLayout>
-
-                    <EditText
-                        android:id="@+id/companyId"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="40dp">
-
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/firstName"
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="First Name *"
-                            android:inputType="text" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_marginTop="25dp"
+                            android:padding="16dp"
+                            android:text="Note*: At least one Image is mandatory to complete transaction."
+                            android:textColor="@color/light_theme"
+                            android:textSize="9sp" />
 
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/lastName"
+                        <Button
+                            android:id="@+id/btn_addImagesToCust"
+                            style="@style/blueButton"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Last Name"
-                            android:inputType="text" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/mobileNum"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Mobile No *"
-                            android:inputType="numberDecimal"
-                            android:maxLength="10" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/emailId"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Email ID"
-                            android:inputType="textEmailAddress" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/address1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Address 1 *"
-                            android:inputType="text" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/address2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Address 2"
-                            android:inputType="text" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
+                            android:layout_margin="15dp"
+                            android:text="Attach Image(s)" />
+                    </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/first_step_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="14dp">
+
+                            <TextView
+                                android:id="@+id/textView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Add Customer"
+                                android:textColor="@android:color/black"
+                                android:textSize="28sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/txtsignup"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginTop="4dp"
+                                android:text=""
+                                android:textColor="#9C27B0"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+
+                                />
+                        </RelativeLayout>
+
+                        <EditText
+                            android:id="@+id/companyId"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone" />
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1">
+                            android:layout_marginTop="40dp">
+
 
                             <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/state"
+                                android:id="@+id/firstName"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="State"
+                                android:hint="First Name *"
                                 android:inputType="text" />
                         </com.google.android.material.textfield.TextInputLayout>
 
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
 
                             <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/pin"
+                                android:id="@+id/lastName"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Pincode *"
-                                android:inputType="numberDecimal"
-                                android:maxLength="6" />
+                                android:hint="Last Name"
+                                android:inputType="text" />
                         </com.google.android.material.textfield.TextInputLayout>
 
 
-                    </LinearLayout>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
 
-                    <LinearLayout
-                        android:id="@+id/take_img_customer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:orientation="horizontal">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/mobileNum"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Mobile No *"
+                                android:inputType="numberDecimal"
+                                android:maxLength="10" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                        <TextView
-                            android:layout_width="0dp"
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/emailId"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Email ID"
+                                android:inputType="textEmailAddress" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/address1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Address 1 *"
+                                android:inputType="text" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/address2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Address 2"
+                                android:inputType="text" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.7"
-                            android:padding="10dp"
-                            android:text="Select Image"
-                            android:textSize="14sp" />
-                        <!--Capture / -->
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/state"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="State"
+                                    android:inputType="text" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
+
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/pin"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="Pincode *"
+                                    android:inputType="numberDecimal"
+                                    android:maxLength="6" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/take_img_customer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.7"
+                                android:padding="10dp"
+                                android:text="Select profile Image"
+                                android:textSize="14sp" />
+                            <!--Capture / -->
+                            <ImageView
+                                android:id="@+id/triggImgGet"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="0.3"
+                                android:background="@color/background_one_"
+                                android:padding="10dp"
+                                android:src="@drawable/add_a_photo" />
+
+
+                        </LinearLayout>
+
                         <ImageView
-                            android:id="@+id/triggImgGet"
-                            android:layout_width="0dp"
+                            android:id="@+id/selectedImg"
+                            android:layout_width="match_parent"
+                            android:layout_height="75dp"
+                            android:src="@drawable/profile_icon_menu" />
+
+                        <LinearLayout
+                            android:id="@+id/selectedImgLayout"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_weight="0.3"
-                            android:background="@color/background_one_"
-                            android:padding="10dp"
-                            android:src="@drawable/add_a_photo" />
+                            android:orientation="vertical"
+                            android:visibility="gone">
 
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/oil"
+                                android:padding="5dp"
+                                android:text="Attached KYC Images."
+                                android:textColor="@color/white" />
 
+                            <HorizontalScrollView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="10dp">
+
+                                <LinearLayout
+                                    android:id="@+id/imgHolderInLastSetCustUp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/background"
+                                    android:orientation="horizontal"
+                                    android:padding="5dp"></LinearLayout>
+                            </HorizontalScrollView>
+                        </LinearLayout>
+
+                        <Button
+                            android:id="@+id/btn_add_customer"
+                            style="@style/purpoleButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="32dp"
+                            android:padding="15dp"
+                            android:text="ADD CUSTOMER" />
                     </LinearLayout>
-
-                    <ImageView
-                        android:id="@+id/selectedImg"
-                        android:layout_width="match_parent"
-                        android:layout_height="75dp"
-                        android:src="@drawable/ic_menu_camera" />
-
-                    <Button
-                        android:id="@+id/btn_add_customer"
-                        style="@style/purpoleButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="32dp"
-                        android:padding="15dp"
-                        android:text="ADD CUSTOMER" />
                 </LinearLayout>
+
             </androidx.cardview.widget.CardView>
         </ScrollView>
 
@@ -333,7 +525,8 @@
             android:id="@+id/progressbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/add_signal_customer"

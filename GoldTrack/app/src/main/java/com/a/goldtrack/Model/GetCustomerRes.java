@@ -19,10 +19,20 @@ public class GetCustomerRes {
         public String address2;
         public String pin;
         public String state;
+        public List<UploadedImages> uploadedImages;
         public String createdBy;
         public String updatedBy;
         public String createdDt;
         public String updatedDt;
         public String profile_pic_url;
     }
+
+    public class UploadedImages {
+        public String commonID;
+        public String createdBy;
+        public String imageType;
+        public String imagePath;
+        public String id;
+    }
+
 }

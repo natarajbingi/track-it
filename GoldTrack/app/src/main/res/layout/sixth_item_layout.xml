@@ -27,7 +27,7 @@
                 android:layout_marginTop="20dp"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="Please Attachment commodity images by capture or select image to complete Transaction. click on image to attach"
+                android:text="Please Attach commodity images by capture or select image to complete Transaction."
                 android:textColor="@color/jet"
                 android:textSize="15sp" />
 
