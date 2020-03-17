@@ -325,7 +325,7 @@
                         android:layout_height="75dp"
                         android:layout_weight="1"
                         android:padding="8dp"
-                        android:src="@drawable/ic_menu_camera"/>
+                        android:src="@drawable/ic_menu_camera" />
 
 
                 </LinearLayout>
@@ -370,6 +370,28 @@
                         android:text=""
                         android:textColor="@color/oil"
                         android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/oil"
+                        android:padding="5dp"
+                        android:text="Attached commodity Images."
+                        android:textColor="@color/white" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp">
+
+                        <LinearLayout
+                            android:id="@+id/imgHolderInLastSetTrans"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/background"
+                            android:orientation="horizontal"
+                            android:padding="5dp"></LinearLayout>
+                    </HorizontalScrollView>
 
                     <LinearLayout
                         android:layout_width="match_parent"

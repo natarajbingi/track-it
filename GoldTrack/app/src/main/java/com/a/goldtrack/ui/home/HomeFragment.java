@@ -46,6 +46,7 @@ import com.a.goldtrack.Model.GetTransactionReq;
 import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.Model.ItemsTrans;
 import com.a.goldtrack.R;
+import com.a.goldtrack.camera.CamReqActivity;
 import com.a.goldtrack.databinding.FragmentHomeBinding;
 import com.a.goldtrack.databinding.TransItemPopupBinding;
 import com.a.goldtrack.network.APIService;
@@ -53,9 +54,11 @@ import com.a.goldtrack.network.RestFullServices;
 import com.a.goldtrack.network.RetrofitClient;
 import com.a.goldtrack.trans.IDropdownDataCallBacks;
 import com.a.goldtrack.utils.Constants;
+import com.a.goldtrack.utils.ImageClickLIstener;
 import com.a.goldtrack.utils.Sessions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -307,6 +310,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         final TextView empName = (TextView) popupView.findViewById(R.id.empName);
         final TextView branchName = (TextView) popupView.findViewById(R.id.branchName);
         final LinearLayout itemsDataRepeatLayout = (LinearLayout) popupView.findViewById(R.id.itemsDataRepeatLayout);
+        final LinearLayout imgHolderInLastSetTrans = (LinearLayout) popupView.findViewById(R.id.imgHolderInLastSetTrans);
 
         Button buttonRequestADD = (Button) popupView.findViewById(R.id.TestButton);
 
@@ -351,6 +355,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
                 referencePicPath.setVisibility(View.GONE);
             }
 
+
             String itemsDataRepeatStr = "ITEMS:";
 
             for (int i = 0; i < res.itemList.size(); i++) {
@@ -358,6 +363,8 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
                 // itemsDataRepeatStr += (i + 1) + ") " + res.itemList.get(i).itemName + "\t\t\t" + res.itemList.get(i).commodityWeight + "Grms\t\t\t Rs. " + Constants.priceToString(res.itemList.get(i).amount) + "\n\n";
             }
 
+            if (res.uploadedImages != null)
+                addImgs(imgHolderInLastSetTrans, res.uploadedImages);
             itemsDataRepeat.setText(itemsDataRepeatStr);
             pdf_link.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -396,6 +403,32 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         ((TextView) newView1.findViewById(R.id.amt)).setText("Rs. " + data.amount);
 
         view.addView(newView1);
+    }
+
+    private void addImgs(ViewGroup grp, List<GetTransactionRes.UploadedImages> imgDataList) {
+        grp.removeAllViews();
+        if (imgDataList.size() > 0) {
+            for (int i = 0; i < imgDataList.size(); i++) {
+                final ViewGroup newView1 = (ViewGroup) LayoutInflater.from(context)
+                        .inflate(R.layout.img_layout, grp, false);
+                ImageView imgNewScroll = (ImageView) newView1.findViewById(R.id.selectedImgOne);
+                TextView attachmentCount = (TextView) newView1.findViewById(R.id.attachmentCount);
+                attachmentCount.setText("Attachment " + (i + 1));
+                // imgNewScroll.setImageBitmap(CamReqActivity.stringToBitmap();
+                Picasso.get()
+                        .load(imgDataList.get(i).imagePath)
+                        // .transform(new BitmapTransform(800, 600))
+                        // .resize(size, size)
+                        // .centerInside()
+                        // .noPlaceholder()
+                        .placeholder(R.drawable.loader)
+                        .error(R.drawable.load_failed)
+                        .into(imgNewScroll);
+
+                imgNewScroll.setOnClickListener(new ImageClickLIstener(context, (imgDataList.get(i).imagePath)));
+                grp.addView(newView1);
+            }
+        }
     }
 
     @Override

@@ -408,6 +408,12 @@
                 layout="@layout/fifth_item_layout"
                 bind:transModelFifth="@{transModel}" />
 
+            <!--Fifth step details-->
+            <include
+                android:id="@+id/sixth_layout_parent"
+                layout="@layout/sixth_item_layout"
+                bind:transModelSixth="@{transModel}" />
+
             <RelativeLayout
                 android:id="@+id/bottom_total_layout"
                 android:layout_width="match_parent"

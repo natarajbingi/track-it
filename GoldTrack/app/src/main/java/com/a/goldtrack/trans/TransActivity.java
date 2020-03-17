@@ -26,6 +26,7 @@ import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,10 +37,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
+import com.a.goldtrack.Model.AddRemoveCommonImageReq;
+import com.a.goldtrack.Model.AddRemoveCommonImageRes;
 import com.a.goldtrack.Model.AddTransactionReq;
 import com.a.goldtrack.Model.AddTransactionRes;
 import com.a.goldtrack.Model.CustomerWithOTPReq;
@@ -53,37 +57,47 @@ import com.a.goldtrack.camera.CamReqActivity;
 import com.a.goldtrack.customer.CustomerActivity;
 import com.a.goldtrack.databinding.ActivityTransBinding;
 import com.a.goldtrack.utils.Constants;
+import com.a.goldtrack.utils.ImageClickLIstener;
 import com.a.goldtrack.utils.Sessions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class TransActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, ITransUiHandler {
 
+    private static final String TAG = "TransActivity";
+
     TransViewModel viewModel;
     ActivityTransBinding binding;
+
     ProgressDialog progressDialog;
     Context context;
+
     CountDownTimer timer;
-    private final int first = 1, second = 2, third = 3, four = 4, five = 5;
+    private final int first = 1, second = 2, third = 3, four = 4, five = 5, sixth = 6;
     private int current = 1;
     List<ItemsTrans> list;
-    private static final String TAG = "TransActivity";
     protected CustomTransAddedItemAdapter mAdapter;
     protected Constants.LayoutManagerType mCurrentLayoutManagerType;
     protected RecyclerView.LayoutManager mLayoutManager;
     boolean showingItemAdd = false;
-    int counter = 0;
+    int counter = 0, CAM_REQ_Code_One = 1001, CAM_REQ_Code_Two = 1002, CAM_REQ_Code_Three = 1003;
     String otp = "", ImgData = null;
     DropdownDataForCompanyRes dropdownRes;
 
     Map<String, String> branchesArr = null;
     Map<String, String> itemsArr = null;
     Map<String, String> customersArr = null;
+    private boolean allImgDone;
+    AddTransactionReq addTransactionReq;
+    int position;
+    List<String> imgDataList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,10 +108,9 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         context = TransActivity.this;
 
         list = new ArrayList<>();
+        imgDataList = new ArrayList<>();
         init();
     }
-
-    // double payableAmt = 0;
 
     private void init() {
 
@@ -120,6 +133,12 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         binding.itemAddTransLayoutParent.addItemButton.setOnClickListener(this);
         binding.itemAddTransLayoutParent.itemAddingLocalCalci.setOnClickListener(this);
         binding.itemAddTransLayoutParent.cancel.setOnClickListener(this);
+        binding.sixthLayoutParent.triggImgGetSixth.setOnClickListener(this);
+        binding.fifthLayoutParent.dismissLastBtn.setOnClickListener(this);
+        binding.finalLayoutParent.triggImgGet.setOnClickListener(this);
+        binding.sixthLayoutParent.removeAll.setOnClickListener(this);
+        binding.sixthLayoutParent.btnAddImagesToTrans.setOnClickListener(this);
+
         binding.stepLastSubmit.setText("Proceed");
         binding.stepLastSubmit.setOnClickListener(this);
         viewModel.onViewAvailable(this);
@@ -176,7 +195,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 binding.finalLayoutParent.roundOffAmount.setEnabled(b);
             }
         });
-        binding.fifthLayoutParent.dismissLastBtn.setOnClickListener(this);
+
         binding.finalLayoutParent.roundOffAmount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -244,13 +263,6 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
-        binding.finalLayoutParent.triggImgGet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(TransActivity.this, CamReqActivity.class);
-                startActivityForResult(i, CamReqActivity.CAM_REQ_Code);
-            }
-        });
         DropdownDataForCompanyRes resDp = (DropdownDataForCompanyRes) Sessions.getUserObj(context, Constants.dorpDownSession, DropdownDataForCompanyRes.class);
         if (resDp != null) {
             viewModel.dropdownList.postValue(resDp);
@@ -260,23 +272,31 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("resultCode", resultCode + "");
-
-        if (resultCode == CamReqActivity.CAM_REQ_Code) {
-            String Res = data.getStringExtra(CamReqActivity.CAM_REQ_ImgData);
+        String Res = null;
+        if (data != null) {
+            Res = data.getStringExtra(CamReqActivity.CAM_REQ_ImgData);
             if (Res.equals("Success")) {
                 ImgData = Sessions.getUserString(context, Constants.sesImgData);
-            }
-            if (ImgData != null) {
-                addTransactionReq.referencePicData = ImgData;
-                binding.finalLayoutParent.selectedImg.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
-                binding.finalLayoutParent.selectedImg.setVisibility(View.VISIBLE);
-            } else Constants.Toasty(context, "Image Loading have a problem try again.");
-        }
+                if (ImgData != null) {
+                    if (resultCode == CAM_REQ_Code_One) {
 
+                        addTransactionReq.referencePicData = ImgData;
+                        binding.finalLayoutParent.selectedImg.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
+                        binding.finalLayoutParent.selectedImg.setVisibility(View.VISIBLE);
+                    } else if (resultCode == CAM_REQ_Code_Two) {
+
+                        imgDataList.add(ImgData);
+                        //   binding.sixthLayoutParent.selectedImgOne.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
+                        addImgs();
+                    }
+                } else Constants.Toasty(context, "Image Loading have a problem please try again.");
+            }
+        } else Constants.Toasty(context, "Image Loading have a problem please try again.");
     }
 
     private void setDropDowns() {
@@ -361,6 +381,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         // overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
+    int currentNoImgAttach = 0;
 
     @Override
     public void onClick(View v) {
@@ -500,10 +521,6 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 showingItemAdd = !showingItemAdd;
             }
             break;
-            case R.id.dismiss_last_btn: {
-                resetInnerAddItem(true);
-            }
-            break;
             case R.id.item_adding_local_calci: {
                 if (binding.itemAddTransLayoutParent.selectedCommodityAmount.getText().toString().isEmpty() ||
                         binding.itemAddTransLayoutParent.commodityWeight.getText().toString().isEmpty() ||
@@ -609,6 +626,56 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
             break;
+            case R.id.triggImgGet: {
+                Intent i = new Intent(TransActivity.this, CamReqActivity.class);
+                i.putExtra("CAM_REQ_Code", CAM_REQ_Code_One);
+                startActivityForResult(i, CAM_REQ_Code_One);
+            }
+            break;
+            case R.id.triggImgGet_Sixth: {
+                if (imgDataList.size() < 2) {
+                    Intent i = new Intent(TransActivity.this, CamReqActivity.class);
+                    i.putExtra("CAM_REQ_Code", CAM_REQ_Code_Two);
+                    startActivityForResult(i, CAM_REQ_Code_Two);
+                } else {
+                    Constants.Toasty(context, "Max 2 images can attach.");
+                }
+            }
+            break;
+            /*case R.id.selectedImgOne: {
+                Intent i = new Intent(TransActivity.this, CamReqActivity.class);
+                i.putExtra("CAM_REQ_Code", CAM_REQ_Code_Two);
+                startActivityForResult(i, CAM_REQ_Code_Two);
+            }
+            break;
+            case R.id.selectedImgTwo: {
+                Intent i = new Intent(TransActivity.this, CamReqActivity.class);
+                i.putExtra("CAM_REQ_Code", CAM_REQ_Code_Three);
+                startActivityForResult(i, CAM_REQ_Code_Three);
+            }
+            break;*/
+            case R.id.btn_addImagesToTrans: {
+                if (imgDataList.size() == 0) {
+                    Constants.Toasty(context, "Please select at least one image to proceed.");
+                } else {
+//                    if (imgDataList.get(CAM_REQ_Code_Two) != null) {
+//                        addImagesForAttach(currentTransactionID, imgDataList.get(CAM_REQ_Code_Two));
+//                        currentNoImgAttach = CAM_REQ_Code_Two;
+//                    } else {
+                    addImagesForAttach(currentTransactionID, imgDataList.get(currentNoImgAttach));
+//                    }
+                }
+            }
+            break;
+            case R.id.removeAll: {
+                imgDataList.clear();
+                addImgs();
+            }
+            break;
+            case R.id.dismiss_last_btn: {
+                resetInnerAddItem(true);
+            }
+            break;
         }
     }
 
@@ -671,6 +738,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     private void resetInnerAddItem(boolean finalReset) {
         if (finalReset) {
             list.clear();
+            imgDataList.clear();
 
             current = first;
             binding.otpedit.setText("");
@@ -690,7 +758,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             binding.grandTotalAmtBottom.setText("Rs. 0.00");
             binding.stepLastSubmit.setText("Proceed");
             ImgData = null;
-
+            currentNoImgAttach = 0;
             binding.finalLayoutParent.customer.setText("");
             binding.selectedTextCommodityPrice.setText("");
             binding.selectedBranch.setText("");
@@ -713,6 +781,8 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             binding.fifthLayoutParent.customMsg.setText("");
             binding.fifthLayoutParent.linkMsg.setText("");
             binding.finalLayoutParent.itemsDataRepeat.setText("");
+
+            currentTransactionID = "";
             setCurrentLayoutVisible();
         }
         binding.itemAddTransLayoutParent.addItemButton.setText("ADD");
@@ -737,6 +807,8 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         binding.bottomTotalLayout.setVisibility(View.GONE);
         binding.finalLayoutParent.finalLayoutChild.setVisibility(View.GONE);
         binding.fifthLayoutParent.finalLayoutChild.setVisibility(View.GONE);
+        binding.sixthLayoutParent.finalSixthChild.setVisibility(View.GONE);
+        binding.sixthLayoutParent.removeAll.setVisibility(View.GONE);
         binding.finalLayoutParent.selectedImg.setVisibility(View.GONE);
 
         switch (current) {
@@ -757,6 +829,9 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 binding.bottomTotalLayout.setVisibility(View.VISIBLE);*/
                 break;
             case five:
+                makeItemVisible(binding.sixthLayoutParent.finalSixthChild);
+                break;
+            case sixth:
                 makeItemVisible(binding.fifthLayoutParent.finalLayoutChild);
                 break;
         }
@@ -847,7 +922,28 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         return req;
     }
 
-    AddTransactionReq addTransactionReq;
+
+    private void addImgs() {
+        binding.sixthLayoutParent.imgHolderInLastSetTrans.removeAllViews();
+        if (imgDataList.size() > 0) {
+            binding.sixthLayoutParent.removeAll.setVisibility(View.VISIBLE);
+            for (int i = 0; i < imgDataList.size(); i++) {
+                final ViewGroup newView1 = (ViewGroup) LayoutInflater.from(context)
+                        .inflate(R.layout.img_layout, binding.sixthLayoutParent.imgHolderInLastSetTrans, false);
+                ImageView imgNewScroll = (ImageView) newView1.findViewById(R.id.selectedImgOne);
+                TextView attachmentCount = (TextView) newView1.findViewById(R.id.attachmentCount);
+                attachmentCount.setText("Attachment " + (i + 1));
+                imgNewScroll.setImageBitmap(CamReqActivity.stringToBitmap(imgDataList.get(i)));
+                imgNewScroll.setOnClickListener(new ImageClickLIstener(context, CamReqActivity.stringToBitmap(imgDataList.get(i))));
+                binding.sixthLayoutParent.imgHolderInLastSetTrans.addView(newView1);
+            }
+        } else {
+            binding.sixthLayoutParent.removeAll.setVisibility(View.GONE);
+            final ViewGroup newView1 = (ViewGroup) LayoutInflater.from(context)
+                    .inflate(R.layout.img_layout, binding.sixthLayoutParent.imgHolderInLastSetTrans, false);
+            binding.sixthLayoutParent.imgHolderInLastSetTrans.addView(newView1);
+        }
+    }
 
     private void setmRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this);
@@ -963,8 +1059,6 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         binding.recyclerTransItems.scrollToPosition(scrollPosition);
     }
 
-    int position;
-
     @Override
     public void oncItemClicked(View view, int position) {
         this.position = position;
@@ -998,17 +1092,36 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    String currentTransactionID = "", currentTransactionRefNo = "";
+
     @Override
     public void onAddTransSuccess(AddTransactionRes res) {
         progressDialog.dismiss();
-        Constants.Toasty(context, res.response.toUpperCase() + "\nBill No:" + res.transactionID, Constants.success);
         final SpannableString s = new SpannableString(res.transactionInvoiceURL);
         Linkify.addLinks(s, Linkify.ALL);
-        binding.fifthLayoutParent.customMsg.setText(res.response + "\n\nBill No: " + res.transactionID);
+        currentTransactionID = res.transactionID;
+        currentTransactionRefNo = res.transactionRefNo;
+        binding.fifthLayoutParent.customMsg.setText(res.response + "\n\nBill No: " + res.transactionRefNo);
         binding.fifthLayoutParent.linkMsg.setText(s);
         binding.fifthLayoutParent.linkMsg.setMovementMethod(LinkMovementMethod.getInstance());
         current = five;
         setCurrentLayoutVisible();
+    }
+
+    void addImagesForAttach(String strId, String imgData) {
+
+        AddRemoveCommonImageReq req = new AddRemoveCommonImageReq();
+        req.id = null;
+        req.commonID = strId;//.split("/")[0];
+        req.imageData = imgData;
+        req.companyID = Sessions.getUserString(context, Constants.companyId);
+        req.createdBy = Sessions.getUserString(context, Constants.userId);
+        req.actionType = Constants.actionTypeADD;
+        req.imageTable = Constants.imageTableTRANSACTION_IMAGE;
+        req.imageType = Constants.imageTypeANYTHING;
+
+        progressDialog.show();
+        viewModel.addRemoveCommonImageReq(req);
     }
 
     @Override
@@ -1020,6 +1133,20 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     public void onGetDropDownsSuccess(DropdownDataForCompanyRes res) {
         progressDialog.dismiss();
 
+    }
+
+    @Override
+    public void onAddRemoveCommonImageSuccess(AddRemoveCommonImageRes res) {
+        progressDialog.dismiss();
+        currentNoImgAttach++;
+        if (imgDataList.size() > currentNoImgAttach) {
+            addImagesForAttach(currentTransactionID, imgDataList.get(currentNoImgAttach));
+        } else {
+            current = sixth;
+            Constants.Toasty(context, "Transaction Done Successfully," + "\nBill No:" + currentTransactionRefNo, Constants.success);
+            setCurrentLayoutVisible();
+        }
+        // todo:
     }
 
     @Override

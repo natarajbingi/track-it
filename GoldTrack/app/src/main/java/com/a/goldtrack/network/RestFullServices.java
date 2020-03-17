@@ -8,6 +8,8 @@ import com.a.goldtrack.Model.AddCustomerReq;
 import com.a.goldtrack.Model.AddCustomerRes;
 import com.a.goldtrack.Model.AddItemReq;
 import com.a.goldtrack.Model.AddItemRes;
+import com.a.goldtrack.Model.AddRemoveCommonImageReq;
+import com.a.goldtrack.Model.AddRemoveCommonImageRes;
 import com.a.goldtrack.Model.AddTransactionRes;
 import com.a.goldtrack.Model.AddUserDailyClosureReq;
 import com.a.goldtrack.Model.AddUserDailyClosureRes;
@@ -488,6 +490,42 @@ public class RestFullServices {
             }
         });
     }
+
+    /*Img For attachment
+     * */
+    public static void addRemoveCommonImage(AddRemoveCommonImageReq req, ITransCallBacks callTransBacks, ICustomerCallBacs callCustomerBacks) {
+        getClient().addRemoveCommonImage(req).enqueue(new Callback<AddRemoveCommonImageRes>() {
+            @Override
+            public void onResponse(Call<AddRemoveCommonImageRes> call, Response<AddRemoveCommonImageRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
+                if (response.isSuccessful()) {
+                    if (response.body().success) {
+                        if (callTransBacks != null)
+                            callTransBacks.onAddRemoveCommonImageSuccess(response.body());
+                        if (callCustomerBacks != null)
+                            callCustomerBacks.onAddRemoveCommonImageSuccess(response.body());
+                    } else {
+                        if (callTransBacks != null)
+                            callTransBacks.onErrorComplete(response.body().response);
+                        if (callCustomerBacks != null)
+                            callCustomerBacks.onCompleteError(response.body().response);
+                    }
+                } else {
+                    if (callTransBacks != null)
+                        callTransBacks.onErrorComplete("Something went wrong, Server Error");
+                    if (callCustomerBacks != null)
+                        callCustomerBacks.onCompleteError("Something went wrong, Server Error");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddRemoveCommonImageRes> call, Throwable t) {
+                if (callTransBacks != null) callTransBacks.onError(t.getMessage());
+                if (callCustomerBacks != null) callCustomerBacks.onError(t.getMessage());
+            }
+        });
+    }
+
 
     /*UserDailyClosure
      * */

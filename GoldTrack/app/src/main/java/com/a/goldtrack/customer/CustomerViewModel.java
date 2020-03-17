@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.a.goldtrack.Model.AddCustomerReq;
 import com.a.goldtrack.Model.AddCustomerRes;
+import com.a.goldtrack.Model.AddRemoveCommonImageReq;
+import com.a.goldtrack.Model.AddRemoveCommonImageRes;
 import com.a.goldtrack.Model.GetCustomerReq;
 import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.UpdateCustomerReq;
@@ -42,6 +44,11 @@ public class CustomerViewModel extends ViewModel implements ICustomerCallBacs {
         RestFullServices.updateCusomer(req, this);
     }
 
+    public void addRemoveCommonImage(AddRemoveCommonImageReq req) {
+        RestFullServices.addRemoveCommonImage(req, null, this);
+    }
+
+
     @Override
     public void getCustomerSuccess(GetCustomerRes body) {
         list.postValue(body);
@@ -56,6 +63,11 @@ public class CustomerViewModel extends ViewModel implements ICustomerCallBacs {
     @Override
     public void updateCustomerSuccess(UpdateCustomerRes body) {
         view.updateCustomerSuccess(body);
+    }
+
+    @Override
+    public void onAddRemoveCommonImageSuccess(AddRemoveCommonImageRes res) {
+        view.onAddRemoveCommonImageSuccess(res);
     }
 
     @Override

@@ -86,6 +86,12 @@ public interface APIService {
     @POST("transaction/getTransactionForFilters")
     Call<GetTransactionRes> getTransactionForFilters(@Body GetTransactionReq req);
 
+    /* Img For attachment
+     * */
+
+    @POST("transaction/addRemoveCommonImage")
+    Call<AddRemoveCommonImageRes> addRemoveCommonImage(@Body AddRemoveCommonImageReq req);
+
     /*UserDailyClosure
      * */
     @POST("user/addUserDailyClosure")
