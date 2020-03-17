@@ -92,7 +92,7 @@ public class Constants {
     public static final int info = 2;
     public static final int warning = 3;
     public static final int custom = 4;
-    private ProgressDialog pd;
+    private static ProgressDialog pd;
 
     public static enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,
@@ -510,7 +510,7 @@ public class Constants {
         return dialog;
     }
 
-    public void showProgress(Context ctx) {
+    public static void showProgress(Context ctx) {
         if (!((Activity) ctx).isFinishing()) {
             pd = new ProgressDialog(ctx);
             pd.setMessage("loading");
@@ -520,7 +520,7 @@ public class Constants {
     }
 
 
-    public void hideProgress(Context ctx) {
+    public static void hideProgress(Context ctx) {
         if (pd != null) {
             if (!((Activity) ctx).isFinishing()) {
                 if (pd.isShowing()) {

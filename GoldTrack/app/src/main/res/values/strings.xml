@@ -40,6 +40,12 @@
     <string-array name="example">
         <item>Select</item>
     </string-array>
+    <string-array name="kycArray">
+        <item>Select</item>
+        <item>AADHAR CARD</item>
+        <item>DRIVING LICENCE</item>
+        <item>PAN</item>
+    </string-array>
     <string-array name="commodity">
         <item>Select</item>
         <item>PLATINUM</item>

@@ -44,7 +44,7 @@ public class CustomerViewModel extends ViewModel implements ICustomerCallBacs {
         RestFullServices.updateCusomer(req, this);
     }
 
-    public void addRemoveCommonImage(AddRemoveCommonImageReq req) {
+    public void addRemoveCommonImageReq(AddRemoveCommonImageReq req) {
         RestFullServices.addRemoveCommonImage(req, null, this);
     }
 
