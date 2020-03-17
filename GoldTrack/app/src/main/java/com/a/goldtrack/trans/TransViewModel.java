@@ -3,6 +3,8 @@ package com.a.goldtrack.trans;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.a.goldtrack.Model.AddRemoveCommonImageReq;
+import com.a.goldtrack.Model.AddRemoveCommonImageRes;
 import com.a.goldtrack.Model.AddTransactionReq;
 import com.a.goldtrack.Model.AddTransactionRes;
 import com.a.goldtrack.Model.CustomerWithOTPReq;
@@ -65,6 +67,10 @@ public class TransViewModel extends ViewModel implements ITransCallBacks {
         RestFullServices.getDropdownDataForCompany(req, this);
     }
 
+    public void addRemoveCommonImageReq(AddRemoveCommonImageReq req) {
+        RestFullServices.addRemoveCommonImage(req, this, null);
+    }
+
     @Override
     public void onOtpSuccess(CustomerWithOTPRes body) {
         view.onUiVerifyOtpSuccess(body);
@@ -84,6 +90,11 @@ public class TransViewModel extends ViewModel implements ITransCallBacks {
     @Override
     public void onGetTransSuccess(GetTransactionRes res) {
         view.onGetTransSuccess(res);
+    }
+
+    @Override
+    public void onAddRemoveCommonImageSuccess(AddRemoveCommonImageRes res) {
+        view.onAddRemoveCommonImageSuccess(res);
     }
 
     @Override

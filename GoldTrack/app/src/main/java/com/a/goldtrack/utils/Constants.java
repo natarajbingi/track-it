@@ -75,6 +75,18 @@ public class Constants {
     public static final String roles = "roles";
     public static final String dorpDownSession = "dorpDownSession";
     public static final String sesImgData = "sesImgData";
+
+    /* Img add Strings
+     * */
+    public static final String imageTableTRANSACTION_IMAGE = "TRANSACTION_IMAGE";
+    public static final String imageTableCUSTOMER_IMAGE = "CUSTOMER_IMAGE";
+    public static final String imageTypeDL = "DL";
+    public static final String imageTypeAADHAR = "AADHAR";
+    public static final String imageTypeANYTHING = "ANYTHING";
+    public static final String actionTypeADD = "ADD";
+    public static final String actionTypeREMOVE = "REMOVE";
+
+
     public static final int error = 0;
     public static final int success = 1;
     public static final int info = 2;

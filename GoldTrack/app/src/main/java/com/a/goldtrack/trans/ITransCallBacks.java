@@ -1,5 +1,6 @@
 package com.a.goldtrack.trans;
 
+import com.a.goldtrack.Model.AddRemoveCommonImageRes;
 import com.a.goldtrack.Model.AddTransactionRes;
 import com.a.goldtrack.Model.CustomerWithOTPRes;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
@@ -11,7 +12,11 @@ public interface ITransCallBacks {
     void onDropDownSuccess(DropdownDataForCompanyRes body);
 
     void onAddTransSuccess(AddTransactionRes res);
+
     void onGetTransSuccess(GetTransactionRes res);
+
+
+    void onAddRemoveCommonImageSuccess(AddRemoveCommonImageRes res);
 
     void onError(String message);
 

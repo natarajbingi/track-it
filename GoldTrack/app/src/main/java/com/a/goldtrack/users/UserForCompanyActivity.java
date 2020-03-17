@@ -300,7 +300,8 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
                 break;
             case R.id.triggImgGet:
                 Intent cam = new Intent(UserForCompanyActivity.this, CamReqActivity.class);
-                startActivityForResult(cam, CamReqActivity.CAM_REQ_Code);
+                cam.putExtra("CAM_REQ_Code",501);
+                startActivityForResult(cam, 501);
                 break;
         }
     }
@@ -410,9 +411,9 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("resultCode", resultCode + "");
-        if (resultCode == CamReqActivity.CAM_REQ_Code) {
+        if (resultCode == 501) {
             String Res = data.getStringExtra(CamReqActivity.CAM_REQ_ImgData);
-            if (Res.equals("Success")) {
+            if (Res != null && Res.equals("Success")) {
                 ImgData = Sessions.getUserString(context, Constants.sesImgData);
             }
             if (ImgData != null)

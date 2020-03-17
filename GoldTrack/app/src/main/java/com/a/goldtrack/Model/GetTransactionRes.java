@@ -26,6 +26,7 @@ public class GetTransactionRes {
         public String totalAmount;
         public String grossAmount;
         public String marginAmount;
+        public List<UploadedImages> uploadedImages;
         public String nettAmount;
         public String paidAmountForRelease;
         public String roundOffAmount;
@@ -42,6 +43,14 @@ public class GetTransactionRes {
         public String updatedBy;
         public String createdDt;
         public String updatedDt;
+    }
+
+    public class UploadedImages {
+        public String commonID;
+        public String createdBy;
+        public String imageType;
+        public String imagePath;
+        public String id;
     }
 
     public class ItemList {

@@ -29,6 +29,7 @@ import android.view.View;
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddCustomerReq;
 import com.a.goldtrack.Model.AddCustomerRes;
+import com.a.goldtrack.Model.AddRemoveCommonImageRes;
 import com.a.goldtrack.Model.GetCustomerReq;
 import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.UpdateCustomerReq;
@@ -228,15 +229,18 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("resultCode", resultCode + "");
-        if (resultCode == CamReqActivity.CAM_REQ_Code) {
-            String Res = data.getStringExtra(CamReqActivity.CAM_REQ_ImgData);
-            if (Res.equals("Success")) {
-                ImgData = Sessions.getUserString(context, Constants.sesImgData);
-                //   ImgData = Sessions.getUserString(context, Constants.sesImgData);
+        if (resultCode == 501) {
+            String Res = null;
+            if (data != null) {
+                Res = data.getStringExtra(CamReqActivity.CAM_REQ_ImgData);
+                if (Res != null && Res.equals("Success")) {
+                    ImgData = Sessions.getUserString(context, Constants.sesImgData);
+                }
+                if (ImgData != null)
+                    binding.selectedImg.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
+                else Constants.Toasty(context, "Image Loading have problem try again.");
             }
-            if (ImgData != null)
-                binding.selectedImg.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
-            else Constants.Toasty(context, "Image Loading have problem try again.");
+
         }
 
     }
@@ -363,7 +367,8 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.triggImgGet:
                 Intent i = new Intent(CustomerActivity.this, CamReqActivity.class);
-                startActivityForResult(i, CamReqActivity.CAM_REQ_Code);
+                i.putExtra("CAM_REQ_Code", 501);
+                startActivityForResult(i, 501);
                 break;
             case R.id.add_signal_customer:
                 if (viewOrEdit) {
@@ -406,6 +411,11 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
     public void getCustomerSuccess(GetCustomerRes res) {
         binding.progressbar.setVisibility(View.GONE);
         binding.listDetailsHolder.setRefreshing(false);
+    }
+
+    @Override
+    public void onAddRemoveCommonImageSuccess(AddRemoveCommonImageRes res) {
+
     }
 
     @Override

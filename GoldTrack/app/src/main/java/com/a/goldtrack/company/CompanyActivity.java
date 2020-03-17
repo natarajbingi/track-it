@@ -377,7 +377,8 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.triggImgGet:
                 Intent i = new Intent(CompanyActivity.this, CamReqActivity.class);
-                startActivityForResult(i, CamReqActivity.CAM_REQ_Code);
+                i.putExtra("CAM_REQ_Code", 501);
+                startActivityForResult(i, 501);
                 break;
         }
     }
@@ -385,7 +386,7 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == CamReqActivity.CAM_REQ_Code) {
+        if (resultCode == 501) {
             ImgData = Sessions.getUserString(context, CamReqActivity.CAM_REQ_ImgData);
             if (ImgData != null)
                 binding.selectedImg.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));

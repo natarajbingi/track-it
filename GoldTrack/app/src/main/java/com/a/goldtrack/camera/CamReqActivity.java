@@ -61,7 +61,7 @@ public class CamReqActivity extends AppCompatActivity {
     File mPhotoFile;
     FileCompressor mCompressor;
     ImageView selectedImg;
-    public static final int CAM_REQ_Code = 501;
+    private int CAM_REQ_Code = 501;
     public static final String CAM_REQ_ImgData = "ImgData";
 
     @Override
@@ -73,6 +73,8 @@ public class CamReqActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         final ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
+
+        CAM_REQ_Code = getIntent().getExtras().getInt("CAM_REQ_Code");
 
         selectedImg = findViewById(R.id.imageView);
         selectImage();
@@ -168,7 +170,7 @@ public class CamReqActivity extends AppCompatActivity {
                     String filePath = mPhotoFile.getPath();
                     Bitmap bitmap = BitmapFactory.decodeFile(filePath);
                     saveImage(bitmap);
-                   // mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
+                    // mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -183,7 +185,7 @@ public class CamReqActivity extends AppCompatActivity {
                     String filePath = mPhotoFile.getPath();
                     Bitmap bitmap = BitmapFactory.decodeFile(filePath);
                     saveImage(bitmap);
-                   // mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
+                    // mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
