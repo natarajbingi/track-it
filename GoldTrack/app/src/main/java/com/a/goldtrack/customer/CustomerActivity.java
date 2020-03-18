@@ -113,7 +113,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
 //        imgPanList = new ArrayList<>();
         imgFinalList = new ArrayList<>();
 
-        //  custReq.companyID = Sessions.getUserString(context, Constants.companyId);
+        custReq.companyID = Sessions.getUserString(context, Constants.companyId);
         custReq.customerId = "0";
         viewModel.onViewAvailable(this);
         if (Constants.isConnection()) {
