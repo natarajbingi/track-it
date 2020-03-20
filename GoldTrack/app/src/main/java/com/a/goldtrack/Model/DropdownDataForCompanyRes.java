@@ -31,16 +31,18 @@ public class DropdownDataForCompanyRes {
 
     public class CustomerList {
 
-        public String uniqueId;
+        public List<UploadedImages> uploadedImages;
+        public String profile_pic_url;
+        public String emailId;
         public String firstName;
         public String lastName;
         public String mobileNum;
-        public String emailId;
         public String address1;
         public String address2;
         public String pin;
         public String id;
         public String state;
+        public String uniqueId;
         public String createdBy;
         public String updatedBy;
         public String createdDt;
@@ -48,6 +50,13 @@ public class DropdownDataForCompanyRes {
 
     }
 
+    public class UploadedImages {
+        public String commonID;
+        public String createdBy;
+        public String imageType;
+        public String imagePath;
+        public String id;
+    }
     public class ItemsList {
         public String companyID;
         public String commodity;

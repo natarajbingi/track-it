@@ -5,7 +5,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -21,13 +20,10 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.text.Html;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
-import android.util.SparseArray;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -97,7 +93,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     AddTransactionReq addTransactionReq;
     int position;
     List<String> imgDataList;
-
+    // DropdownDataForCompanyRes resDp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -263,9 +259,9 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
-        DropdownDataForCompanyRes resDp = (DropdownDataForCompanyRes) Sessions.getUserObj(context, Constants.dorpDownSession, DropdownDataForCompanyRes.class);
-        if (resDp != null) {
-            viewModel.dropdownList.postValue(resDp);
+        dropdownRes = (DropdownDataForCompanyRes) Sessions.getUserObj(context, Constants.dorpDownSession, DropdownDataForCompanyRes.class);
+        if (dropdownRes != null) {
+            viewModel.dropdownList.postValue(dropdownRes);
         } else if (Constants.isConnection()) {
             progressDialog.show();
             viewModel.getDropdowns(req);
@@ -470,7 +466,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                                             + "Gross Amt: " + Constants.priceToString(addTransactionReq.grossAmount)
                                             + "\nMargin Amt: " + Constants.priceToString(addTransactionReq.marginAmount)
                                             + "\nNet Amt: " + Constants.priceToString(addTransactionReq.nettAmount)
-                                            + "\nReleasing Amt: " + Constants.priceToString(addTransactionReq.paidAmountForRelease)
+                                            + "\nReleasing Amt: " + (addTransactionReq.paidAmountForRelease.isEmpty() ? "0.00" : Constants.priceToString(addTransactionReq.paidAmountForRelease))
                                             + "\nPayable Amt: " + Constants.priceToString(addTransactionReq.amountPayable);
 
                                     Constants.alertDialogShowWithCancel(context, strR, new DialogInterface.OnClickListener() {
@@ -705,6 +701,9 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
         if (binding.finalLayoutParent.nbfcReleaseAmtCheckBox.isChecked())
             binding.finalLayoutParent.paidAmountForRelease.setText(addTransactionReq.paidAmountForRelease);
+        else
+            binding.finalLayoutParent.paidAmountForRelease.setText("0.00");
+
         binding.finalLayoutParent.roundOffAmount.setText(addTransactionReq.roundOffAmount);
         binding.finalLayoutParent.comments.setText(addTransactionReq.comments);
 
@@ -879,7 +878,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     void askBeforeExit() {
         new AlertDialog.Builder(TransActivity.this, R.style.AppTheme_Dark_Dialog)
                 .setTitle("Confirm")
-                .setMessage("Are you sure you want to cancel the registration process?")
+                .setMessage("Are you sure you want to cancel the Transaction process?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -909,6 +908,17 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         req.counter = (counter + 1) + "";
         req.totalTransactionAmount = totalTransactionAmount;
         req.otp = otp;
+
+        for (int i = 0; i < dropdownRes.customerList.size(); i++) {
+            if (dropdownRes.customerList.get(i).id.equals(req.customerID)) {
+                if (dropdownRes.customerList.get(i).uploadedImages == null || dropdownRes.customerList.get(i).uploadedImages.size() <= 0) {
+                    Constants.alertDialogShow(context, "Selected customer's KYC details not complete, can't do transaction without KYC completion.");
+                    binding.autoCompleteSelectCustomer.setText("");
+                    return null;
+                }
+            }
+        }
+
 
         if (binding.selectBranch.getSelectedItem().toString().equals("Select")
                 || binding.selectCommodity.getSelectedItem().toString().equals("Select")
