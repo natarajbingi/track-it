@@ -22,8 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:animateLayoutChanges="true"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -31,6 +30,7 @@
                 android:layout_margin="15dp">
 
                 <TextView
+                    android:id="@+id/header"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Daily Closure"
@@ -47,7 +47,95 @@
                     android:textColor="#9C27B0"
                     android:textSize="20sp"
                     android:textStyle="bold" />
+
             </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/filter_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/oil"
+                    android:padding="8dp"
+                    android:text="Filter "
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:paddingLeft="5dp"
+                    android:text="Select Branch *"
+                    android:textSize="12sp" />
+
+                <Spinner
+                    android:id="@+id/select_branch_filter"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:entries="@array/example" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.9">
+
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/date_closure_filter"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:hint="Closure Date  YYYY-MM-DD"
+                            android:inputType="text" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageView
+                        android:id="@+id/img_date_click_filter"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.1"
+                        android:src="@drawable/ic_date" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal"
+                    android:padding="15dp">
+
+                    <Button
+                        android:id="@+id/filter_clear"
+                        style="@style/greyButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Clear FIlter" />
+
+                    <Button
+                        android:id="@+id/filter_submit"
+                        style="@style/blueButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="40dp"
+                        android:layout_weight="1"
+                        android:text="Apply FIlter" />
+                </LinearLayout>
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/search"
@@ -74,7 +162,8 @@
             android:id="@+id/add_details_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:animateLayoutChanges="true">
+            android:animateLayoutChanges="true"
+            android:visibility="gone">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -125,15 +214,6 @@
 
 
                     <TextView
-                        android:id="@+id/extraData"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:visibility="gone" />
-
-
-                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingLeft="5dp"
@@ -146,6 +226,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:entries="@array/example" />
+
+                    <TextView
+                        android:id="@+id/extraData"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -186,7 +276,7 @@
                             android:layout_height="wrap_content"
                             android:hint="Fund Received *"
                             android:inputType="text|numberDecimal"
-                            android:maxLength="9" />
+                            android:maxLength="8" />
                     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -201,7 +291,7 @@
                             android:layout_height="wrap_content"
                             android:hint="Expenses amount "
                             android:inputType="text|numberDecimal"
-                            android:maxLength="9" />
+                            android:maxLength="7" />
                     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -288,6 +378,16 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </ScrollView>
+
+        <ImageView
+            android:id="@+id/filterReq"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignTop="@+id/add_signal_closure"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_toLeftOf="@+id/add_signal_closure"
+            android:src="@drawable/ic_filter" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/add_signal_closure"

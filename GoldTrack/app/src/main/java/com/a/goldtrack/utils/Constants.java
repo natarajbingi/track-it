@@ -23,10 +23,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -173,6 +175,20 @@ public class Constants {
         } else {
             return "";
         }
+    }
+
+    public static void setSpinners(Spinner spr, String[] array) {
+        // -----------------------------------------------
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(GTrackApplication.getInstance().getApplicationContext(),
+                R.layout.custom_spinner,
+                array);
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
+        // The drop down view
+        spr.setAdapter(spinnerArrayAdapter);
+    }
+
+    public static String isEmptyReturn0(String str) {
+        return str == null ? "0" : str.isEmpty() ? "0" : str;
     }
 
     public static String getRandomNumberString() {
