@@ -84,8 +84,15 @@ public class CustomHomeAdapter extends RecyclerView.Adapter<CustomHomeAdapter.Vi
         viewHolder.textView.setText(mDataSet.get(position).customerName);
         viewHolder.text_date.setText("Date: " + Constants.getMiliToDateyyyymmmdd(mDataSet.get(position).createdDt)
                 + "\nBill No: " + mDataSet.get(position).billNumber);
+        String str = "";
+        if (Float.parseFloat(mDataSet.get(position).amountPayable) < 0) {
+            str += "\nPayable Amt: " + Constants.priceToString(mDataSet.get(position).amountPayable);
+            viewHolder.text_sub.setTextColor(context.getResources().getColor(R.color.button_red));
+        }
+
         viewHolder.text_sub.setText("Commodity: " + mDataSet.get(position).commodity
-                + "\t\t\tTotal Amt: " + Constants.priceToString(mDataSet.get(position).totalAmount));
+                + "\t\t\tTotal Amt: " + Constants.priceToString(mDataSet.get(position).totalAmount) + str);
+
     }
 
     public void updateListNew(List<GetTransactionRes.DataList> mDataset) {

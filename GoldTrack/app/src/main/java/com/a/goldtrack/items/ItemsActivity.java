@@ -22,6 +22,7 @@ import android.view.View;
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddItemReq;
 import com.a.goldtrack.Model.AddItemRes;
+import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompanyBranchesRes;
 import com.a.goldtrack.Model.GetItemsReq;
 import com.a.goldtrack.Model.GetItemsRes;
@@ -50,7 +51,7 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
     protected Constants.LayoutManagerType mCurrentLayoutManagerType;
 
     protected RecyclerView.LayoutManager mLayoutManager;
-    protected List<GetItemsRes.ResList> mDataset;
+    protected List<DropdownDataForCompanyRes.ItemsList> mDataset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,10 +86,10 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
         progressDialog.show();
         viewModel.onGetItemsForCompany(reqGet);
         viewModel.onViewAvailable(this);
-        viewModel.list.observe(this, new Observer<GetItemsRes>() {
+        viewModel.list.observe(this, new Observer<List<DropdownDataForCompanyRes.ItemsList>>() {
             @Override
-            public void onChanged(GetItemsRes getItemsRes) {
-                mDataset = getItemsRes.resList;
+            public void onChanged(List<DropdownDataForCompanyRes.ItemsList> customerLists) {
+                mDataset = customerLists;
                 progressDialog.dismiss();
                 setmRecyclerView();
             }
@@ -117,9 +118,9 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
 
     public void filter(String s) {
         Log.d("mDataset", "" + mDataset.size());
-        List<GetItemsRes.ResList> temp = new ArrayList<>();
+        List<DropdownDataForCompanyRes.ItemsList> temp = new ArrayList<>();
         if (mDataset != null && mDataset.size() > 0) {
-            for (GetItemsRes.ResList d : mDataset) {
+            for (DropdownDataForCompanyRes.ItemsList d : mDataset) {
 
                 if (d.itemName.toLowerCase().contains(s.toLowerCase())) {
                     temp.add(d);
@@ -337,129 +338,15 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
+    public void onGetDrpSuccess(DropdownDataForCompanyRes res) {
+        progressDialog.dismiss();
+        Sessions.setUserObj(context, res, Constants.dorpDownSession);
+
+    }
+
+    @Override
     public void onError(String msg) {
         progressDialog.dismiss();
     }
 
-    /*private void addItem(AddItemReq req) {
-        Log.d(TAG, "addCompany");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<AddItemRes> call = apiService.addItem(req);
-
-
-        progressDialog.show();
-        call.enqueue(new Callback<AddItemRes>() {
-            @Override
-            public void onResponse(Call<AddItemRes> call, Response<AddItemRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            Constants.Toasty(context, "Company Added successfully", Constants.success);
-                            resetAll();
-                            // getItemsForCompany(reqGet);
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AddItemRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }
-
-    private void getItemsForCompany(GetItemsReq req) {
-        Log.d(TAG, "getUserForCompany");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<GetItemsRes> call = apiService.getItemsForCompany(req);
-
-
-        progressDialog.show();
-        call.enqueue(new Callback<GetItemsRes>() {
-            @Override
-            public void onResponse(Call<GetItemsRes> call, Response<GetItemsRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-                            mDataset = response.body().resList;
-                            setmRecyclerView();
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GetItemsRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }
-
-    private void updateItemDetails(UpdateItemReq req) {
-        Log.d(TAG, "updateCompanyDetails");
-        RetrofitClient retrofitSet = new RetrofitClient();
-        Retrofit retrofit = retrofitSet.getClient(Constants.BaseUrl);
-        APIService apiService = retrofit.create(APIService.class);
-        Call<UpdateItemRes> call = apiService.updateItemDetails(req);
-
-
-        progressDialog.show();
-        call.enqueue(new Callback<UpdateItemRes>() {
-            @Override
-            public void onResponse(Call<UpdateItemRes> call, Response<UpdateItemRes> response) {
-                progressDialog.dismiss();
-                Constants.logPrint(call.request().toString(), req, response.body());
-                try {
-                    if (response.isSuccessful()) {
-                        if (response.body().success) {
-
-                            Constants.Toasty(context, "Item Updated successfully", Constants.success);
-                            resetAll();
-                            viewOrEdit = true;
-                            //  getItemsForCompany(reqGet);
-                        } else {
-                            Constants.alertDialogShow(context, response.body().response);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<UpdateItemRes> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("Response:", "" + t);
-                Constants.alertDialogShow(context, "Something went wrong, please try again");
-                t.printStackTrace();
-            }
-        });
-
-    }
-*/
 }

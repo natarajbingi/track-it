@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
+import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompanyRes;
 import com.a.goldtrack.Model.GetItemsRes;
 import com.a.goldtrack.R;
@@ -25,16 +26,16 @@ import java.util.List;
 public class CustomItemsAdapter extends RecyclerView.Adapter<CustomItemsAdapter.ViewHolder> {
     private static final String TAG = "CustomItemsAdapter";
 
-    private List<GetItemsRes.ResList> mDataSet;
+    private List<DropdownDataForCompanyRes.ItemsList> mDataSet;
     RecycleItemClicked companyClicked;
     Context context;
 
-    public CustomItemsAdapter(Context context,List<GetItemsRes.ResList> dataSet) {
+    public CustomItemsAdapter(Context context,List<DropdownDataForCompanyRes.ItemsList> dataSet) {
         mDataSet = dataSet;
         this.context = context;
     }
 
-    public void updateListNew(List<GetItemsRes.ResList> mDataset) {
+    public void updateListNew(List<DropdownDataForCompanyRes.ItemsList> mDataset) {
         this.mDataSet=(mDataset);
         this.notifyDataSetChanged();
     }

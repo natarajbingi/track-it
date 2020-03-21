@@ -215,6 +215,7 @@
 
 
             <LinearLayout
+                android:id="@+id/allEditableItemsHolder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -242,7 +243,7 @@
                     <ImageView
                         android:id="@+id/item_adding_local_calci"
                         android:layout_width="0dp"
-                        android:layout_height="45dp"
+                        android:layout_height="36dp"
                         android:layout_gravity="center_vertical"
                         android:layout_weight="0.1"
                         android:background="@drawable/button_bg"
@@ -307,7 +308,7 @@
                         android:checked="false"
                         android:gravity="center"
                         android:src="@drawable/ic_edit"
-                        android:text="Edit"
+                        android:text="Modify"
                         android:textColor="@color/oil"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -344,7 +345,7 @@
                         android:layout_weight="0.17"
                         android:checked="false"
                         android:gravity="center"
-                        android:text="NBFC - \nYes / No"
+                        android:text="NBFC ?"
                         android:textColor="@color/oil"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -370,7 +371,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.25"
                         android:padding="8dp"
-                        android:text="Capture Img"
+                        android:text="NFBC Img ?"
                         android:textColor="@color/oil"
                         android:textStyle="bold" />
 
@@ -382,6 +383,7 @@
                         android:padding="8dp"
                         android:src="@drawable/add_a_photo" />
                 </LinearLayout>
+
 
                 <ImageView
                     android:id="@+id/selectedImg"
@@ -404,6 +406,132 @@
                         android:inputType="text"
                         android:text="" />
                 </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/allReadableItemsHolder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/marginForTotalText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="text|number"
+                        android:text="Margin %*"
+                        android:textColor="@color/oil"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/marginAmountText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"
+                        android:text="Margin Amount"
+                        android:textColor="@color/oil"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/nettAmountText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"
+                        android:text="nettAmount"
+                        android:textColor="@color/oil"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/monsoon"
+                    android:padding="2dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/roundOffAmountText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"
+                        android:text="roundOff"
+                        android:textColor="@color/oil"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/paidAmountForReleaseText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"
+                        android:text="paidAmount"
+                        android:textColor="@color/oil"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/monsoon"
+                    android:padding="2dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/payableAmountText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"
+                        android:text="payableAmount"
+                        android:textColor="@color/oil"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/commentsText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"
+                        android:text="commentsText"
+                        android:textColor="@color/oil"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/monsoon"
+                    android:padding="2dp" />
+                <ImageView
+                    android:id="@+id/selectedImgText"
+                    android:layout_width="match_parent"
+                    android:layout_height="85dp"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:src="@drawable/ic_menu_camera" />
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
+import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.R;
@@ -28,16 +29,16 @@ import java.util.List;
 public class CustomCustomersAdapter extends RecyclerView.Adapter<CustomCustomersAdapter.ViewHolder> implements Filterable {
     private static final String TAG = "CustomCustomersAdapter";
 
-    private List<GetCustomerRes.ResList> mDataSet;
+    private List<DropdownDataForCompanyRes.CustomerList> mDataSet;
     RecycleItemClicked companyClicked;
     Context context;
 
-    public CustomCustomersAdapter(Context context, List<GetCustomerRes.ResList> dataSet) {
+    public CustomCustomersAdapter(Context context, List<DropdownDataForCompanyRes.CustomerList> dataSet) {
         mDataSet = dataSet;
         this.context = context;
     }
 
-    public void updateListNew(List<GetCustomerRes.ResList> mDataset) {
+    public void updateListNew(List<DropdownDataForCompanyRes.CustomerList> mDataset) {
         this.mDataSet = (mDataset);
         this.notifyDataSetChanged();
     }
@@ -93,6 +94,8 @@ public class CustomCustomersAdapter extends RecyclerView.Adapter<CustomCustomers
         viewHolder.logo_id.setVisibility(View.VISIBLE);
         Constants.setGilde(mDataSet.get(position).profile_pic_url, viewHolder.logo_id);
 
+        if (mDataSet.get(position).uploadedImages == null || mDataSet.get(position).uploadedImages.size() == 0)
+            viewHolder.textView.setTextColor(context.getResources().getColor(R.color.button_red));
     }
 
     @Override

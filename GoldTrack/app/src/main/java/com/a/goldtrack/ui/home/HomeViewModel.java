@@ -13,7 +13,7 @@ import com.a.goldtrack.trans.IDropdownDataCallBacks;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
-public class HomeViewModel extends ViewModel implements IHomeFragCallbacks , IDropdownDataCallBacks {
+public class HomeViewModel extends ViewModel implements IHomeFragCallbacks, IDropdownDataCallBacks {
 
     private MutableLiveData<String> mText;
     MutableLiveData<GetTransactionRes> transList;
@@ -33,10 +33,11 @@ public class HomeViewModel extends ViewModel implements IHomeFragCallbacks , IDr
 
     public void getTransactions(GetTransactionReq req) {
         if (transList != null)
-            RestFullServices.getTransaction(req, null, this,null);
+            RestFullServices.getTransaction(req, null, this, null);
     }
+
     public void getDropdown(GetCompany req) {
-        RestFullServices.getDropdownDataForCompanyHome(req, this);
+        RestFullServices.getDropdownDataForCompany(req);
     }
 
     public void onViewAvailable(IHomeUiView view) {

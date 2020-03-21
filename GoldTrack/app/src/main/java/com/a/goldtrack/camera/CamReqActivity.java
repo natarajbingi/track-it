@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -20,13 +19,9 @@ import android.provider.Settings;
 import com.a.goldtrack.BuildConfig;
 import com.a.goldtrack.GTrackApplication;
 import com.a.goldtrack.R;
-import com.a.goldtrack.users.UserForCompanyActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.FileCompressor;
-import com.a.goldtrack.utils.ImageUtil;
 import com.a.goldtrack.utils.Sessions;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -38,7 +33,6 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -55,7 +49,6 @@ public class CamReqActivity extends AppCompatActivity {
 
     private Context myContext;
     /*  Camera Actions */
-    // Camera Actions
     static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_GALLERY_PHOTO = 2;
     File mPhotoFile;
@@ -185,7 +178,7 @@ public class CamReqActivity extends AppCompatActivity {
                     String filePath = mPhotoFile.getPath();
                     Bitmap bitmap = BitmapFactory.decodeFile(filePath);
                     saveImage(bitmap);
-                    // mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
+                     // mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

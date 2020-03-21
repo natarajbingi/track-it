@@ -35,6 +35,7 @@ import com.a.goldtrack.Model.AddCustomerReq;
 import com.a.goldtrack.Model.AddCustomerRes;
 import com.a.goldtrack.Model.AddRemoveCommonImageReq;
 import com.a.goldtrack.Model.AddRemoveCommonImageRes;
+import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCustomerReq;
 import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.UpdateCustomerReq;
@@ -62,7 +63,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
     protected CustomCustomersAdapter mAdapter;
     protected Constants.LayoutManagerType mCurrentLayoutManagerType;
     protected RecyclerView.LayoutManager mLayoutManager;
-    protected List<GetCustomerRes.ResList> mDataset;
+    protected List<DropdownDataForCompanyRes.CustomerList> mDataset;
 
     //List<String> imgDataList;
 //    List<AddRemoveCommonImageReq> imgAadharList;
@@ -124,10 +125,10 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         } else {
             Constants.Toasty(context, "No Internet connection.", Constants.info);
         }
-        viewModel.list.observe(this, new Observer<GetCustomerRes>() {
+        viewModel.list.observe(this, new Observer<List<DropdownDataForCompanyRes.CustomerList>>() {
             @Override
-            public void onChanged(GetCustomerRes resList) {
-                mDataset = resList.resList;
+            public void onChanged(List<DropdownDataForCompanyRes.CustomerList> customerLists) {
+                mDataset = customerLists;
                 //progressDialog.dismiss();
                 if (mDataset.size() == 0) binding.nodataLayout.setVisibility(View.VISIBLE);
                 else binding.nodataLayout.setVisibility(View.GONE);
@@ -324,7 +325,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void addImgUp(List<GetCustomerRes.UploadedImages> uploadedImages) {
+    private void addImgUp(List<DropdownDataForCompanyRes.UploadedImages> uploadedImages) {
         binding.imgHolderInLastSetCustUp.removeAllViews();
         if (uploadedImages.size() > 0) {
             for (int i = 0; i < uploadedImages.size(); i++) {
@@ -439,9 +440,9 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
 
     public void filter(String s) {
         Log.d("mDataset", "" + mDataset.size());
-        List<GetCustomerRes.ResList> temp = new ArrayList<>();
+        List<DropdownDataForCompanyRes.CustomerList> temp = new ArrayList<>();
         if (mDataset != null && mDataset.size() > 0) {
-            for (GetCustomerRes.ResList d : mDataset) {
+            for (DropdownDataForCompanyRes.CustomerList d : mDataset) {
 
                 if (d.firstName.toLowerCase().contains(s.toLowerCase())) {
                     temp.add(d);
@@ -581,6 +582,14 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         }
         // todo:
 
+    }
+
+    @Override
+    public void onGetDrpSuccess(DropdownDataForCompanyRes res) {
+        binding.progressbar.setVisibility(View.GONE);
+        Constants.hideProgress(context);
+        binding.listDetailsHolder.setRefreshing(false);
+        Sessions.setUserObj(context, res, Constants.dorpDownSession);
     }
 
     @Override
