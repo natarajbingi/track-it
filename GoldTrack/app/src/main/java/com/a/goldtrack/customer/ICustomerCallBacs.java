@@ -14,7 +14,7 @@ public interface ICustomerCallBacs {
 
     void onAddRemoveCommonImageSuccess(AddRemoveCommonImageRes res);
 
-    void onCompleteError(String s);
+    void onErrorComplete(String s);
 
     void addCustomerSuccess(AddCustomerRes body);
 }

@@ -18,7 +18,7 @@ import com.a.goldtrack.network.RestFullServices;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransViewModel extends ViewModel implements ITransCallBacks {
+public class TransViewModel extends ViewModel implements ITransCallBacks,IDropdownDataCallBacks {
 
     // MutableLiveData<List<ItemsTrans>> list = new MutableLiveData<>();
     MutableLiveData<DropdownDataForCompanyRes> dropdownList;
@@ -64,7 +64,7 @@ public class TransViewModel extends ViewModel implements ITransCallBacks {
         if (dropdownList == null) {
             dropdownList = new MutableLiveData<>();
         }
-        RestFullServices.getDropdownDataForCompany(req, this);
+        RestFullServices.getDropdownDataForCompanyHome(req, this);
     }
 
     public void addRemoveCommonImageReq(AddRemoveCommonImageReq req) {

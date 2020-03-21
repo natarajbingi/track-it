@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
+import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompanyBranchesRes;
 import com.a.goldtrack.R;
 
@@ -24,16 +25,16 @@ import java.util.List;
 public class CustomCompanyBranchAdapter extends RecyclerView.Adapter<CustomCompanyBranchAdapter.ViewHolder> {
     private static final String TAG = "CustomBranchAdapter";
 
-    private List<GetCompanyBranchesRes.ResList> mDataSet;
+    private List<DropdownDataForCompanyRes.BranchesList> mDataSet;
     RecycleItemClicked companyClicked;
     Context context;
 
-    public CustomCompanyBranchAdapter(Context context, List<GetCompanyBranchesRes.ResList> dataSet) {
+    public CustomCompanyBranchAdapter(Context context, List<DropdownDataForCompanyRes.BranchesList> dataSet) {
         mDataSet = dataSet;
         this.context = context;
     }
 
-    public void updateListNew(List<GetCompanyBranchesRes.ResList> mDataset) {
+    public void updateListNew(List<DropdownDataForCompanyRes.BranchesList> mDataset) {
         this.mDataSet=(mDataset);
         this.notifyDataSetChanged();
     }

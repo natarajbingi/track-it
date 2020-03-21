@@ -3,18 +3,26 @@ package com.a.goldtrack.companybranche;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.a.goldtrack.GTrackApplication;
 import com.a.goldtrack.Model.AddCompanyBranchesReq;
 import com.a.goldtrack.Model.AddCompanyBranchesRes;
+import com.a.goldtrack.Model.DropdownDataForCompanyRes;
+import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetCompanyBranches;
 import com.a.goldtrack.Model.GetCompanyBranchesRes;
 import com.a.goldtrack.Model.UpdateCompanyBranchesReq;
 import com.a.goldtrack.Model.UpdateCompanyBranchesRes;
 import com.a.goldtrack.Model.UpdateCompanyDetails;
 import com.a.goldtrack.network.RestFullServices;
+import com.a.goldtrack.trans.IDropdownDataCallBacks;
+import com.a.goldtrack.utils.Constants;
+import com.a.goldtrack.utils.Sessions;
 
-public class CompanyBranchesViewModel extends ViewModel implements IBranchCallBacks {
+import java.util.List;
 
-    MutableLiveData<GetCompanyBranchesRes> list;
+public class CompanyBranchesViewModel extends ViewModel implements IBranchCallBacks, IDropdownDataCallBacks {
+
+    MutableLiveData<List<DropdownDataForCompanyRes.BranchesList>> list;
     IBranchView view;
 
     @Override
@@ -31,7 +39,9 @@ public class CompanyBranchesViewModel extends ViewModel implements IBranchCallBa
         if (list == null) {
             list = new MutableLiveData<>();
         }
-        RestFullServices.getBranches(req, this);
+        GetCompany req1 = new GetCompany();
+        req1.companyId = Sessions.getUserString(GTrackApplication.getInstance().getApplicationContext(), Constants.companyId);
+        RestFullServices.getDropdownDataForCompanyHome(req1, this);
     }
 
     void onAddBranch(AddCompanyBranchesReq req) {
@@ -45,8 +55,6 @@ public class CompanyBranchesViewModel extends ViewModel implements IBranchCallBa
 
     @Override
     public void onSuccessGetBranch(GetCompanyBranchesRes list) {
-        this.list.postValue(list);
-        view.onSuccessGetBranch();
     }
 
     @Override
@@ -60,7 +68,18 @@ public class CompanyBranchesViewModel extends ViewModel implements IBranchCallBa
     }
 
     @Override
+    public void onDropDownSuccess(DropdownDataForCompanyRes body) {
+        this.list.postValue(body.branchesList);
+        view.onSuccessGetBranch(body);
+    }
+
+    @Override
     public void onError(String msg) {
         view.onErrorBranch(msg);
+    }
+
+    @Override
+    public void onErrorComplete(String s) {
+        view.onErrorBranch(s);
     }
 }

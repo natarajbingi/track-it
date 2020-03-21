@@ -23,6 +23,7 @@ import android.view.View;
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddCompanyBranchesReq;
 import com.a.goldtrack.Model.AddCompanyBranchesRes;
+import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompanyBranches;
 import com.a.goldtrack.Model.GetCompanyBranchesRes;
 import com.a.goldtrack.Model.GetCompanyRes;
@@ -30,6 +31,7 @@ import com.a.goldtrack.Model.UpdateCompanyBranchesReq;
 import com.a.goldtrack.Model.UpdateCompanyBranchesRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityCompanyBranchesBinding;
+import com.a.goldtrack.trans.IDropdownDataCallBacks;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
@@ -53,7 +55,7 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
 
 
     protected RecyclerView.LayoutManager mLayoutManager;
-    protected List<GetCompanyBranchesRes.ResList> mDataset;
+    protected List<DropdownDataForCompanyRes.BranchesList> mDataset;
     GetCompanyBranches reqGet;
 
     @Override
@@ -88,10 +90,10 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
         progressDialog.show();
         viewModel.onGetBranch(reqGet);
         viewModel.onViewAvailable(this);
-        viewModel.list.observe(this, new Observer<GetCompanyBranchesRes>() {
+        viewModel.list.observe(this, new Observer<List<DropdownDataForCompanyRes.BranchesList>>() {
             @Override
-            public void onChanged(GetCompanyBranchesRes getCompanyBranchesRes) {
-                mDataset = getCompanyBranchesRes.resList;
+            public void onChanged(List<DropdownDataForCompanyRes.BranchesList> branchesLists) {
+                mDataset = branchesLists;
                 progressDialog.dismiss();
                 setmRecyclerView();
             }
@@ -120,9 +122,9 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
 
     public void filter(String s) {
         Log.d("mDataset", "" + mDataset.size());
-        List<GetCompanyBranchesRes.ResList> temp = new ArrayList<>();
+        List<DropdownDataForCompanyRes.BranchesList> temp = new ArrayList<>();
         if (mDataset != null && mDataset.size() > 0) {
-            for (GetCompanyBranchesRes.ResList d : mDataset) {
+            for (DropdownDataForCompanyRes.BranchesList d : mDataset) {
 
                 if (d.branchName.toLowerCase().contains(s.toLowerCase())) {
                     temp.add(d);
@@ -309,9 +311,11 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
         viewOrEdit = false;
     }
 
+
     @Override
-    public void onSuccessGetBranch() {
+    public void onSuccessGetBranch(DropdownDataForCompanyRes res) {
         progressDialog.dismiss();
+        Sessions.setUserObj(context, res, Constants.dorpDownSession);
     }
 
     @Override
@@ -340,5 +344,7 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
         Constants.Toasty(context, msg, Constants.warning);
         progressDialog.dismiss();
     }
+
+
 
 }

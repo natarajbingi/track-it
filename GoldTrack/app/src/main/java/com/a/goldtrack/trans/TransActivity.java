@@ -137,6 +137,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
         binding.stepLastSubmit.setText("Proceed");
         binding.stepLastSubmit.setOnClickListener(this);
+        binding.stepLastValidate.setOnClickListener(this);
         viewModel.onViewAvailable(this);
         GetCompany req = new GetCompany();
         req.companyId = Sessions.getUserString(context, Constants.companyId);
@@ -189,9 +190,28 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 binding.finalLayoutParent.roundOffAmount.setEnabled(b);
+                binding.finalLayoutParent.marginForTotal.setEnabled(!b);
+                if (!b) {
+                    binding.finalLayoutParent.itemAddingLocalCalci.setVisibility(View.VISIBLE);
+                } else {
+                    binding.finalLayoutParent.itemAddingLocalCalci.setVisibility(View.GONE);
+                }
             }
         });
 
+        binding.wantToEditAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                binding.stepLastSubmit.setVisibility(View.GONE);
+                binding.editAgainHolder.setVisibility(View.GONE);
+                binding.stepLastValidate.setVisibility(View.VISIBLE);
+                // binding.finalLayoutParent.finalLayoutChild.setEnabled(true);
+                binding.finalLayoutParent.allEditableItemsHolder.setVisibility(View.VISIBLE);
+                binding.finalLayoutParent.allReadableItemsHolder.setVisibility(View.GONE);
+            }
+        });
         binding.finalLayoutParent.roundOffAmount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -316,7 +336,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             for (int i = 0; i < dropdownRes.customerList.size(); i++) {
                 customersArr.put(dropdownRes.customerList.get(i).firstName.toUpperCase()
                         + " " + dropdownRes.customerList.get(i).lastName.toUpperCase()
-                        + "-" + dropdownRes.customerList.get(i).mobileNum, dropdownRes.customerList.get(i).id);
+                        + " - " + dropdownRes.customerList.get(i).mobileNum, dropdownRes.customerList.get(i).id);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -428,6 +448,100 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
             break;
+            case R.id.step_last_validate: {
+                String str = binding.stepLastSubmit.getText().toString();
+                addTransactionReq.comments = binding.finalLayoutParent.comments.getText().toString();
+                try {
+                    if (addTransactionReq.itemList != null && addTransactionReq.itemList.size() > 0) {
+                        // addTransactionReq.paidAmountForRelease = binding.finalLayoutParent.paidAmountForRelease.getText().toString();
+                        //  addTransactionReq.roundOffAmount = binding.finalLayoutParent.roundOffAmount.getText().toString();
+                        //   addTransactionReq.comments = binding.finalLayoutParent.comments.getText().toString();
+                        boolean hmmm = false;
+                        binding.grandTotalAmtBottom.setText("Total: Rs. " + Constants.priceToString(addTransactionReq.roundOffAmount));
+                        if (addTransactionReq.roundOffAmount.isEmpty()) {
+                            Constants.Toasty(context, "Please enter Mandatory details to submit.", Constants.warning);
+                            break;
+                        }
+                        addTransactionReq.paidAmountForRelease = binding.finalLayoutParent.paidAmountForRelease.getText().toString();
+                        if (binding.finalLayoutParent.nbfcReleaseAmtCheckBox.isChecked() && addTransactionReq.paidAmountForRelease.isEmpty()) {
+                            Constants.Toasty(context, "Please enter paid amount For release to submit.", Constants.warning);
+                            break;
+                        }
+                        if (binding.finalLayoutParent.nbfcReleaseAmtCheckBox.isChecked() && (addTransactionReq.referencePicData == null || addTransactionReq.referencePicData.isEmpty())) {
+                            Constants.Toasty(context, "Please upload image for NFBC.", Constants.warning);
+                            break;
+                        }
+                        if (binding.finalLayoutParent.itemRoundOffEdit.isChecked()) {
+                            double rdAmt = Double.parseDouble(binding.finalLayoutParent.roundOffAmount.getText().toString());
+                            double tolAmt = Double.parseDouble(addTransactionReq.totalAmount);
+                            double marginAmt = 0.0, newMarginPer = 0.0;
+                            if (rdAmt != tolAmt) {
+                                newMarginPer = ((1 - (rdAmt / tolAmt)) * 100);
+                                marginAmt = (tolAmt * newMarginPer) / 100;// 2 / 100
+                                double FinalAmt = rdAmt - marginAmt;
+                                addTransactionReq.marginPercent = newMarginPer + "";
+                                addTransactionReq.marginAmount = marginAmt + "";
+                                addTransactionReq.roundOffAmount = rdAmt + "";
+                                addTransactionReq.nettAmount = rdAmt + "";
+                                // addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount + "";
+
+                                // settingFinalPageVals();
+                                hmmm = true;
+                            }
+                        } else {
+
+                            float marginForFinalTotal = Float.parseFloat(isEmptyReturn0(binding.finalLayoutParent.marginForTotal.getText().toString()));
+
+                            float marginAmt = (Float.parseFloat(addTransactionReq.grossAmount) * marginForFinalTotal) / 100;// 2 / 100
+                            float FinalAmt = Float.parseFloat(addTransactionReq.grossAmount) - marginAmt;
+                            // float FinalAmtPer = FinalAmt / Float.parseFloat(addTransactionReq.totalAmount) * 100;
+                            addTransactionReq.marginAmount = marginAmt + "";
+                            addTransactionReq.marginPercent = marginForFinalTotal + "";
+                            addTransactionReq.nettAmount = FinalAmt + "";
+                            addTransactionReq.roundOffAmount = addTransactionReq.nettAmount + "";
+                            // addTransactionReq.paidAmountForRelease = addTransactionReq.nettAmount + "";
+                            //  binding.finalLayoutParent.marginAmount.setText("Margin Amount: " + marginAmt);
+                            //  settingFinalPageVals();
+                            hmmm = true;
+
+                        }
+                        if (binding.finalLayoutParent.nbfcReleaseAmtCheckBox.isChecked()) {
+                            addTransactionReq.amountPayable = (Double.parseDouble(addTransactionReq.nettAmount) - Double.parseDouble(isEmptyReturn0(addTransactionReq.paidAmountForRelease))) + "";
+                        } else {
+                            addTransactionReq.amountPayable = addTransactionReq.nettAmount;
+                        }
+                        if (hmmm) {
+                            settingFinalPageVals();
+                            binding.stepLastSubmit.setVisibility(View.VISIBLE);
+                            binding.editAgainHolder.setVisibility(View.VISIBLE);
+                            binding.finalLayoutParent.allEditableItemsHolder.setVisibility(View.GONE);
+                            binding.finalLayoutParent.allReadableItemsHolder.setVisibility(View.VISIBLE);
+                            binding.stepLastValidate.setVisibility(View.GONE);
+
+                            binding.finalLayoutParent.marginForTotalText.setText("Margin %: " + Constants.priceToString(addTransactionReq.marginPercent));
+                            binding.finalLayoutParent.marginAmountText.setText("Margin Amt: " + Constants.priceToString(addTransactionReq.marginAmount));
+                            binding.finalLayoutParent.nettAmountText.setText("Net Amt: " + Constants.priceToString(addTransactionReq.nettAmount));
+                            binding.finalLayoutParent.roundOffAmountText.setText("RoundOff Amt: \n" + Constants.priceToString(addTransactionReq.roundOffAmount));
+                            binding.finalLayoutParent.paidAmountForReleaseText.setText("Paid Amt For Release: \n" + Constants.priceToString(addTransactionReq.paidAmountForRelease));
+                            binding.finalLayoutParent.payableAmountText.setText("Payable Amt: " + Constants.priceToString(addTransactionReq.amountPayable));
+                            binding.finalLayoutParent.commentsText.setText("Comment: " + addTransactionReq.comments);
+
+                            if (addTransactionReq.referencePicData != null && !addTransactionReq.referencePicData.isEmpty()) {
+                                binding.finalLayoutParent.selectedImgText.setImageBitmap(CamReqActivity.stringToBitmap(addTransactionReq.referencePicData));
+                                binding.finalLayoutParent.selectedImgText.setVisibility(View.VISIBLE);
+                            } else {
+                                binding.finalLayoutParent.selectedImgText.setVisibility(View.GONE);
+                            }
+                        }
+                    } else
+                        Constants.Toasty(context, "No Items Found to do transaction.", Constants.warning);
+                } catch (Exception e) {
+                    Constants.Toasty(context, "No Items Found to do transaction.", Constants.warning);
+                    e.printStackTrace();
+                    Log.d(TAG, e.getMessage());
+                }
+            }
+            break;
             case R.id.step_last_submit: {
                 String str = binding.stepLastSubmit.getText().toString();
                 try {
@@ -440,6 +554,9 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                                     setCurrentLayoutVisible();
                                     settingFinalPageVals();
                                     binding.stepLastSubmit.setText("SUBMIT");
+                                    binding.stepLastSubmit.setVisibility(View.GONE);
+                                    binding.stepLastValidate.setVisibility(View.VISIBLE);
+                                    binding.editAgainHolder.setVisibility(View.GONE);
                                 }
                             });
 
@@ -457,6 +574,10 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                                 Constants.Toasty(context, "Please enter paid amount For release to submit.", Constants.warning);
                                 break;
                             }
+                            if (binding.finalLayoutParent.nbfcReleaseAmtCheckBox.isChecked() && (addTransactionReq.referencePicData == null || addTransactionReq.referencePicData.isEmpty())) {
+                                Constants.Toasty(context, "Please upload image for NFBC.", Constants.warning);
+                                break;
+                            }
                             if (Constants.isConnection()) {
 
                                 CustomerWithOTPReq req = firstLayoutValidate();
@@ -466,15 +587,21 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                                             + "Gross Amt: " + Constants.priceToString(addTransactionReq.grossAmount)
                                             + "\nMargin Amt: " + Constants.priceToString(addTransactionReq.marginAmount)
                                             + "\nNet Amt: " + Constants.priceToString(addTransactionReq.nettAmount)
-                                            + "\nReleasing Amt: " + (addTransactionReq.paidAmountForRelease.isEmpty() ? "0.00" : Constants.priceToString(addTransactionReq.paidAmountForRelease))
+                                            //+ "\nReleasing Amt: " + (addTransactionReq.paidAmountForRelease.isEmpty() ? "0.00" : Constants.priceToString(addTransactionReq.paidAmountForRelease))
+                                            + "\nReleasing Amt: " + isEmptyReturn0(addTransactionReq.paidAmountForRelease)
                                             + "\nPayable Amt: " + Constants.priceToString(addTransactionReq.amountPayable);
 
                                     Constants.alertDialogShowWithCancel(context, strR, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                            progressDialog.show();
-                                            addTransactionReq.paidAmountForRelease = isEmptyReturn0(addTransactionReq.paidAmountForRelease);
-                                            viewModel.verifyOtp(req);
+                                            if (Float.parseFloat(addTransactionReq.amountPayable) > 0) {
+                                                progressDialog.show();
+                                                addTransactionReq.paidAmountForRelease = isEmptyReturn0(addTransactionReq.paidAmountForRelease);
+                                                viewModel.verifyOtp(req);
+                                            } else {
+                                                progressDialog.show();
+                                                viewModel.addTransreq(addTransactionReq);
+                                            }
                                         }
                                     });
                                 }
@@ -623,9 +750,13 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             }
             break;
             case R.id.triggImgGet: {
-                Intent i = new Intent(TransActivity.this, CamReqActivity.class);
-                i.putExtra("CAM_REQ_Code", CAM_REQ_Code_One);
-                startActivityForResult(i, CAM_REQ_Code_One);
+                if (binding.finalLayoutParent.nbfcReleaseAmtCheckBox.isChecked()) {
+                    Intent i = new Intent(TransActivity.this, CamReqActivity.class);
+                    i.putExtra("CAM_REQ_Code", CAM_REQ_Code_One);
+                    startActivityForResult(i, CAM_REQ_Code_One);
+                } else {
+                    Constants.Toasty(context, "NFC not enabled.");
+                }
             }
             break;
             case R.id.triggImgGet_Sixth: {
@@ -638,18 +769,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
             break;
-            /*case R.id.selectedImgOne: {
-                Intent i = new Intent(TransActivity.this, CamReqActivity.class);
-                i.putExtra("CAM_REQ_Code", CAM_REQ_Code_Two);
-                startActivityForResult(i, CAM_REQ_Code_Two);
-            }
-            break;
-            case R.id.selectedImgTwo: {
-                Intent i = new Intent(TransActivity.this, CamReqActivity.class);
-                i.putExtra("CAM_REQ_Code", CAM_REQ_Code_Three);
-                startActivityForResult(i, CAM_REQ_Code_Three);
-            }
-            break;*/
+
             case R.id.btn_addImagesToTrans: {
                 if (imgDataList.size() == 0) {
                     Constants.Toasty(context, "Please select at least one image to proceed.");
@@ -738,6 +858,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         if (finalReset) {
             list.clear();
             imgDataList.clear();
+            addImgs();
 
             current = first;
             binding.otpedit.setText("");
@@ -750,10 +871,8 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             binding.resend.setVisibility(View.GONE);
             binding.selectedCustomerName.setText("");
             binding.transitionCurrentDate.setText("");
-            binding.selectedBranch.setText("");
             binding.selectedTextCommodity.setText("");
             setmRecyclerView();
-            binding.selectedTextCommodityPrice.setText("");
             binding.grandTotalAmtBottom.setText("Rs. 0.00");
             binding.stepLastSubmit.setText("Proceed");
             ImgData = null;
@@ -761,6 +880,9 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             binding.finalLayoutParent.customer.setText("");
             binding.selectedTextCommodityPrice.setText("");
             binding.selectedBranch.setText("");
+            binding.finalLayoutParent.itemRoundOffEdit.setChecked(false);
+            binding.finalLayoutParent.nbfcReleaseAmtCheckBox.setChecked(false);
+            binding.finalLayoutParent.itemRoundOffEdit.setChecked(false);
 
             binding.finalLayoutParent.commodity.setText("");
             binding.finalLayoutParent.nbfcReferenceNo.setText("");
@@ -775,7 +897,9 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             binding.finalLayoutParent.marginPercent.setText("");
 
             binding.finalLayoutParent.paidAmountForRelease.setText("");
+            binding.finalLayoutParent.paidAmountForRelease.setEnabled(false);
             binding.finalLayoutParent.roundOffAmount.setText("");
+            binding.finalLayoutParent.roundOffAmount.setEnabled(false);
             binding.finalLayoutParent.comments.setText("");
             binding.fifthLayoutParent.customMsg.setText("");
             binding.fifthLayoutParent.linkMsg.setText("");
@@ -783,6 +907,21 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
             currentTransactionID = "";
             setCurrentLayoutVisible();
+            binding.finalLayoutParent.marginForTotal.setText("");
+            binding.finalLayoutParent.marginForTotal.setEnabled(true);
+            binding.finalLayoutParent.payableAmount.setText("");
+
+            binding.finalLayoutParent.marginForTotalText.setText("Margin %: ");
+            binding.finalLayoutParent.marginAmountText.setText("Margin Amt: ");
+            binding.finalLayoutParent.nettAmountText.setText("Net Amt: ");
+            binding.finalLayoutParent.roundOffAmountText.setText("RoundOff Amt:");
+            binding.finalLayoutParent.paidAmountForReleaseText.setText("Paid Amt For Release:");
+            binding.finalLayoutParent.payableAmountText.setText("Payable Amt: ");
+            binding.finalLayoutParent.commentsText.setText("Comment: ");
+
+            binding.finalLayoutParent.selectedImgText.setVisibility(View.GONE);
+            binding.finalLayoutParent.selectedImg.setVisibility(View.GONE);
+
         }
         binding.itemAddTransLayoutParent.addItemButton.setText("ADD");
         binding.itemAddTransLayoutParent.commodityWeight.setText("");
@@ -804,11 +943,17 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         binding.thirdStepDetails.setVisibility(View.GONE);
         binding.stepNextButton.setVisibility(View.GONE);
         binding.bottomTotalLayout.setVisibility(View.GONE);
+        binding.stepLastSubmit.setVisibility(View.GONE);
+        binding.stepLastValidate.setVisibility(View.GONE);
+        binding.editAgainHolder.setVisibility(View.GONE);
         binding.finalLayoutParent.finalLayoutChild.setVisibility(View.GONE);
         binding.fifthLayoutParent.finalLayoutChild.setVisibility(View.GONE);
         binding.sixthLayoutParent.finalSixthChild.setVisibility(View.GONE);
         binding.sixthLayoutParent.removeAll.setVisibility(View.GONE);
         binding.finalLayoutParent.selectedImg.setVisibility(View.GONE);
+
+        binding.finalLayoutParent.allEditableItemsHolder.setVisibility(View.GONE);
+        binding.finalLayoutParent.allReadableItemsHolder.setVisibility(View.GONE);
 
         switch (current) {
             case first:
@@ -819,11 +964,11 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 makeItemVisible(binding.nestedScroll, binding.stepNextButton, binding.secondStepOtp);
                 break;
             case third:
-                makeItemVisible(binding.nestedScroll, binding.recyclerTransItems, binding.thirdStepDetails, binding.bottomTotalLayout);
+                makeItemVisible(binding.nestedScroll, binding.recyclerTransItems, binding.thirdStepDetails, binding.bottomTotalLayout, binding.stepLastSubmit);
                 //setmRecyclerView();
                 break;
             case four:
-                makeItemVisible(binding.nestedScroll, binding.finalLayoutParent.finalLayoutChild, binding.bottomTotalLayout);
+                makeItemVisible(binding.nestedScroll, binding.finalLayoutParent.allEditableItemsHolder, binding.finalLayoutParent.finalLayoutChild, binding.bottomTotalLayout, binding.stepLastValidate);
                /* binding.finalLayoutParent.finalLayoutChild.setVisibility(View.VISIBLE);
                 binding.bottomTotalLayout.setVisibility(View.VISIBLE);*/
                 break;
@@ -904,7 +1049,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         if (mob.isEmpty()) {
             return null;
         }
-        req.customerMob = mob.split("-")[1];
+        req.customerMob = mob.split("-")[1].trim();
         req.counter = (counter + 1) + "";
         req.totalTransactionAmount = totalTransactionAmount;
         req.otp = otp;

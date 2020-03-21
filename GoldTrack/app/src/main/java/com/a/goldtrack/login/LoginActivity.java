@@ -121,7 +121,7 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
     @Override
     public void onSetEmailError(boolean bool) {
         if (bool)
-            binding.edEmail.setError("enter a valid email address");
+            binding.edEmail.setError("Enter a valid email address");
         else
             binding.edEmail.setError(null);
 
@@ -130,7 +130,7 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
     @Override
     public void onSetPwdError(boolean bool) {
         if (bool)
-            binding.edPassword.setError("between 4 and 10 alphanumeric characters");
+            binding.edPassword.setError("Invalid password");
         else
             binding.edPassword.setError(null);
 

@@ -1,5 +1,6 @@
 package com.a.goldtrack.network;
 
+import com.a.goldtrack.GTrackApplication;
 import com.a.goldtrack.Model.AddCompany;
 import com.a.goldtrack.Model.AddCompanyBranchesReq;
 import com.a.goldtrack.Model.AddCompanyBranchesRes;
@@ -57,6 +58,7 @@ import com.a.goldtrack.trans.ITransCallBacks;
 import com.a.goldtrack.ui.home.IHomeFragCallbacks;
 import com.a.goldtrack.users.IUserCallBacks;
 import com.a.goldtrack.utils.Constants;
+import com.a.goldtrack.utils.Sessions;
 import com.google.gson.Gson;
 
 import java.util.concurrent.TimeUnit;
@@ -191,24 +193,25 @@ public class RestFullServices {
         });
     }
 
-    public static void getDropdownDataForCompany(GetCompany req, ITransCallBacks callBacks) {
+    public static void getDropdownDataForCompany(GetCompany req) {
         getClient().getDropdownDataForCompany(req).enqueue(new Callback<DropdownDataForCompanyRes>() {
             @Override
             public void onResponse(Call<DropdownDataForCompanyRes> call, Response<DropdownDataForCompanyRes> response) {
                 Constants.logPrint(call.request().toString(), req, response.body());
                 if (response.isSuccessful()) {
-                    callBacks.onDropDownSuccess(response.body());
-                } else callBacks.onErrorComplete("Something went wrong, Server Error");
+                    if (response.body().success)
+                        Sessions.setUserObj(GTrackApplication.getInstance().getApplicationContext(), response.body(), Constants.dorpDownSession);
+                } else {
+
+                }
             }
 
             @Override
             public void onFailure(Call<DropdownDataForCompanyRes> call, Throwable t) {
-                callBacks.onError(t.getMessage());
+
             }
         });
-       /* Gson gj = new Gson();
-        DropdownDataForCompanyRes res = gj.fromJson(Constants.listme, DropdownDataForCompanyRes.class);
-        callBacks.onDropDownSuccess(res);*/
+
     }
 
     public static void getDropdownDataForCompanyHome(GetCompany req, IDropdownDataCallBacks callBacks) {
@@ -367,8 +370,8 @@ public class RestFullServices {
                 if (response.isSuccessful())
                     if (response.body().success)
                         callBacks.addCustomerSuccess(response.body());
-                    else callBacks.onCompleteError(response.body().response);
-                else callBacks.onCompleteError("Something went wrong,Server Error");
+                    else callBacks.onErrorComplete(response.body().response);
+                else callBacks.onErrorComplete("Something went wrong,Server Error");
             }
 
             @Override
@@ -385,7 +388,7 @@ public class RestFullServices {
                 Constants.logPrint(call.request().toString(), req, response.body());
                 if (response.isSuccessful())
                     callBacks.updateCustomerSuccess(response.body());
-                else callBacks.onCompleteError("Something went wrong,Server Error");
+                else callBacks.onErrorComplete("Something went wrong,Server Error");
             }
 
             @Override
@@ -402,7 +405,7 @@ public class RestFullServices {
                 Constants.logPrint(call.request().toString(), req, response.body());
                 if (response.isSuccessful())
                     callBacks.getCustomerSuccess(response.body());
-                else callBacks.onCompleteError("Something went wrong, Server Error");
+                else callBacks.onErrorComplete("Something went wrong, Server Error");
             }
 
             @Override
@@ -508,13 +511,13 @@ public class RestFullServices {
                         if (callTransBacks != null)
                             callTransBacks.onErrorComplete(response.body().response);
                         if (callCustomerBacks != null)
-                            callCustomerBacks.onCompleteError(response.body().response);
+                            callCustomerBacks.onErrorComplete(response.body().response);
                     }
                 } else {
                     if (callTransBacks != null)
                         callTransBacks.onErrorComplete("Something went wrong, Server Error");
                     if (callCustomerBacks != null)
-                        callCustomerBacks.onCompleteError("Something went wrong, Server Error");
+                        callCustomerBacks.onErrorComplete("Something went wrong, Server Error");
                 }
             }
 
