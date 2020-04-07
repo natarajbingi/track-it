@@ -251,7 +251,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
             public void onClick(View view) {
                 String strBrnc = binding.selectBranchFilter.getSelectedItem().toString();
                 String strCom = binding.selectCommodityFilter.getSelectedItem().toString();
-                String struser = usersArr.get(binding.selectEmployeeFilter.getSelectedItem().toString());
+                String struser = binding.selectEmployeeFilter.getSelectedItem().toString();
                 String dateFilr = binding.dateClosureFilter.getText().toString();
                 if (strBrnc.equals("Select")) {
                     strBrnc = "0";
@@ -271,10 +271,11 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
                 req.transactionDate = dateFilr;
                 req.commodity = strCom;
                 if (role) {
-                    req.employeeID = struser;
+                    req.employeeID = struser.equals("0") ? struser : usersArr.get(struser);
                 } else
                     req.employeeID = Sessions.getUserString(context, Constants.userId);
 
+                Constants.logPrint(null, req, null);
                 progressDialog.show();
                 viewModel.getTransactions(req);
             }
@@ -611,7 +612,13 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+        String mm = "";
+        if ((monthOfYear + 1) < 10) {
+            mm = "0" + (monthOfYear + 1);
+        } else {
+            mm = (monthOfYear + 1) + "";
+        }
+        String date = year + "-" + mm + "-" + dayOfMonth;
         binding.dateClosureFilter.setText(date);
     }
 }

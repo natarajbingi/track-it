@@ -513,7 +513,13 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+        String mm = "";
+        if ((monthOfYear + 1) < 10) {
+            mm = "0" + (monthOfYear + 1);
+        } else {
+            mm = (monthOfYear + 1) + "";
+        }
+        String date = year + "-" + mm + "-" + dayOfMonth;
 
         if (whichDate == filterDate) {
             binding.dateClosureFilter.setText(date);

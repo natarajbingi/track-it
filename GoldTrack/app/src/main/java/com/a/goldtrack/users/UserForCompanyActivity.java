@@ -300,7 +300,7 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
                 break;
             case R.id.triggImgGet:
                 Intent cam = new Intent(UserForCompanyActivity.this, CamReqActivity.class);
-                cam.putExtra("CAM_REQ_Code",501);
+                cam.putExtra("CAM_REQ_Code", 501);
                 startActivityForResult(cam, 501);
                 break;
         }
@@ -424,7 +424,13 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+        String mm = "";
+        if ((monthOfYear + 1) < 10) {
+            mm = "0" + (monthOfYear + 1);
+        } else {
+            mm = (monthOfYear + 1) + "";
+        }
+        String date = year + "-" + mm + "-" + dayOfMonth;
         binding.dob.setText(date);
     }
 }
