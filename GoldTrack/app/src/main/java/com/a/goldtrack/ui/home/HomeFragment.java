@@ -16,12 +16,14 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -35,6 +37,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.a.goldtrack.GTrackApplication;
 import com.a.goldtrack.HomeActivity;
 import com.a.goldtrack.Interfaces.InterfaceClasses;
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
@@ -44,9 +47,13 @@ import com.a.goldtrack.Model.GetCompanyRes;
 import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.GetTransactionReq;
 import com.a.goldtrack.Model.GetTransactionRes;
+import com.a.goldtrack.Model.GetUserDailyClosureReq;
+import com.a.goldtrack.Model.GetUserForCompany;
+import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.Model.ItemsTrans;
 import com.a.goldtrack.R;
 import com.a.goldtrack.camera.CamReqActivity;
+import com.a.goldtrack.dailyclosure.UserDailyClosureActivity;
 import com.a.goldtrack.databinding.FragmentHomeBinding;
 import com.a.goldtrack.databinding.TransItemPopupBinding;
 import com.a.goldtrack.network.APIService;
@@ -59,13 +66,17 @@ import com.a.goldtrack.utils.Sessions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.squareup.picasso.Picasso;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -75,7 +86,7 @@ import retrofit2.Retrofit;
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 
-public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeUiView {
+public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeUiView, DatePickerDialog.OnDateSetListener {
 
 
     private Constants.LayoutManagerType mCurrentLayoutManagerType;
@@ -94,12 +105,18 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
     private GetTransactionReq req;
     private GetCompany reqDrop;
 
+    boolean holderFilter = true, role;
+    Map<String, String> branchesArr = null, usersArr = null;
+
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         context = getContext();
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("in Progress...");
+        String str = Sessions.getUserString(context, Constants.roles);
+        role = str.equals("ADMIN") || str.equals("SUPER_ADMIN");
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
         binding.setHomeFragModel(viewModel);
@@ -131,8 +148,8 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
 
         req = new GetTransactionReq();
         req.companyID = Sessions.getUserString(context, Constants.companyId);
-        String role = Sessions.getUserString(context, Constants.roles);
-        if (role.equals("ADMIN") || role.equals("SUPER_ADMIN")) {
+
+        if (role) {
             req.employeeID = "0";
         } else
             req.employeeID = Sessions.getUserString(context, Constants.userId);
@@ -143,6 +160,16 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         progressDialog.show();
         viewModel.getTransactions(req);
 
+
+        if (role) {
+            GetUserForCompany req1 = new GetUserForCompany();
+            req1.companyId = Sessions.getUserString(context, Constants.companyId);
+            req1.userId = "0";
+            viewModel.getUsers(req1);
+            binding.emplyeeHolder.setVisibility(View.VISIBLE);
+        } else {
+            binding.emplyeeHolder.setVisibility(View.GONE);
+        }
         viewModel.getText().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -153,6 +180,8 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
             @Override
             public void onChanged(GetTransactionRes getTransactionRes) {
                 progressDialog.dismiss();
+                binding.filterHolder.setVisibility(View.GONE);
+                holderFilter = true;
                 mDataset = getTransactionRes.dataList;
                 setmRecyclerView();
             }
@@ -175,6 +204,80 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
             @Override
             public void afterTextChanged(Editable s) {
                 filter(s.toString());
+            }
+        });
+
+
+        binding.filterReq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (holderFilter) {
+                    binding.filterHolder.setVisibility(View.VISIBLE);
+                } else {
+                    binding.filterHolder.setVisibility(View.GONE);
+                }
+                holderFilter = !holderFilter;
+            }
+        });
+        binding.filterClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                binding.dateClosureFilter.setText("");
+                binding.selectBranchFilter.setSelection(0);
+                binding.selectCommodityFilter.setSelection(0);
+                binding.selectEmployeeFilter.setSelection(0);
+                progressDialog.show();
+                viewModel.getTransactions(req);
+            }
+        });
+
+        binding.imgDateClickFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar now = Calendar.getInstance();
+                DatePickerDialog dpd = DatePickerDialog.newInstance(
+                        HomeFragment.this,
+                        now.get(Calendar.YEAR), // Initial year selection
+                        now.get(Calendar.MONTH), // Initial month selection
+                        now.get(Calendar.DAY_OF_MONTH) // Inital day selection
+                );
+                dpd.setMaxDate(now);
+                dpd.show(getFragmentManager(), "Datepickerdialog");
+
+            }
+        });
+        binding.filterSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String strBrnc = binding.selectBranchFilter.getSelectedItem().toString();
+                String strCom = binding.selectCommodityFilter.getSelectedItem().toString();
+                String struser = binding.selectEmployeeFilter.getSelectedItem().toString();
+                String dateFilr = binding.dateClosureFilter.getText().toString();
+                if (strBrnc.equals("Select")) {
+                    strBrnc = "0";
+                } else
+                    strBrnc = branchesArr.get(strBrnc);
+
+                if (strCom.equals("Select")) {
+                    strCom = "";
+                }
+                if (struser.equals("Select")) {
+                    struser = "0";
+                }
+
+                GetTransactionReq req = new GetTransactionReq();
+                req.companyID = Sessions.getUserString(context, Constants.companyId);
+                req.branchID = strBrnc == null ? "0" : strBrnc;
+                req.transactionDate = dateFilr;
+                req.commodity = strCom;
+                if (role) {
+                    req.employeeID = struser.equals("0") ? struser : usersArr.get(struser);
+                } else
+                    req.employeeID = Sessions.getUserString(context, Constants.userId);
+
+                Constants.logPrint(null, req, null);
+                progressDialog.show();
+                viewModel.getTransactions(req);
             }
         });
         return binding.getRoot();
@@ -252,15 +355,66 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
     }
 
     @Override
-    public void onGetDrpSuccess(DropdownDataForCompanyRes body) {
-        if (body.success) {
-            Sessions.setUserObj(context, body, Constants.dorpDownSession);
+    public void onGetDrpSuccess(DropdownDataForCompanyRes dropdownRes) {
+        if (dropdownRes.success) {
+            Sessions.setUserObj(context, dropdownRes, Constants.dorpDownSession);
             Log.d("TAG", "Saving Dropdown Data");
+            if (dropdownRes != null) {
+                branchesArr = new LinkedHashMap<String, String>();
+                branchesArr.put("Select", "Select");
+                /* Branches */
+                try {
+                    for (int i = 0; i < dropdownRes.branchesList.size(); i++) {
+                        branchesArr.put(dropdownRes.branchesList.get(i).branchName.toUpperCase()
+                                + "-" + dropdownRes.branchesList.get(i).id, dropdownRes.branchesList.get(i).id);
+                    }
+                    setSpinners(binding.selectBranchFilter, branchesArr.keySet().toArray(new String[0]));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Constants.Toasty(context, "Please refresh home screen to load details", Constants.error);
+            }
         } else {
-            Constants.Toasty(context, body.response + ", Please refresh again.", 1);
+            Constants.Toasty(context, dropdownRes.response + ", Please refresh again.", 1);
         }
     }
 
+    @Override
+    public void getUsersSuccess(GetUserForCompanyRes res) {
+        if (res.success) {
+            Log.d("TAG", "GetUserForCompanyRes Data");
+            if (res != null) {
+                usersArr = new LinkedHashMap<String, String>();
+                usersArr.put("Select", "Select");
+                /* users */
+                try {
+                    for (int i = 0; i < res.resList.size(); i++) {
+                        usersArr.put(res.resList.get(i).firstName.toUpperCase()
+                                + "-" + res.resList.get(i).lastName, res.resList.get(i).id);
+                    }
+                    setSpinners(binding.selectEmployeeFilter, usersArr.keySet().toArray(new String[0]));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Constants.Toasty(context, "Please refresh home screen to load details", Constants.error);
+            }
+        } else {
+            Constants.Toasty(context, res.response + ", Please refresh again.", 1);
+        }
+    }
+
+
+    public void setSpinners(Spinner spr, String[] array) {
+        // -----------------------------------------------
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(context,
+                R.layout.custom_spinner,
+                array);
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
+        // The drop down view
+        spr.setAdapter(spinnerArrayAdapter);
+    }
 
     @Override
     public void onError(String message) {
@@ -455,4 +609,16 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
 
         }
     };
+
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+        String mm = "";
+        if ((monthOfYear + 1) < 10) {
+            mm = "0" + (monthOfYear + 1);
+        } else {
+            mm = (monthOfYear + 1) + "";
+        }
+        String date = year + "-" + mm + "-" + dayOfMonth;
+        binding.dateClosureFilter.setText(date);
+    }
 }

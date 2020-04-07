@@ -342,18 +342,25 @@ public class RestFullServices {
         });
     }
 
-    public static void getUsers(GetUserForCompany req, IUserCallBacks callBacks) {
+    public static void getUsers(GetUserForCompany req, IUserCallBacks callBacks, IHomeFragCallbacks homeFragCallbacks) {
         getClient().getUserForCompany(req).enqueue(new Callback<GetUserForCompanyRes>() {
             @Override
             public void onResponse(Call<GetUserForCompanyRes> call, Response<GetUserForCompanyRes> response) {
-                if (response.isSuccessful())
-                    callBacks.getUsersSuccess(response.body());
-                else callBacks.onError("Something went wrong, Server Error");
+                if (response.isSuccessful()) {
+                    if (callBacks != null) callBacks.getUsersSuccess(response.body());
+                    if (homeFragCallbacks != null)
+                        homeFragCallbacks.getUsersSuccess(response.body());
+                } else {
+                    if (callBacks != null) callBacks.onError("Something went wrong, Server Error");
+                    if (homeFragCallbacks != null)
+                        homeFragCallbacks.onError("Something went wrong, Server Error");
+                }
             }
 
             @Override
             public void onFailure(Call<GetUserForCompanyRes> call, Throwable t) {
-                callBacks.onError(t.getMessage());
+                if (callBacks != null) callBacks.onError(t.getMessage());
+                if (homeFragCallbacks != null) homeFragCallbacks.onError(t.getMessage());
             }
         });
     }

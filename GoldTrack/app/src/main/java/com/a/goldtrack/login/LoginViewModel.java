@@ -27,17 +27,18 @@ public class LoginViewModel extends ViewModel implements ILoginCallBacks {
         view.onClickTextView();
     }
 
+    //|| !android.util.Patterns.EMAIL_ADDRESS.matcher(email.get()).matches()
     public void loginBtn() {
         boolean valid = true;
-        if (email.get() == null || (email.get().isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email.get()).matches())) {
+        if (email.get() == null || (email.get().isEmpty())) {
             view.onSetEmailError(true);
             valid = false;
         } else {
             view.onSetEmailError(false);
             // _emailText.setError(null);
         }
-
-        if (pwd.get() == null || (pwd.get().isEmpty() || pwd.get().length() < 4 || pwd.get().length() > 10)) {
+        //|| pwd.get().length() > 10
+        if (pwd.get() == null || (pwd.get().isEmpty() || pwd.get().length() < 4)) {
             view.onSetPwdError(true);
             valid = false;
         } else {

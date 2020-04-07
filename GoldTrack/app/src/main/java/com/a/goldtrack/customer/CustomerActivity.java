@@ -99,6 +99,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         ab.setDisplayHomeAsUpEnabled(true);
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
+        binding.editAgainHolder.setVisibility(View.GONE);
 
         Constants.hideProgress(context);
 
@@ -136,7 +137,13 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
                 setmRecyclerView();
             }
         });
-
+        binding.editAgainHolder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                binding.firstStepLayout.setVisibility(View.GONE);
+                binding.secondStepLayout.setVisibility(View.VISIBLE);
+            }
+        });
 
         binding.listDetailsHolder.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -405,6 +412,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         binding.addDetailsHolder.setVisibility(View.GONE);
         binding.firstStepLayout.setVisibility(View.GONE);
         binding.secondStepLayout.setVisibility(View.GONE);
+        binding.editAgainHolder.setVisibility(View.VISIBLE);
         binding.selectedImgLayout.setVisibility(View.GONE);
         binding.progressbar.setVisibility(View.GONE);
         binding.imgHolderInLastSetCustUp.removeAllViews();
@@ -412,6 +420,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void setEditUpdateVals(int position) {
+        currentCustID = mDataset.get(position).id;
         binding.companyId.setText(mDataset.get(position).id);
         binding.firstName.setText(mDataset.get(position).firstName);
         binding.lastName.setText(mDataset.get(position).lastName);
@@ -424,6 +433,13 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         ImgData = "";
         binding.btnAddCustomer.setText("Update");
         binding.textView.setText("Update");
+
+        if (mDataset.get(position).uploadedImages == null || mDataset.get(position).uploadedImages.size() == 0) {
+            binding.editAgainHolder.setVisibility(View.VISIBLE);
+            imgFinalList.clear();
+        } else {
+            binding.editAgainHolder.setVisibility(View.GONE);
+        }
 
         Constants.setGilde(mDataset.get(position).profile_pic_url, binding.selectedImg);
         binding.addSignalCustomer.setImageDrawable(getResources().getDrawable(R.drawable.ic_arrow_back));

@@ -80,14 +80,17 @@ public class CustomHomeAdapter extends RecyclerView.Adapter<CustomHomeAdapter.Vi
             viewHolder.parent_tile_bg.setBackgroundColor(context.getResources().getColor(R.color.white));
         }
 
-        Log.d(TAG, "Element " + position + " set.");
+        // Log.d(TAG, "Element " + position + " set.");
         viewHolder.textView.setText(mDataSet.get(position).customerName);
         viewHolder.text_date.setText("Date: " + Constants.getMiliToDateyyyymmmdd(mDataSet.get(position).createdDt)
                 + "\nBill No: " + mDataSet.get(position).billNumber);
         String str = "";
-        if (Float.parseFloat(mDataSet.get(position).amountPayable) < 0) {
+        if (mDataSet.get(position).amountPayable.contains("-")) {
             str += "\nPayable Amt: " + Constants.priceToString(mDataSet.get(position).amountPayable);
             viewHolder.text_sub.setTextColor(context.getResources().getColor(R.color.button_red));
+           // Log.d("bingiRed", mDataSet.get(position).amountPayable + " : " + position);
+        } else {
+            viewHolder.text_sub.setTextColor(context.getResources().getColor(R.color.oil));
         }
 
         viewHolder.text_sub.setText("Commodity: " + mDataSet.get(position).commodity

@@ -87,15 +87,21 @@ public class CustomCustomersAdapter extends RecyclerView.Adapter<CustomCustomers
         } else {
             viewHolder.parent_tile_bg.setBackgroundColor(context.getResources().getColor(R.color.white));
         }
+
+        String str = "";
+        if (mDataSet.get(position).uploadedImages == null || mDataSet.get(position).uploadedImages.size() == 0) {
+            viewHolder.textView.setTextColor(context.getResources().getColor(R.color.button_red));
+            str += "\nIncomplete KYC";
+        } else {
+            viewHolder.textView.setTextColor(context.getResources().getColor(R.color.oil));
+        }
         viewHolder.textView.setText(mDataSet.get(position).firstName + " " + mDataSet.get(position).lastName);
         viewHolder.text_sub.setText("Mobile No: " + mDataSet.get(position).mobileNum
-                + "\nEmail: " + mDataSet.get(position).emailId);
+                + "\nEmail: " + mDataSet.get(position).emailId + str);
         viewHolder.text_date.setText("Unique ID: " + mDataSet.get(position).uniqueId);
         viewHolder.logo_id.setVisibility(View.VISIBLE);
         Constants.setGilde(mDataSet.get(position).profile_pic_url, viewHolder.logo_id);
 
-        if (mDataSet.get(position).uploadedImages == null || mDataSet.get(position).uploadedImages.size() == 0)
-            viewHolder.textView.setTextColor(context.getResources().getColor(R.color.button_red));
     }
 
     @Override

@@ -14,6 +14,7 @@ public class GetUserDailyClosureRes {
         public String userId;
         public String branchId;
         public String fundRecieved;
+        public String companyBranchName;
         public String expenses;
         public String cashInHand;
         public String expensesDesc;

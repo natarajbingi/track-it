@@ -71,6 +71,8 @@ dependencies {
  * For managing request permission
  */
     implementation 'com.karumi:dexter:4.2.0'
+    implementation 'com.github.jkwiecien:EasyImage:3.0.3'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.61'
 
     // Retrofit Lib
     implementation 'com.squareup.retrofit2:retrofit:2.0.2'

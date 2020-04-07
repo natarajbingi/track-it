@@ -36,7 +36,7 @@ public class UserForCompanyViewModel extends ViewModel implements IUserCallBacks
         if (list == null) {
             list = new MutableLiveData<>();
         }
-        RestFullServices.getUsers(req, this);
+        RestFullServices.getUsers(req, this, null);
     }
 
     @Override

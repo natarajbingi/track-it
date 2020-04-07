@@ -8,6 +8,8 @@ import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetTransactionReq;
 import com.a.goldtrack.Model.GetTransactionRes;
+import com.a.goldtrack.Model.GetUserForCompany;
+import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.network.RestFullServices;
 import com.a.goldtrack.trans.IDropdownDataCallBacks;
 import com.a.goldtrack.utils.Constants;
@@ -36,8 +38,11 @@ public class HomeViewModel extends ViewModel implements IHomeFragCallbacks, IDro
             RestFullServices.getTransaction(req, null, this, null);
     }
 
+    public void getUsers(GetUserForCompany req) {
+        RestFullServices.getUsers(req, null,this);
+    }
     public void getDropdown(GetCompany req) {
-        RestFullServices.getDropdownDataForCompany(req);
+        RestFullServices.getDropdownDataForCompanyHome(req, this);
     }
 
     public void onViewAvailable(IHomeUiView view) {
@@ -54,6 +59,11 @@ public class HomeViewModel extends ViewModel implements IHomeFragCallbacks, IDro
     public void onGetTransSuccess(GetTransactionRes res) {
         transList.postValue(res);
         view.onGetTransSuccess(res);
+    }
+
+    @Override
+    public void getUsersSuccess(GetUserForCompanyRes res) {
+        view.getUsersSuccess(res);
     }
 
     @Override

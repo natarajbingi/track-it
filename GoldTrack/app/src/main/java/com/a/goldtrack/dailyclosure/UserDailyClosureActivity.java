@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -56,6 +57,7 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
     GetUserDailyClosureReq req;
     boolean viewOrEdit = true;
     boolean role = false;
+    int whichDate = 0, filterDate = 1, closureDate = 2;
 
     protected Constants.LayoutManagerType mCurrentLayoutManagerType;
 
@@ -74,6 +76,7 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
     }
 
     Map<String, String> branchesArr = null;
+    boolean holderFilter = true;
 
     void init() {
         String str = Sessions.getUserString(context, Constants.roles);
@@ -119,26 +122,67 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
                     );
                     dpd.setMaxDate(now);
                     dpd.show(getSupportFragmentManager(), "Datepickerdialog");
+                    whichDate = closureDate;
                 }
+            }
+        });
+        binding.imgDateClickFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar now = Calendar.getInstance();
+                DatePickerDialog dpd = DatePickerDialog.newInstance(
+                        UserDailyClosureActivity.this,
+                        now.get(Calendar.YEAR), // Initial year selection
+                        now.get(Calendar.MONTH), // Initial month selection
+                        now.get(Calendar.DAY_OF_MONTH) // Inital day selection
+                );
+                dpd.setMaxDate(now);
+                dpd.show(getSupportFragmentManager(), "Datepickerdialog");
+                whichDate = filterDate;
             }
         });
         viewModel.totalAmt.observe(this, new Observer<Double>() {
             @Override
             public void onChanged(Double totTrans) {
                 binding.totalAmt.setText("" + totTrans);
-//                if (totTrans > 0) {
-                String str = binding.expenses.getText().toString();
-                double expesnse = Double.parseDouble(str.isEmpty() ? "0" : str);
-                String recFund = binding.fundRecieved.getText().toString();
-                str = (Double.parseDouble(recFund.isEmpty() ? "0" : recFund) - (totTrans + expesnse)) + "";
-                binding.cashInHand.setText(str);
-//                }
             }
         });
+        binding.filterClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                binding.dateClosureFilter.setText("");
+                binding.selectBranchFilter.setSelection(0);
+                progressDialog.show();
+                viewModel.getDailyClosures(req);
+            }
+        });
+        binding.filterSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String strBrnc = binding.selectBranchFilter.getSelectedItem().toString();
+                String dateFilr = binding.dateClosureFilter.getText().toString();
+                if (strBrnc.equals("Select")) {
+                    strBrnc = "0";
+                } else
+                    strBrnc = branchesArr.get(strBrnc);
+
+                GetUserDailyClosureReq req = new GetUserDailyClosureReq();
+                req.companyID = Sessions.getUserString(context, Constants.companyId);
+                req.branchID = strBrnc == null ? "0" : strBrnc;
+                req.date = dateFilr;
+                if (role) {
+                    req.userID = "0";
+                } else
+                    req.userID = Sessions.getUserString(context, Constants.userId);
+
+                progressDialog.show();
+                viewModel.getDailyClosures(req);
+            }
+        });
+
         viewModel.list.observe(this, new Observer<GetUserDailyClosureRes>() {
             @Override
             public void onChanged(GetUserDailyClosureRes getUserDailyClosureRes) {
-                progressDialog.dismiss();
                 mDataset = getUserDailyClosureRes.dataList;
                 setmRecyclerView();
             }
@@ -146,14 +190,49 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
         binding.addSignalClosure.setOnClickListener(this);
         binding.btnAddClosure.setOnClickListener(this);
 
+        binding.filterReq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (holderFilter) {
+                    binding.filterHolder.setVisibility(View.VISIBLE);
+                } else {
+                    binding.filterHolder.setVisibility(View.GONE);
+                }
+                holderFilter = !holderFilter;
+            }
+        });
+        binding.selectBranch.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                binding.dateClosure.setText("");
+                binding.fundRecieved.setText("");
+                binding.expenses.setText("");
+                binding.expensesDesc.setText("");
+                binding.cashInHand.setText("");
+                binding.totalAmt.setText("");
+                binding.comments.setText("");
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         binding.expenses.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                if (!role && !b) {
-                    gettingTrans();
-                } else if (binding.btnAddClosure.getText().toString().equalsIgnoreCase("Add") && !b) {
-                    gettingTrans();
+                if (!b) {
+                    double totTrans = Double.parseDouble(binding.totalAmt.getText().toString());
+                    String str = binding.expenses.getText().toString();
+                    double expesnse = Double.parseDouble(str.isEmpty() ? "0" : str);
+                    String recFund = binding.fundRecieved.getText().toString();
+                    str = (Double.parseDouble(recFund.isEmpty() ? "0" : recFund) - (totTrans + expesnse)) + "";
+                    binding.cashInHand.setText(str);
                 }
+                //else if (binding.btnAddClosure.getText().toString().equalsIgnoreCase("Add") && !b) {
+//                    gettingTrans();
+//                }
             }
         });
 
@@ -168,20 +247,21 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
         progressDialog.show();
         viewModel.getDailyClosures(req);
         setSpinners(binding.selectBranch, branchesArr.keySet().toArray(new String[0]));
+        setSpinners(binding.selectBranchFilter, branchesArr.keySet().toArray(new String[0]));
 
     }
 
     void gettingTrans() {
         GetTransactionReq reqTrans = new GetTransactionReq();
-        String recFund = binding.fundRecieved.getText().toString();
+        // String recFund = binding.fundRecieved.getText().toString();
         reqTrans.branchID = branchesArr.get(binding.selectBranch.getSelectedItem().toString());
         reqTrans.transactionDate = binding.dateClosure.getText().toString();
         reqTrans.companyID = Sessions.getUserString(context, Constants.companyId);
         reqTrans.employeeID = Sessions.getUserString(context, Constants.userId);
-        if (recFund.isEmpty()) {
+        /*if (recFund.isEmpty()) {
             Constants.Toasty(context, "Please enter Fund received amount.");
             return;
-        }
+        }*/
         if (reqTrans.branchID.equals("Select") || reqTrans.transactionDate.isEmpty()) {
             Constants.Toasty(context, "Please select Branch and date");
         } else {
@@ -262,6 +342,13 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
         switch (view.getId()) {
             case R.id.btn_add_closure:
                 if (binding.btnAddClosure.getText().toString().equals("ADD")) {
+                    double totTrans = Double.parseDouble(Constants.isEmptyReturn0(binding.totalAmt.getText().toString()));
+                    String str = binding.expenses.getText().toString();
+                    double expesnse = Double.parseDouble(Constants.isEmptyReturn0(str));
+                    String recFund = binding.fundRecieved.getText().toString();
+                    str = (Double.parseDouble(recFund.isEmpty() ? "0" : recFund) - (totTrans + expesnse)) + "";
+                    binding.cashInHand.setText(str);
+
                     Constants.alertDialogShowWithCancel(context, "Are you sure want to proceed?", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -373,6 +460,7 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
         binding.addSignalClosure.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.extraData.setVisibility(View.GONE);
+        binding.selectBranch.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
 
     }
@@ -393,11 +481,13 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
         binding.cashInHand.setText(mDataset.get(position).cashInHand);
         binding.expensesDesc.setText(mDataset.get(position).expensesDesc);
         binding.comments.setText(mDataset.get(position).comments);
-        binding.selectBranch.setSelection(
+        binding.extraData.setText("Branch: " + mDataset.get(position).companyBranchName);
+       /* binding.selectBranch.setSelection(
                 ((ArrayAdapter<String>)
                         binding.selectBranch.getAdapter()
-                ).getPosition(mDataset.get(position).branchId));
-
+                ).getPosition(mDataset.get(position).branchId));*/
+        binding.selectBranch.setVisibility(View.GONE);
+        binding.extraData.setVisibility(View.VISIBLE);
 
         String extra = "User Name: " + mDataset.get(position).userName
                 + "\nCompany Name: " + mDataset.get(position).companyName + "\n";
@@ -423,13 +513,39 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
-        binding.dateClosure.setText(date);
+        String mm = "";
+        if ((monthOfYear + 1) < 10) {
+            mm = "0" + (monthOfYear + 1);
+        } else {
+            mm = (monthOfYear + 1) + "";
+        }
+        String date = year + "-" + mm + "-" + dayOfMonth;
+
+        if (whichDate == filterDate) {
+            binding.dateClosureFilter.setText(date);
+
+        } else if (whichDate == closureDate) {
+            if (!role) {
+                gettingTrans();
+            } else if (binding.btnAddClosure.getText().toString().equalsIgnoreCase("Add")) {
+                gettingTrans();
+            }
+
+            binding.dateClosure.setText(date);
+            binding.fundRecieved.setText("");
+            binding.expenses.setText("");
+            binding.expensesDesc.setText("");
+            binding.cashInHand.setText("");
+            binding.totalAmt.setText("");
+            binding.comments.setText("");
+        }
     }
 
     @Override
     public void onGetDailyClosureSuccess(GetUserDailyClosureRes res) {
-        //   progressDialog.dismiss();
+        progressDialog.dismiss();
+        binding.filterHolder.setVisibility(View.GONE);
+        holderFilter = true;
     }
 
     @Override

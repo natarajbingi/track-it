@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
-        tools:context=".company.CompanyActivity">
+        tools:context=".customer.CustomerActivity">
 
         <!-- <com.google.android.material.appbar.AppBarLayout
              android:id="@+id/tabanim_appbar"
@@ -263,7 +263,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="25dp"
                             android:padding="16dp"
-                            android:text="Note*: At least one Image is mandatory to complete transaction."
+                            android:text="Note*: At least one Image is mandatory to complete KYC ."
                             android:textColor="@color/light_theme"
                             android:textSize="9sp" />
 
@@ -504,6 +504,35 @@
                                     android:orientation="horizontal"
                                     android:padding="5dp"></LinearLayout>
                             </HorizontalScrollView>
+
+                            <LinearLayout
+                                android:id="@+id/editAgainHolder"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="5dp"
+                                android:layout_marginBottom="10dp"
+                                android:background="@drawable/background"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.75"
+                                    android:padding="8dp"
+                                    android:text="Upload KYC Details?"
+                                    android:textColor="@color/oil"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:id="@+id/wantToEditAll"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.25"
+                                    android:background="@drawable/btn_bg_grey"
+                                    android:padding="8dp"
+                                    android:src="@drawable/add_a_photo" />
+                            </LinearLayout>
                         </LinearLayout>
 
                         <Button
