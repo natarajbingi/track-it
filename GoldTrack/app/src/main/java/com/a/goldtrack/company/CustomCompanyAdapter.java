@@ -16,6 +16,7 @@ import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.GetCompanyRes;
 import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -33,8 +34,9 @@ public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdap
         mDataSet = dataSet;
         this.context = context;
     }
+
     public void updateListNew(List<GetCompanyRes.ResList> mDataset) {
-        this.mDataSet=(mDataset);
+        this.mDataSet = (mDataset);
         this.notifyDataSetChanged();
     }
 
@@ -81,6 +83,15 @@ public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdap
         viewHolder.textView.setText(mDataSet.get(position).name);
         viewHolder.text_sub.setText(mDataSet.get(position).desc);
         viewHolder.text_date.setText("");
+        viewHolder.logo_id.setVisibility(View.VISIBLE);
+
+        if (mDataSet.get(position).logoImagePath != null && !mDataSet.get(position).logoImagePath.isEmpty()) {
+            Picasso.get()
+                    .load(mDataSet.get(position).logoImagePath)
+                    .fit()
+                    .centerCrop()
+                    .into(viewHolder.logo_id);
+        }
     }
 
     @Override

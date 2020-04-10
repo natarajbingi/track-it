@@ -12,4 +12,6 @@ public interface IBranchView {
     void onSuccessUpdateBranch(UpdateCompanyBranchesRes res);
 
     void onErrorBranch(String msg);
+
+    void PbShow();
 }

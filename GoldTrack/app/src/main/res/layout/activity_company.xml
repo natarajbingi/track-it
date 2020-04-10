@@ -417,8 +417,9 @@
 
                     <ImageView
                         android:id="@+id/selectedImg"
-                        android:layout_width="match_parent"
-                        android:layout_height="105dp"
+                        android:layout_width="250dp"
+                        android:layout_height="155dp"
+                        android:layout_gravity="center_horizontal"
                         android:src="@drawable/placeholder" />
 
                     <Button
@@ -438,7 +439,8 @@
             android:id="@+id/progressbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/add_signal_company"

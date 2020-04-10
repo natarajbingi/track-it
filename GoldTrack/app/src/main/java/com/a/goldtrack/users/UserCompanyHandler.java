@@ -13,4 +13,6 @@ public interface UserCompanyHandler {
     void updateUserSuccess(AddUserForCompanyRes res);
 
     void onError(String msg);
+
+    void pbShow();
 }

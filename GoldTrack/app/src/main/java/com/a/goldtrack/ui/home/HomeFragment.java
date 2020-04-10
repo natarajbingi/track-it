@@ -612,13 +612,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String mm = "";
-        if ((monthOfYear + 1) < 10) {
-            mm = "0" + (monthOfYear + 1);
-        } else {
-            mm = (monthOfYear + 1) + "";
-        }
-        String date = year + "-" + mm + "-" + dayOfMonth;
+        String date = year + "-" + Constants.oneDigToTwo(monthOfYear + 1) + "-" + Constants.oneDigToTwo(dayOfMonth);
         binding.dateClosureFilter.setText(date);
     }
 }

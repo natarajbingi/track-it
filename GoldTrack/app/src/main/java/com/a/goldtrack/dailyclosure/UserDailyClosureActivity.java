@@ -36,6 +36,7 @@ import com.a.goldtrack.Model.UpdateUserDailyClosureRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityUserDailyClosureBinding;
 import com.a.goldtrack.items.CustomItemsAdapter;
+import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -47,21 +48,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UserDailyClosureActivity extends AppCompatActivity implements View.OnClickListener, IDailyClosureView, RecycleItemClicked, DatePickerDialog.OnDateSetListener {
+public class UserDailyClosureActivity extends BaseActivity implements View.OnClickListener, IDailyClosureView, RecycleItemClicked, DatePickerDialog.OnDateSetListener {
 
     UserDailyClosureViewModel viewModel;
     ActivityUserDailyClosureBinding binding;
+
     protected CustomDailyClosureAdapter mAdapter;
-    ProgressDialog progressDialog;
+    // ProgressDialog progressDialog;
     Context context;
     GetUserDailyClosureReq req;
-    boolean viewOrEdit = true;
-    boolean role = false;
+    boolean viewOrEdit = true, role = false;
     int whichDate = 0, filterDate = 1, closureDate = 2;
 
-    protected Constants.LayoutManagerType mCurrentLayoutManagerType;
-
-    protected RecyclerView.LayoutManager mLayoutManager;
     protected List<GetUserDailyClosureRes.DataList> mDataset;
 
 
@@ -81,9 +79,7 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
     void init() {
         String str = Sessions.getUserString(context, Constants.roles);
         role = str.equals("ADMIN") || str.equals("SUPER_ADMIN");
-        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("in Progress...");
+
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
         binding.progressBarForTrans.setVisibility(View.GONE);
@@ -113,15 +109,7 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
             @Override
             public void onClick(View view) {
                 if (binding.btnAddClosure.getText().toString().equalsIgnoreCase("Add")) {
-                    Calendar now = Calendar.getInstance();
-                    DatePickerDialog dpd = DatePickerDialog.newInstance(
-                            UserDailyClosureActivity.this,
-                            now.get(Calendar.YEAR), // Initial year selection
-                            now.get(Calendar.MONTH), // Initial month selection
-                            now.get(Calendar.DAY_OF_MONTH) // Inital day selection
-                    );
-                    dpd.setMaxDate(now);
-                    dpd.show(getSupportFragmentManager(), "Datepickerdialog");
+                    callDatePicker();
                     whichDate = closureDate;
                 }
             }
@@ -129,15 +117,7 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
         binding.imgDateClickFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Calendar now = Calendar.getInstance();
-                DatePickerDialog dpd = DatePickerDialog.newInstance(
-                        UserDailyClosureActivity.this,
-                        now.get(Calendar.YEAR), // Initial year selection
-                        now.get(Calendar.MONTH), // Initial month selection
-                        now.get(Calendar.DAY_OF_MONTH) // Inital day selection
-                );
-                dpd.setMaxDate(now);
-                dpd.show(getSupportFragmentManager(), "Datepickerdialog");
+                callDatePicker();
                 whichDate = filterDate;
             }
         });
@@ -152,7 +132,6 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
             public void onClick(View view) {
                 binding.dateClosureFilter.setText("");
                 binding.selectBranchFilter.setSelection(0);
-                progressDialog.show();
                 viewModel.getDailyClosures(req);
             }
         });
@@ -175,7 +154,7 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
                 } else
                     req.userID = Sessions.getUserString(context, Constants.userId);
 
-                progressDialog.show();
+
                 viewModel.getDailyClosures(req);
             }
         });
@@ -244,11 +223,23 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
         } else
             req.userID = Sessions.getUserString(context, Constants.userId);
 
-        progressDialog.show();
+
         viewModel.getDailyClosures(req);
         setSpinners(binding.selectBranch, branchesArr.keySet().toArray(new String[0]));
         setSpinners(binding.selectBranchFilter, branchesArr.keySet().toArray(new String[0]));
 
+    }
+
+    private void callDatePicker() {
+        Calendar now = Calendar.getInstance();
+        DatePickerDialog dpd = DatePickerDialog.newInstance(
+                UserDailyClosureActivity.this,
+                now.get(Calendar.YEAR), // Initial year selection
+                now.get(Calendar.MONTH), // Initial month selection
+                now.get(Calendar.DAY_OF_MONTH) // Inital day selection
+        );
+        dpd.setMaxDate(now);
+        dpd.show(getSupportFragmentManager(), "Datepickerdialog");
     }
 
     void gettingTrans() {
@@ -300,40 +291,13 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
 
     void setmRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this);
-        mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-        setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
+        mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+        setRecyclerViewLayoutManager(context, mCurrentLayoutManagerType, binding.recyclerDailyClosures);
         if (mAdapter == null) {
             mAdapter = new CustomDailyClosureAdapter(context, mDataset);
             mAdapter.setClickListener(this);
             binding.recyclerDailyClosures.setAdapter(mAdapter);
         } else mAdapter.updateListNew(mDataset);
-    }
-
-    public void setRecyclerViewLayoutManager(Constants.LayoutManagerType layoutManagerType) {
-        int scrollPosition = 0;
-
-        // If a layout manager has already been set, get current scroll position.
-        if (binding.recyclerDailyClosures.getLayoutManager() != null) {
-            scrollPosition = ((LinearLayoutManager) binding.recyclerDailyClosures.getLayoutManager())
-                    .findFirstCompletelyVisibleItemPosition();
-        }
-
-        switch (layoutManagerType) {
-            case GRID_LAYOUT_MANAGER:
-                mLayoutManager = new GridLayoutManager(context, 2);
-                mCurrentLayoutManagerType = Constants.LayoutManagerType.GRID_LAYOUT_MANAGER;
-                break;
-            case LINEAR_LAYOUT_MANAGER:
-                mLayoutManager = new LinearLayoutManager(context);
-                mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-                break;
-            default:
-                mLayoutManager = new LinearLayoutManager(context);
-                mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-        }
-
-        binding.recyclerDailyClosures.setLayoutManager(mLayoutManager);
-        binding.recyclerDailyClosures.scrollToPosition(scrollPosition);
     }
 
     @Override
@@ -409,7 +373,7 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
             Constants.Toasty(context, "Please Enter mandatory Fields", Constants.warning);
             return;
         }
-        progressDialog.show();
+
         viewModel.addDailyClosure(req);
     }
 
@@ -438,7 +402,6 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
         req.data = new ArrayList<>();
         req.data.add(reqData);
 
-        progressDialog.show();
         viewModel.updateDailyClosure(req);
     }
 
@@ -513,14 +476,7 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String mm = "";
-        if ((monthOfYear + 1) < 10) {
-            mm = "0" + (monthOfYear + 1);
-        } else {
-            mm = (monthOfYear + 1) + "";
-        }
-        String date = year + "-" + mm + "-" + dayOfMonth;
-
+        String date = year + "-" + Constants.oneDigToTwo(monthOfYear + 1) + "-" + Constants.oneDigToTwo(dayOfMonth);
         if (whichDate == filterDate) {
             binding.dateClosureFilter.setText(date);
 
@@ -543,7 +499,7 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
 
     @Override
     public void onGetDailyClosureSuccess(GetUserDailyClosureRes res) {
-        progressDialog.dismiss();
+        hidePbar();
         binding.filterHolder.setVisibility(View.GONE);
         holderFilter = true;
     }
@@ -556,7 +512,8 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
             viewModel.getDailyClosures(req);
         } else {
             Constants.alertDialogShow(context, res.response);
-            progressDialog.dismiss();
+            binding.progressBarForTrans.setVisibility(View.GONE);
+            hidePbar();
         }
     }
 
@@ -569,7 +526,8 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
             viewModel.getDailyClosures(req);
         } else {
             Constants.alertDialogShow(context, res.response);
-            progressDialog.dismiss();
+            binding.progressBarForTrans.setVisibility(View.GONE);
+            hidePbar();
         }
 
     }
@@ -582,13 +540,20 @@ public class UserDailyClosureActivity extends AppCompatActivity implements View.
 
     @Override
     public void onError(String message) {
-        progressDialog.dismiss();
+        binding.progressBarForTrans.setVisibility(View.GONE);
+        hidePbar();
         Constants.Toasty(context, message, Constants.error);
     }
 
     @Override
     public void onErrorComplete(String s) {
-        progressDialog.dismiss();
+        binding.progressBarForTrans.setVisibility(View.GONE);
+        hidePbar();
         Constants.Toasty(context, s, Constants.error);
+    }
+
+    @Override
+    public void onPBShow(String s) {
+        showPbar(context);
     }
 }

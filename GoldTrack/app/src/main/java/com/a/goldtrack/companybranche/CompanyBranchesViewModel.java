@@ -41,14 +41,17 @@ public class CompanyBranchesViewModel extends ViewModel implements IBranchCallBa
         }
         GetCompany req1 = new GetCompany();
         req1.companyId = Sessions.getUserString(GTrackApplication.getInstance().getApplicationContext(), Constants.companyId);
+        view.PbShow();
         RestFullServices.getDropdownDataForCompanyHome(req1, this);
     }
 
     void onAddBranch(AddCompanyBranchesReq req) {
+        view.PbShow();
         RestFullServices.addBranch(req, this);
     }
 
     void onUpdateBranch(UpdateCompanyBranchesReq req) {
+        view.PbShow();
         RestFullServices.updateBranch(req, this);
     }
 

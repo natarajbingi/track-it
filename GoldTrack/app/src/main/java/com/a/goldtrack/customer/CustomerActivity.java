@@ -1,9 +1,11 @@
 package com.a.goldtrack.customer;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -12,15 +14,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,18 +44,25 @@ import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.UpdateCustomerReq;
 import com.a.goldtrack.Model.UpdateCustomerRes;
 import com.a.goldtrack.R;
-import com.a.goldtrack.camera.BytePojo;
-import com.a.goldtrack.camera.CamReqActivity;
 import com.a.goldtrack.databinding.ActivityCustomerBinding;
+import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.ImageClickLIstener;
 import com.a.goldtrack.utils.Sessions;
 import com.squareup.picasso.Picasso;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomerActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, ICustomerhandler {
+import pl.aprilapps.easyphotopicker.ChooserType;
+import pl.aprilapps.easyphotopicker.DefaultCallback;
+import pl.aprilapps.easyphotopicker.EasyImage;
+import pl.aprilapps.easyphotopicker.MediaFile;
+import pl.aprilapps.easyphotopicker.MediaSource;
+
+public class CustomerActivity extends BaseActivity implements View.OnClickListener, RecycleItemClicked, ICustomerhandler {
 
     private static final String TAG = "CustomerActivity";
     CustomerViewModel viewModel;
@@ -61,18 +71,14 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
 
     boolean viewOrEdit = true;
     protected CustomCustomersAdapter mAdapter;
-    protected Constants.LayoutManagerType mCurrentLayoutManagerType;
-    protected RecyclerView.LayoutManager mLayoutManager;
     protected List<DropdownDataForCompanyRes.CustomerList> mDataset;
 
-    //List<String> imgDataList;
-//    List<AddRemoveCommonImageReq> imgAadharList;
-//    List<AddRemoveCommonImageReq> imgDlList;
-//    List<AddRemoveCommonImageReq> imgPanList;
     List<AddRemoveCommonImageReq> imgFinalList;
     GetCustomerReq custReq;
     String ImgData = "", ImgDataProf = "", currentCustID = "";
-    int CAM_REQ_Code_Profile = 1001, CAM_REQ_Code_Aadhar = 1002, CAM_REQ_Code_Dl = 1003, CAM_REQ_Code_Pan = 1004;
+    int CAM_REQ_Code_Test = 0, CAM_REQ_Code_Profile = 1001,
+            CAM_REQ_Code_Aadhar = 1002, CAM_REQ_Code_Dl = 1003,
+            CAM_REQ_Code_Pan = 1004;
     int currentNoImgAttach = 0;
 
     @Override
@@ -89,11 +95,6 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
 
     void init() {
 
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);*/
-
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         final ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
@@ -108,20 +109,17 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         binding.triggImgGet.setOnClickListener(this);
         binding.triggImgKYC.setOnClickListener(this);
         binding.btnAddImagesToCust.setOnClickListener(this);
+        binding.removeAll.setOnClickListener(this);
+        onSetEasyImg(false, context);
 
         custReq = new GetCustomerReq();
-//        imgAadharList = new ArrayList<>();
-//        imgDlList = new ArrayList<>();
-//        imgPanList = new ArrayList<>();
         imgFinalList = new ArrayList<>();
 
         custReq.companyID = Sessions.getUserString(context, Constants.companyId);
         custReq.customerId = "0";
         viewModel.onViewAvailable(this);
         if (Constants.isConnection()) {
-            // binding.progressbar.setVisibility(View.VISIBLE);
 
-            Constants.showProgress(context);
             viewModel.getCustomer(custReq);
         } else {
             Constants.Toasty(context, "No Internet connection.", Constants.info);
@@ -150,7 +148,6 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
             public void onRefresh() {
                 //binding.listDetailsHolder.setRefreshing(true);
                 //  binding.progressbar.setVisibility(View.VISIBLE);
-                Constants.showProgress(context);
                 viewModel.getCustomer(custReq);
             }
         });
@@ -203,14 +200,10 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
             Constants.Toasty(context, "Please fill the mandatory fields.", Constants.warning);
             return;
         }
-        //  binding.progressbar.setVisibility(View.VISIBLE);
-        Constants.showProgress(context);
         viewModel.addCustomer(req);
     }
 
     void addImagesForAttach(AddRemoveCommonImageReq req) {
-        // binding.progressbar.setVisibility(View.VISIBLE);
-        Constants.showProgress(context);
         viewModel.addRemoveCommonImageReq(req);
     }
 
@@ -233,81 +226,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
             Constants.Toasty(context, "Please fill the mandatory fields.", Constants.warning);
             return;
         }
-        // binding.progressbar.setVisibility(View.VISIBLE);
-        Constants.showProgress(context);
         viewModel.updateCustomer(req);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d("resultCode", resultCode + "");
-        /*if (resultCode == CAM_REQ_Code_One) {
-            String Res = null;
-            if (data != null) {
-                Res = data.getStringExtra(CamReqActivity.CAM_REQ_ImgData);
-                if (Res != null && Res.equals("Success")) {
-                    ImgData = Sessions.getUserString(context, Constants.sesImgData);
-                }
-                if (ImgData != null)
-                    binding.selectedImg.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
-                else Constants.Toasty(context, "Image Loading have problem try again.");
-            }
-
-        } else if (resultCode == CAM_REQ_Code_Two) {
-
-            imgDataList.add(ImgData);
-            //   binding.sixthLayoutParent.selectedImgOne.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
-            addImgs();
-        }*/
-
-        String Res = null;
-        if (data != null) {
-            Res = data.getStringExtra(CamReqActivity.CAM_REQ_ImgData);
-            if (Res.equals("Success")) {
-                ImgData = Sessions.getUserString(context, Constants.sesImgData);
-                if (ImgData != null) {
-                    if (resultCode == CAM_REQ_Code_Profile) {
-
-                        ImgDataProf = ImgData;
-                        binding.selectedImg.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
-                    } else if (resultCode == CAM_REQ_Code_Aadhar) {
-                        AddRemoveCommonImageReq req = new AddRemoveCommonImageReq();
-                        req.imageData = ImgData;
-                        req.imageType = Constants.imageTypeAADHAR;
-                        req.imageTable = Constants.imageTableCUSTOMER_IMAGE;
-                        req.actionType = Constants.actionTypeADD;
-                        req.companyID = Sessions.getUserString(context, Constants.companyId);
-                        req.createdBy = Sessions.getUserString(context, Constants.userId);
-                        req.commonID = currentCustID;
-                        imgFinalList.add(req);
-                    } else if (resultCode == CAM_REQ_Code_Dl) {
-                        AddRemoveCommonImageReq req = new AddRemoveCommonImageReq();
-                        req.imageData = ImgData;
-                        req.imageType = Constants.imageTypeDL;
-                        req.imageTable = Constants.imageTableCUSTOMER_IMAGE;
-                        req.actionType = Constants.actionTypeADD;
-                        req.companyID = Sessions.getUserString(context, Constants.companyId);
-                        req.createdBy = Sessions.getUserString(context, Constants.userId);
-                        req.commonID = currentCustID;
-                        imgFinalList.add(req);
-                    } else if (resultCode == CAM_REQ_Code_Pan) {
-                        AddRemoveCommonImageReq req = new AddRemoveCommonImageReq();
-                        req.imageData = ImgData;
-                        req.imageType = Constants.imageTypeANYTHING;
-                        req.imageTable = Constants.imageTableCUSTOMER_IMAGE;
-                        req.actionType = Constants.actionTypeADD;
-                        req.companyID = Sessions.getUserString(context, Constants.companyId);
-                        req.createdBy = Sessions.getUserString(context, Constants.userId);
-                        req.commonID = currentCustID;
-                        // imgPanList.add(req);
-                        imgFinalList.add(req);
-                    }
-                    addImgs();
-                } else Constants.Toasty(context, "Image Loading have a problem please try again.");
-            }
-        } else Constants.Toasty(context, "Image Loading have a problem please try again.");
-
     }
 
     private void addImgs() {
@@ -320,8 +239,8 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
                 ImageView imgNewScroll = (ImageView) newView1.findViewById(R.id.selectedImgOne);
                 TextView attachmentCount = (TextView) newView1.findViewById(R.id.attachmentCount);
                 attachmentCount.setText(imgFinalList.get(i).imageType + " " + (i + 1));
-                imgNewScroll.setImageBitmap(CamReqActivity.stringToBitmap(imgFinalList.get(i).imageData));
-                imgNewScroll.setOnClickListener(new ImageClickLIstener(context, CamReqActivity.stringToBitmap(imgFinalList.get(i).imageData)));
+                imgNewScroll.setImageBitmap(Constants.stringToBitmap(imgFinalList.get(i).imageData));
+                imgNewScroll.setOnClickListener(new ImageClickLIstener(context, Constants.stringToBitmap(imgFinalList.get(i).imageData)));
                 binding.imgHolderInLastSetTrans.addView(newView1);
             }
         } else {
@@ -354,8 +273,8 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
 
     private void setmRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this);
-        mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-        setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
+        mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+        setRecyclerViewLayoutManager(context, mCurrentLayoutManagerType, binding.recyclerCustomer);
         if (mAdapter == null) {
             mAdapter = new CustomCustomersAdapter(context, mDataset);
             mAdapter.setClickListener(this);
@@ -363,32 +282,6 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         } else mAdapter.updateListNew(mDataset);
     }
 
-    public void setRecyclerViewLayoutManager(Constants.LayoutManagerType layoutManagerType) {
-        int scrollPosition = 0;
-
-        // If a layout manager has already been set, get current scroll position.
-        if (binding.recyclerCustomer.getLayoutManager() != null) {
-            scrollPosition = ((LinearLayoutManager) binding.recyclerCustomer.getLayoutManager())
-                    .findFirstCompletelyVisibleItemPosition();
-        }
-
-        switch (layoutManagerType) {
-            case GRID_LAYOUT_MANAGER:
-                mLayoutManager = new GridLayoutManager(context, 2);
-                mCurrentLayoutManagerType = Constants.LayoutManagerType.GRID_LAYOUT_MANAGER;
-                break;
-            case LINEAR_LAYOUT_MANAGER:
-                mLayoutManager = new LinearLayoutManager(context);
-                mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-                break;
-            default:
-                mLayoutManager = new LinearLayoutManager(context);
-                mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-        }
-
-        binding.recyclerCustomer.setLayoutManager(mLayoutManager);
-        binding.recyclerCustomer.scrollToPosition(scrollPosition);
-    }
 
     private void resetAll() {
         binding.companyId.setText("");
@@ -402,10 +295,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         binding.pin.setText("");
         ImgData = null;
 
-//        imgAadharList.clear();
-//        imgDlList.clear();
         imgFinalList.clear();
-//        imgPanList.clear();
         binding.addSignalCustomer.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
         binding.selectedImg.setImageDrawable(getResources().getDrawable(R.drawable.profile_icon_menu));
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
@@ -416,7 +306,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         binding.selectedImgLayout.setVisibility(View.GONE);
         binding.progressbar.setVisibility(View.GONE);
         binding.imgHolderInLastSetCustUp.removeAllViews();
-        Constants.hideProgress(context);
+        hidePbar();
     }
 
     private void setEditUpdateVals(int position) {
@@ -490,6 +380,10 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.removeAll:
+                imgFinalList.clear();
+                addImgs();
+                break;
             case R.id.btn_add_customer:
                 if (binding.btnAddCustomer.getText().toString().equals("Add Customer"))
                     setValidateAdd();
@@ -497,33 +391,36 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
                     setValidateUpdate();
                 break;
             case R.id.triggImgGet:
-                Intent i = new Intent(CustomerActivity.this, CamReqActivity.class);
-                i.putExtra("CAM_REQ_Code", CAM_REQ_Code_Profile);
-                startActivityForResult(i, CAM_REQ_Code_Profile);
+                onSetEasyImg(false, context);
+                CAM_REQ_Code_Test = CAM_REQ_Code_Profile;
+                selectImage(context);
+
                 break;
             case R.id.triggImgKYC: {
-                Intent ic = new Intent(CustomerActivity.this, CamReqActivity.class);
-                int sendingID = 0;
+
+                CAM_REQ_Code_Test = 0;
                 String strSpnr = binding.kycSpnner.getSelectedItem().toString();
                 if (strSpnr.equalsIgnoreCase("AADHAR CARD")) {
-                    sendingID = CAM_REQ_Code_Aadhar;
+                    CAM_REQ_Code_Test = CAM_REQ_Code_Aadhar;
+
                 } else if (strSpnr.equalsIgnoreCase("PAN")) {
-                    sendingID = CAM_REQ_Code_Pan;
+                    CAM_REQ_Code_Test = CAM_REQ_Code_Pan;
+
                 } else if (strSpnr.equalsIgnoreCase("DRIVING LICENCE")) {
-                    sendingID = CAM_REQ_Code_Dl;
+                    CAM_REQ_Code_Test = CAM_REQ_Code_Dl;
+
                 }
-                if (sendingID == 0) {
+                if (CAM_REQ_Code_Test == 0) {
                     Constants.Toasty(context, "Please select Type of KYC.");
                 } else {
-                    ic.putExtra("CAM_REQ_Code", sendingID);
-                    startActivityForResult(ic, sendingID);
+
+                    onSetEasyImg(true, context);
+                    selectImage(context);
+
                 }
             }
             break;
             case R.id.btn_addImagesToCust: {
-//                imgFinalList.addAll(imgAadharList);
-//                imgFinalList.addAll(imgDlList);
-//                imgFinalList.addAll(imgPanList);
                 if (imgFinalList.size() == 0) {
                     Constants.Toasty(context, "Please select at least one image to proceed.");
                 } else {
@@ -559,7 +456,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
     public void addCustomerSuccess(AddCustomerRes res) {
         currentCustID = res.id + "";
         binding.progressbar.setVisibility(View.GONE);
-        Constants.hideProgress(context);
+        hidePbar();
 
         binding.addDetailsHolder.setVisibility(View.VISIBLE);
         binding.firstStepLayout.setVisibility(View.GONE);
@@ -578,18 +475,18 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void getCustomerSuccess(GetCustomerRes res) {
         binding.progressbar.setVisibility(View.GONE);
-        Constants.hideProgress(context);
+        hidePbar();
         binding.listDetailsHolder.setRefreshing(false);
     }
 
     @Override
     public void onAddRemoveCommonImageSuccess(AddRemoveCommonImageRes res) {
-        binding.progressbar.setVisibility(View.GONE);
-        Constants.hideProgress(context);
         currentNoImgAttach++;
         if (imgFinalList.size() > currentNoImgAttach) {
             addImagesForAttach(imgFinalList.get(currentNoImgAttach));
         } else {
+            binding.progressbar.setVisibility(View.GONE);
+            hidePbar();
             resetAll();
             viewOrEdit = true;
             viewModel.getCustomer(custReq);
@@ -603,7 +500,7 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onGetDrpSuccess(DropdownDataForCompanyRes res) {
         binding.progressbar.setVisibility(View.GONE);
-        Constants.hideProgress(context);
+       hidePbar();
         binding.listDetailsHolder.setRefreshing(false);
         Sessions.setUserObj(context, res, Constants.dorpDownSession);
     }
@@ -611,8 +508,13 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onErrorSpread(String msg) {
         binding.progressbar.setVisibility(View.GONE);
-        Constants.hideProgress(context);
+        hidePbar();
         Constants.Toasty(context, "Something went wrong, reason: " + msg, Constants.error);
+    }
+
+    @Override
+    public void onPbShow() {
+        showPbar(context);
     }
 
     @Override
@@ -620,5 +522,98 @@ public class CustomerActivity extends AppCompatActivity implements View.OnClickL
         Constants.Toasty(context, "Edit " + mDataset.get(position).firstName, Constants.info);
         setEditUpdateVals(position);
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        easyImage.handleActivityResult(requestCode, resultCode, data, this, new DefaultCallback() {
+            @Override
+            public void onMediaFilesPicked(@NotNull MediaFile[] imageFiles, @NotNull MediaSource source) {
+                if (imageFiles.length != 0) {
+                    int i = 0;
+                    if (CAM_REQ_Code_Test == CAM_REQ_Code_Profile) {
+                        ImgDataProf = Constants.fileToStringOfBitmap(imageFiles[0].getFile());
+                        Picasso.get()
+                                .load(imageFiles[0].getFile())
+                               // .fit()
+                                // .centerCrop()
+                                .into(binding.selectedImg);
+                    } else if (CAM_REQ_Code_Test == CAM_REQ_Code_Aadhar) {
+                        for (MediaFile imageFile : imageFiles) {
+                            if (i == 3) {
+                                break;
+                            }
+                            AddRemoveCommonImageReq req = new AddRemoveCommonImageReq();
+                            req.imageData = Constants.fileToStringOfBitmap(imageFile.getFile());
+                            req.imageType = Constants.imageTypeAADHAR;
+                            req.imageTable = Constants.imageTableCUSTOMER_IMAGE;
+                            req.actionType = Constants.actionTypeADD;
+                            req.companyID = Sessions.getUserString(context, Constants.companyId);
+                            req.createdBy = Sessions.getUserString(context, Constants.userId);
+                            req.commonID = currentCustID;
+                            imgFinalList.add(req);
+                            i++;
+                        }
+
+                    } else if (CAM_REQ_Code_Test == CAM_REQ_Code_Dl) {
+                        for (MediaFile imageFile : imageFiles) {
+                            if (i == 3) {
+                                break;
+                            }
+                            AddRemoveCommonImageReq req = new AddRemoveCommonImageReq();
+                            req.imageData = Constants.fileToStringOfBitmap(imageFile.getFile());
+                            req.imageType = Constants.imageTypeDL;
+                            req.imageTable = Constants.imageTableCUSTOMER_IMAGE;
+                            req.actionType = Constants.actionTypeADD;
+                            req.companyID = Sessions.getUserString(context, Constants.companyId);
+                            req.createdBy = Sessions.getUserString(context, Constants.userId);
+                            req.commonID = currentCustID;
+                            imgFinalList.add(req);
+                            i++;
+                        }
+                    } else if (CAM_REQ_Code_Test == CAM_REQ_Code_Pan) {
+                        for (MediaFile imageFile : imageFiles) {
+                            if (i == 3) {
+                                break;
+                            }
+                            AddRemoveCommonImageReq req = new AddRemoveCommonImageReq();
+                            req.imageData = Constants.fileToStringOfBitmap(imageFile.getFile());
+                            req.imageType = Constants.imageTypeANYTHING;
+                            req.imageTable = Constants.imageTableCUSTOMER_IMAGE;
+                            req.actionType = Constants.actionTypeADD;
+                            req.companyID = Sessions.getUserString(context, Constants.companyId);
+                            req.createdBy = Sessions.getUserString(context, Constants.userId);
+                            req.commonID = currentCustID;
+                            imgFinalList.add(req);
+                            i++;
+                        }
+                    }
+                    addImgs();
+                    if (imageFiles.length > 3) {
+                        Constants.Toasty(context, "Max 3 Image can upload.");
+                    }
+                    //  } else
+                    //  Constants.Toasty(context, "Image Loading have a problem please try again.");
+                }
+                //  } else Constants.Toasty(context, "Image Loading have a problem please try again.");
+
+
+            }
+
+            @Override
+            public void onImagePickerError(@NonNull Throwable error, @NonNull MediaSource source) {
+                //Some error handling
+                error.printStackTrace();
+            }
+
+            @Override
+            public void onCanceled(@NonNull MediaSource source) {
+                //Not necessary to remove any files manually anymore
+            }
+        });
+    }
+
 
 }

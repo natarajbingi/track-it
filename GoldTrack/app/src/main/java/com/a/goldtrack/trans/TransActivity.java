@@ -1,9 +1,8 @@
 package com.a.goldtrack.trans;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -11,12 +10,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -31,10 +28,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
@@ -50,28 +45,31 @@ import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.Model.ItemsTrans;
 import com.a.goldtrack.R;
 import com.a.goldtrack.camera.CamReqActivity;
-import com.a.goldtrack.customer.CustomerActivity;
 import com.a.goldtrack.databinding.ActivityTransBinding;
+import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.ImageClickLIstener;
 import com.a.goldtrack.utils.Sessions;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.squareup.picasso.Picasso;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TransActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, ITransUiHandler {
+import pl.aprilapps.easyphotopicker.DefaultCallback;
+import pl.aprilapps.easyphotopicker.MediaFile;
+import pl.aprilapps.easyphotopicker.MediaSource;
 
+public class TransActivity extends BaseActivity implements View.OnClickListener,
+        RecycleItemClicked, ITransUiHandler {
     private static final String TAG = "TransActivity";
-
     TransViewModel viewModel;
     ActivityTransBinding binding;
 
-    ProgressDialog progressDialog;
     Context context;
 
     CountDownTimer timer;
@@ -82,18 +80,19 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
     protected Constants.LayoutManagerType mCurrentLayoutManagerType;
     protected RecyclerView.LayoutManager mLayoutManager;
     boolean showingItemAdd = false;
-    int counter = 0, CAM_REQ_Code_One = 1001, CAM_REQ_Code_Two = 1002, CAM_REQ_Code_Three = 1003;
-    String otp = "", ImgData = null;
+    int counter = 0, CAM_REQ_Code_One = 1001, CAM_REQ_Code_Two = 1002, CAM_REQ_Code_Test = 0;
+    String otp = "", ImgData = null, currentTransactionID = "", currentTransactionRefNo = "";
+
+    int currentNoImgAttach = 0;
+
     DropdownDataForCompanyRes dropdownRes;
 
     Map<String, String> branchesArr = null;
     Map<String, String> itemsArr = null;
     Map<String, String> customersArr = null;
-    private boolean allImgDone;
     AddTransactionReq addTransactionReq;
     int position;
     List<String> imgDataList;
-    // DropdownDataForCompanyRes resDp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,10 +112,6 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         final ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-
-        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("in Progress...");
 
         //binding.numbver.setText("Verify +91 ");
         binding.stepNextButton.setVisibility(View.VISIBLE);
@@ -283,37 +278,56 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         if (dropdownRes != null) {
             viewModel.dropdownList.postValue(dropdownRes);
         } else if (Constants.isConnection()) {
-            progressDialog.show();
+
             viewModel.getDropdowns(req);
         }
     }
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("resultCode", resultCode + "");
-        String Res = null;
-        if (data != null) {
-            Res = data.getStringExtra(CamReqActivity.CAM_REQ_ImgData);
-            if (Res.equals("Success")) {
-                ImgData = Sessions.getUserString(context, Constants.sesImgData);
-                if (ImgData != null) {
-                    if (resultCode == CAM_REQ_Code_One) {
 
-                        addTransactionReq.referencePicData = ImgData;
-                        binding.finalLayoutParent.selectedImg.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
+        easyImage.handleActivityResult(requestCode, resultCode, data, this, new DefaultCallback() {
+            @Override
+            public void onMediaFilesPicked(@NotNull MediaFile[] imageFiles, @NotNull MediaSource source) {
+                if (imageFiles.length != 0) {
+                    int i = 0;
+                    if (CAM_REQ_Code_Test == CAM_REQ_Code_One) {
+                        addTransactionReq.referencePicData = Constants.fileToStringOfBitmap(imageFiles[0].getFile());
+                        Picasso.get()
+                                .load(imageFiles[0].getFile())
+                                // .fit()
+                                // .centerCrop()
+                                .into(binding.finalLayoutParent.selectedImg);
                         binding.finalLayoutParent.selectedImg.setVisibility(View.VISIBLE);
-                    } else if (resultCode == CAM_REQ_Code_Two) {
 
-                        imgDataList.add(ImgData);
-                        //   binding.sixthLayoutParent.selectedImgOne.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
+                    } else if (CAM_REQ_Code_Test == CAM_REQ_Code_Two) {
+                        for (MediaFile imageFile : imageFiles) {
+                            if (i == 3) {
+                                break;
+                            }
+                            imgDataList.add(Constants.fileToStringOfBitmap(imageFile.getFile()));
+                            i++;
+                        }
                         addImgs();
                     }
-                } else Constants.Toasty(context, "Image Loading have a problem please try again.");
+                }
             }
-        } else Constants.Toasty(context, "Image Loading have a problem please try again.");
+
+            @Override
+            public void onImagePickerError(@NonNull Throwable error, @NonNull MediaSource source) {
+                //Some error handling
+                error.printStackTrace();
+            }
+
+            @Override
+            public void onCanceled(@NonNull MediaSource source) {
+                //Not necessary to remove any files manually anymore
+            }
+        });
     }
+
 
     private void setDropDowns() {
         branchesArr = new LinkedHashMap<String, String>();
@@ -342,8 +356,8 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             e.printStackTrace();
         }
 
-        setSpinners(binding.selectBranch, branchesArr.keySet().toArray(new String[0]));
-        setAutoComplete(binding.autoCompleteSelectCustomer, customersArr.keySet().toArray(new String[0]));
+        Constants.setSpinners(binding.selectBranch, branchesArr.keySet().toArray(new String[0]));
+        Constants.setAutoComplete(context, binding.autoCompleteSelectCustomer, customersArr.keySet().toArray(new String[0]));
 
     }
 
@@ -362,31 +376,9 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             e.printStackTrace();
         }
         itemsArr = ReturnArray;
-        setSpinners(binding.itemAddTransLayoutParent.selectItem, itemsArr.keySet().toArray(new String[0]));
+        Constants.setSpinners(binding.itemAddTransLayoutParent.selectItem, itemsArr.keySet().toArray(new String[0]));
     }
 
-    private void setSpinners(Spinner spr, String[] array) {
-        // -----------------------------------------------
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(context,
-                R.layout.custom_spinner,
-                array);
-        spinnerArrayAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
-        // The drop down view
-        spr.setAdapter(spinnerArrayAdapter);
-    }
-
-    private void setAutoComplete(AutoCompleteTextView auto, String[] array) {
-        // -----------------------------------------------
-        //Creating the instance of ArrayAdapter containing list of fruit names
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.select_dialog_item,
-                array);
-        //Getting the instance of AutoCompleteTextView
-        // binding.autoCompleteSelectCustomer.setThreshold(1);//will start working from first character
-        auto.setThreshold(1);//will start working from first character
-        auto.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
-        auto.setTextColor(Color.RED);
-    }
 
     @Override
     public void onBackPressed() {
@@ -396,8 +388,6 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             finish();//  onBackPressed();
         // overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
-
-    int currentNoImgAttach = 0;
 
     @Override
     public void onClick(View v) {
@@ -439,7 +429,6 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                         if (otp.equals(otpeditStr)) {
                             // current = third;
                             timer.cancel();
-                            progressDialog.show();
                             viewModel.addTransreq(addTransactionReq);
                         } else {
                             Constants.Toasty(context, "Please enter Valid OTP, try again.", Constants.error);
@@ -527,7 +516,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                             binding.finalLayoutParent.commentsText.setText("Comment: " + addTransactionReq.comments);
 
                             if (addTransactionReq.referencePicData != null && !addTransactionReq.referencePicData.isEmpty()) {
-                                binding.finalLayoutParent.selectedImgText.setImageBitmap(CamReqActivity.stringToBitmap(addTransactionReq.referencePicData));
+                                binding.finalLayoutParent.selectedImgText.setImageBitmap(stringToBitmap(addTransactionReq.referencePicData));
                                 binding.finalLayoutParent.selectedImgText.setVisibility(View.VISIBLE);
                             } else {
                                 binding.finalLayoutParent.selectedImgText.setVisibility(View.GONE);
@@ -595,11 +584,9 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             if (Float.parseFloat(addTransactionReq.amountPayable) > 0) {
-                                                progressDialog.show();
                                                 addTransactionReq.paidAmountForRelease = isEmptyReturn0(addTransactionReq.paidAmountForRelease);
                                                 viewModel.verifyOtp(req);
                                             } else {
-                                                progressDialog.show();
                                                 viewModel.addTransreq(addTransactionReq);
                                             }
                                         }
@@ -677,7 +664,6 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 otp = Constants.getRandomNumberString();
                 CustomerWithOTPReq req = firstLayoutValidate();
                 if (req != null) {
-                    progressDialog.show();
                     viewModel.verifyOtp(req);
                 }
             }
@@ -751,9 +737,10 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             break;
             case R.id.triggImgGet: {
                 if (binding.finalLayoutParent.nbfcReleaseAmtCheckBox.isChecked()) {
-                    Intent i = new Intent(TransActivity.this, CamReqActivity.class);
-                    i.putExtra("CAM_REQ_Code", CAM_REQ_Code_One);
-                    startActivityForResult(i, CAM_REQ_Code_One);
+
+                    CAM_REQ_Code_Test = CAM_REQ_Code_One;
+                    onSetEasyImg(false, context);
+                    selectImage(context);
                 } else {
                     Constants.Toasty(context, "NFC not enabled.");
                 }
@@ -761,9 +748,9 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
             break;
             case R.id.triggImgGet_Sixth: {
                 if (imgDataList.size() < 2) {
-                    Intent i = new Intent(TransActivity.this, CamReqActivity.class);
-                    i.putExtra("CAM_REQ_Code", CAM_REQ_Code_Two);
-                    startActivityForResult(i, CAM_REQ_Code_Two);
+                    CAM_REQ_Code_Test = CAM_REQ_Code_Two;
+                    onSetEasyImg(true, context);
+                    selectImage(context);
                 } else {
                     Constants.Toasty(context, "Max 2 images can attach.");
                 }
@@ -774,12 +761,9 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 if (imgDataList.size() == 0) {
                     Constants.Toasty(context, "Please select at least one image to proceed.");
                 } else {
-//                    if (imgDataList.get(CAM_REQ_Code_Two) != null) {
-//                        addImagesForAttach(currentTransactionID, imgDataList.get(CAM_REQ_Code_Two));
-//                        currentNoImgAttach = CAM_REQ_Code_Two;
-//                    } else {
+
                     addImagesForAttach(currentTransactionID, imgDataList.get(currentNoImgAttach));
-//                    }
+
                 }
             }
             break;
@@ -1089,7 +1073,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
                 TextView attachmentCount = (TextView) newView1.findViewById(R.id.attachmentCount);
                 attachmentCount.setText("Attachment " + (i + 1));
                 imgNewScroll.setImageBitmap(CamReqActivity.stringToBitmap(imgDataList.get(i)));
-                imgNewScroll.setOnClickListener(new ImageClickLIstener(context, CamReqActivity.stringToBitmap(imgDataList.get(i))));
+                imgNewScroll.setOnClickListener(new ImageClickLIstener(context, stringToBitmap(imgDataList.get(i))));
                 binding.sixthLayoutParent.imgHolderInLastSetTrans.addView(newView1);
             }
         } else {
@@ -1238,7 +1222,7 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onUiVerifyOtpSuccess(CustomerWithOTPRes body) {
-        progressDialog.dismiss();
+        hidePbar();
         current = second;
         binding.numbver.setText("Verify +91 " + binding.autoCompleteSelectCustomer.getText().toString().split("-")[1]);
         startCounter();
@@ -1247,11 +1231,9 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    String currentTransactionID = "", currentTransactionRefNo = "";
-
     @Override
     public void onAddTransSuccess(AddTransactionRes res) {
-        progressDialog.dismiss();
+        hidePbar();
         final SpannableString s = new SpannableString(res.transactionInvoiceURL);
         Linkify.addLinks(s, Linkify.ALL);
         currentTransactionID = res.transactionID;
@@ -1275,7 +1257,6 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
         req.imageTable = Constants.imageTableTRANSACTION_IMAGE;
         req.imageType = Constants.imageTypeANYTHING;
 
-        progressDialog.show();
         viewModel.addRemoveCommonImageReq(req);
     }
 
@@ -1286,18 +1267,18 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onGetDropDownsSuccess(DropdownDataForCompanyRes res) {
-        progressDialog.dismiss();
+        hidePbar();
 
     }
 
     @Override
     public void onAddRemoveCommonImageSuccess(AddRemoveCommonImageRes res) {
-        progressDialog.dismiss();
         currentNoImgAttach++;
         if (imgDataList.size() > currentNoImgAttach) {
             addImagesForAttach(currentTransactionID, imgDataList.get(currentNoImgAttach));
         } else {
             current = sixth;
+            hidePbar();
             Constants.Toasty(context, "Transaction Done Successfully," + "\nBill No:" + currentTransactionRefNo, Constants.success);
             setCurrentLayoutVisible();
         }
@@ -1306,13 +1287,18 @@ public class TransActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onError(String msg) {
-        progressDialog.dismiss();
+        hidePbar();
         Constants.Toasty(context, msg, Constants.error);
     }
 
     @Override
     public void onErrorComplete(String msg) {
-        progressDialog.dismiss();
+        hidePbar();
         Constants.Toasty(context, msg, Constants.warning);
+    }
+
+    @Override
+    public void onpbSHow() {
+        showPbar(context);
     }
 }
