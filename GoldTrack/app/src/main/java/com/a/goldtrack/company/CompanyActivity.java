@@ -1,24 +1,17 @@
 package com.a.goldtrack.company;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.MediaScannerConnection;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -27,44 +20,38 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.a.goldtrack.GTrackApplication;
-import com.a.goldtrack.Interfaces.ConnectivityReceiverListener;
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddCompany;
 import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetCompanyRes;
-import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.UpdateCompanyDetails;
 import com.a.goldtrack.R;
-import com.a.goldtrack.camera.CamReqActivity;
-import com.a.goldtrack.camera.ICameraUtil;
 import com.a.goldtrack.databinding.ActivityCompanyBinding;
+import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-public class CompanyActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, ICameraUtil, ICompanyView, ConnectivityReceiverListener {
+import pl.aprilapps.easyphotopicker.DefaultCallback;
+import pl.aprilapps.easyphotopicker.MediaFile;
+import pl.aprilapps.easyphotopicker.MediaSource;
+
+public class CompanyActivity extends BaseActivity implements View.OnClickListener, RecycleItemClicked,
+        ICompanyView {
+
     CompanyViewModel viewModel;
     ActivityCompanyBinding binding;
-    //ProgressDialog progressDialog;
+
     Context context;
     boolean viewOrEdit = true;
     GetCompany reqGet;
     private static final String TAG = "CompanyActivity";
     protected CustomCompanyAdapter mAdapter;
-    String ImgData = null;
-    protected Constants.LayoutManagerType mCurrentLayoutManagerType;
-
-
-    protected RecyclerView.LayoutManager mLayoutManager;
     protected List<GetCompanyRes.ResList> mDataset;
 
     @Override
@@ -73,16 +60,19 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         viewModel = ViewModelProviders.of(this).get(CompanyViewModel.class);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_company);
         binding.setCmpModel(viewModel);
+        viewModel.onViewAvailable(this);
         context = CompanyActivity.this;
 
         init();
+
+
+        if (savedInstanceState != null) {
+            photos = savedInstanceState.getParcelableArrayList(PHOTOS_KEY);
+        }
     }
 
     private void init() {
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);*/
+
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         final ActionBar ab = getSupportActionBar();
@@ -90,23 +80,19 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
 
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
-        binding.progressbar.setVisibility(View.GONE);
+        hidePbar();
 
         binding.addSignalCompany.setOnClickListener(this);
         binding.btnAddCompany.setOnClickListener(this);
         reqGet = new GetCompany();
         reqGet.companyId = "0";
-
-        // progressDialog.show();
-        binding.progressbar.setVisibility(View.VISIBLE);
-
+        onSetEasyImg(false, context);
         viewModel.getCompany(reqGet);
-        viewModel.onViewAvailable(this);
         viewModel.list.observe(this, new Observer<GetCompanyRes>() {
             @Override
             public void onChanged(GetCompanyRes getCompanyRes) {
                 mDataset = getCompanyRes.resList;
-                binding.progressbar.setVisibility(View.GONE);
+                hidePbar();
                 //progressDialog.dismiss();
                 setmRecyclerView();
             }
@@ -116,7 +102,6 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onRefresh() {
                 //binding.listDetailsHolder.setRefreshing(true);
-                binding.progressbar.setVisibility(View.VISIBLE);
                 viewModel.getCompany(reqGet);
             }
         });
@@ -139,7 +124,7 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
                 filter(s.toString());
             }
         });
-        // binding.triggImgGet.setOnClickListener(this);
+        binding.triggImgGet.setOnClickListener(this);
     }
 
     public void filter(String s) {
@@ -177,8 +162,6 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
 
     private void setValidateAdd() {
         AddCompany req = new AddCompany();
-
-
         req.name = binding.name.getText().toString();
         req.desc = binding.desc.getText().toString();
         req.mobileNo = binding.mobileNo.getText().toString();
@@ -191,7 +174,8 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         req.district = binding.district.getText().toString();
         req.state = binding.state.getText().toString();
         req.pin = binding.pin.getText().toString();
-        req.logoImageData = ImgData;
+        req.logoImageData = photos.size() != 0 ? Constants.fileToStringOfBitmap(photos.get(0).getFile()) : "";
+        ;
         req.logoImagePath = "";
         req.smsSenderID = binding.smsSenderID.getText().toString();
         req.gstNo = binding.gstNo.getText().toString();
@@ -201,8 +185,6 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
             return;
         }
 
-        // progressDialog.show();
-        binding.progressbar.setVisibility(View.VISIBLE);
         viewModel.addCompany(req);
     }
 
@@ -230,7 +212,7 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         req.add = false;
         req.updatedDt = Constants.getDateNowyyyymmmdd();
         req.updatedBy = Sessions.getUserString(context, Constants.userId);
-        req.logoImageData = ImgData;
+        req.logoImageData = photos.size() != 0 ? Constants.fileToStringOfBitmap(photos.get(0).getFile()) : "";
         req.logoImagePath = "";
         req.smsSenderID = binding.smsSenderID.getText().toString();
         req.gstNo = binding.gstNo.getText().toString();
@@ -239,8 +221,6 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
             return;
         }
         req1.data.add(req);
-        //  progressDialog.show();
-        binding.progressbar.setVisibility(View.VISIBLE);
         viewModel.updateCompany(req1);
     }
 
@@ -249,7 +229,6 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
 
         Constants.Toasty(context, "Company Added successfully", Constants.success);
         resetAll();
-        // progressDialog.dismiss();
         viewModel.getCompany(reqGet);
     }
 
@@ -263,9 +242,13 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     @Override
+    public void PbSHow() {
+        showPbar(context);
+    }
+
+    @Override
     public void onSuccessGetCompany(GetCompanyRes model) {
-        //progressDialog.dismiss();
-        binding.progressbar.setVisibility(View.GONE);
+        hidePbar();
         binding.listDetailsHolder.setRefreshing(false);
     }
 
@@ -277,14 +260,14 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onErrorSpread(String msg) {
-        binding.progressbar.setVisibility(View.GONE);
+        hidePbar();
         binding.listDetailsHolder.setRefreshing(false);
     }
 
     void setmRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this);
-        mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-        setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
+        mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+        setRecyclerViewLayoutManager(context, mCurrentLayoutManagerType, binding.recyclerBranches);
         if (mAdapter == null) {
             mAdapter = new CustomCompanyAdapter(context, mDataset);
             binding.recyclerBranches.setAdapter(mAdapter);
@@ -292,33 +275,6 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         } else
             mAdapter.updateListNew(mDataset);
 
-    }
-
-    public void setRecyclerViewLayoutManager(Constants.LayoutManagerType layoutManagerType) {
-        int scrollPosition = 0;
-
-        // If a layout manager has already been set, get current scroll position.
-        if (binding.recyclerBranches.getLayoutManager() != null) {
-            scrollPosition = ((LinearLayoutManager) binding.recyclerBranches.getLayoutManager())
-                    .findFirstCompletelyVisibleItemPosition();
-        }
-
-        switch (layoutManagerType) {
-            case GRID_LAYOUT_MANAGER:
-                mLayoutManager = new GridLayoutManager(context, 2);
-                mCurrentLayoutManagerType = Constants.LayoutManagerType.GRID_LAYOUT_MANAGER;
-                break;
-            case LINEAR_LAYOUT_MANAGER:
-                mLayoutManager = new LinearLayoutManager(context);
-                mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-                break;
-            default:
-                mLayoutManager = new LinearLayoutManager(context);
-                mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-        }
-
-        binding.recyclerBranches.setLayoutManager(mLayoutManager);
-        binding.recyclerBranches.scrollToPosition(scrollPosition);
     }
 
 
@@ -337,6 +293,7 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         binding.pin.setText("");
         binding.smsSenderID.setText("");
         binding.gstNo.setText("");
+        photos.clear();
         Glide.with(context)
                 .load("")
                 .apply(new RequestOptions()
@@ -376,21 +333,8 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
                 viewOrEdit = !viewOrEdit;
                 break;
             case R.id.triggImgGet:
-                Intent i = new Intent(CompanyActivity.this, CamReqActivity.class);
-                i.putExtra("CAM_REQ_Code", 501);
-                startActivityForResult(i, 501);
+                selectImage(context);
                 break;
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == 501) {
-            ImgData = Sessions.getUserString(context, CamReqActivity.CAM_REQ_ImgData);
-            if (ImgData != null)
-                binding.selectedImg.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
-            else Constants.Toasty(context, "Image Loading have problem try again.");
         }
     }
 
@@ -447,10 +391,35 @@ public class CompanyActivity extends AppCompatActivity implements View.OnClickLi
         Constants.showSnack(isConnected, binding.textView);
     }
 
-
     @Override
-    public void onReturnBitmapCaptured(Bitmap bitmap) {
-        Constants.saveImage(context, bitmap);
-        binding.selectedImg.setImageBitmap(bitmap);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        easyImage.handleActivityResult(requestCode, resultCode, data, this, new DefaultCallback() {
+            @Override
+            public void onMediaFilesPicked(MediaFile[] imageFiles, MediaSource source) {
+                photos.clear();
+                for (MediaFile imageFile : imageFiles) {
+                    photos.add(imageFile);
+                }
+                Picasso.get()
+                        .load(photos.get(0).getFile())
+                        .fit()
+                        .centerCrop()
+                        .into(binding.selectedImg);
+            }
+
+            @Override
+            public void onImagePickerError(@NonNull Throwable error, @NonNull MediaSource source) {
+                //Some error handling
+                error.printStackTrace();
+            }
+
+            @Override
+            public void onCanceled(@NonNull MediaSource source) {
+                //Not necessary to remove any files manually anymore
+            }
+        });
     }
+
 }

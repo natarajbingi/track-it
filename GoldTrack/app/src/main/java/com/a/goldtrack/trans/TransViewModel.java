@@ -18,7 +18,7 @@ import com.a.goldtrack.network.RestFullServices;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransViewModel extends ViewModel implements ITransCallBacks,IDropdownDataCallBacks {
+public class TransViewModel extends ViewModel implements ITransCallBacks, IDropdownDataCallBacks {
 
     // MutableLiveData<List<ItemsTrans>> list = new MutableLiveData<>();
     MutableLiveData<DropdownDataForCompanyRes> dropdownList;
@@ -35,28 +35,15 @@ public class TransViewModel extends ViewModel implements ITransCallBacks,IDropdo
         dropdownList = new MutableLiveData<>();
     }
 
-    List<ItemsTrans> addTranItemsNowTest() {
-        List<ItemsTrans> list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            ItemsTrans im = new ItemsTrans();
-            im.commodity = "Chain " + i;
-            im.commodityWeight = "100." + i;
-            im.amount = "200" + i;
-            im.nettWeight = "100 " + i;
-            im.purity = "100 " + i;
-            im.stoneWastage = "100 " + i;
-            im.otherWastage = "100 " + i;
-            im.itemID = "" + i;
-            list.add(im);
-        }
-        return list;
-    }
-
     public void verifyOtp(CustomerWithOTPReq req) {
+
+        view.onpbSHow();
         RestFullServices.getPTO(req, this);
     }
 
     public void addTransreq(AddTransactionReq req) {
+
+        view.onpbSHow();
         RestFullServices.addTransaction(req, this);
     }
 
@@ -64,10 +51,12 @@ public class TransViewModel extends ViewModel implements ITransCallBacks,IDropdo
         if (dropdownList == null) {
             dropdownList = new MutableLiveData<>();
         }
+        view.onpbSHow();
         RestFullServices.getDropdownDataForCompanyHome(req, this);
     }
 
     public void addRemoveCommonImageReq(AddRemoveCommonImageReq req) {
+        view.onpbSHow();
         RestFullServices.addRemoveCommonImage(req, this, null);
     }
 

@@ -1,7 +1,11 @@
 package com.a.goldtrack.users;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -9,9 +13,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -31,40 +38,47 @@ import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.Model.UpdateUserDetails;
 import com.a.goldtrack.R;
 import com.a.goldtrack.camera.CamReqActivity;
+import com.a.goldtrack.company.CompanyActivity;
 import com.a.goldtrack.customer.CustomerActivity;
 import com.a.goldtrack.dailyclosure.UserDailyClosureActivity;
 import com.a.goldtrack.databinding.ActivityUserForCompanyBinding;
+import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
+import com.squareup.picasso.Picasso;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import pl.aprilapps.easyphotopicker.ChooserType;
+import pl.aprilapps.easyphotopicker.DefaultCallback;
+import pl.aprilapps.easyphotopicker.EasyImage;
+import pl.aprilapps.easyphotopicker.MediaFile;
+import pl.aprilapps.easyphotopicker.MediaSource;
 
-public class UserForCompanyActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, DatePickerDialog.OnDateSetListener, UserCompanyHandler {
+
+public class UserForCompanyActivity extends BaseActivity implements View.OnClickListener, RecycleItemClicked,
+        DatePickerDialog.OnDateSetListener, UserCompanyHandler {
 
     ActivityUserForCompanyBinding binding;
     UserForCompanyViewModel viewModel;
-    ProgressDialog progressDialog;
     Context context;
     boolean viewOrEdit = true;
     private static final String TAG = "UserCompanyActivity";
     protected CustomUsersAdapter mAdapter;
-    protected Constants.LayoutManagerType mCurrentLayoutManagerType;
-    protected RecyclerView.LayoutManager mLayoutManager;
     protected List<GetUserForCompanyRes.ResList> mDataset;
     GetUserForCompany user;
     List<String> rolesList = new ArrayList<>();
     private int userIdIfEditing = 0;
-    String ImgData = "";
+    //String ImgData = "";
 
 
     void setmRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this);
-        mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-        setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
+        mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+        setRecyclerViewLayoutManager(context, mCurrentLayoutManagerType, binding.recyclerUserForCmpy);
         if (mAdapter == null) {
             mAdapter = new CustomUsersAdapter(context, mDataset);
             mAdapter.setClickListener(this);
@@ -72,32 +86,6 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         } else mAdapter.updateListNew(mDataset);
     }
 
-    public void setRecyclerViewLayoutManager(Constants.LayoutManagerType layoutManagerType) {
-        int scrollPosition = 0;
-
-        // If a layout manager has already been set, get current scroll position.
-        if (binding.recyclerUserForCmpy.getLayoutManager() != null) {
-            scrollPosition = ((LinearLayoutManager) binding.recyclerUserForCmpy.getLayoutManager())
-                    .findFirstCompletelyVisibleItemPosition();
-        }
-
-        switch (layoutManagerType) {
-            case GRID_LAYOUT_MANAGER:
-                mLayoutManager = new GridLayoutManager(context, 2);
-                mCurrentLayoutManagerType = Constants.LayoutManagerType.GRID_LAYOUT_MANAGER;
-                break;
-            case LINEAR_LAYOUT_MANAGER:
-                mLayoutManager = new LinearLayoutManager(context);
-                mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-                break;
-            default:
-                mLayoutManager = new LinearLayoutManager(context);
-                mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-        }
-
-        binding.recyclerUserForCmpy.setLayoutManager(mLayoutManager);
-        binding.recyclerUserForCmpy.scrollToPosition(scrollPosition);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +96,7 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         context = UserForCompanyActivity.this;
 
         init();
+        onSetEasyImg(false, context);
     }
 
     void init() {
@@ -116,9 +105,9 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         final ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("in Progress...");
+//        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
+//        progressDialog.setIndeterminate(true);
+//        progressDialog.setMessage("in Progress...");
 
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
@@ -152,14 +141,13 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         user = new GetUserForCompany();
         user.companyId = Sessions.getUserString(context, Constants.companyId);
         user.userId = "0";
-        progressDialog.show();
         viewModel.getUsers(user);
         viewModel.onViewAvailable(this);
         viewModel.list.observe(this, new Observer<GetUserForCompanyRes>() {
             @Override
             public void onChanged(GetUserForCompanyRes getUserForCompanyRes) {
                 mDataset = getUserForCompanyRes.resList;
-                progressDialog.dismiss();
+                hidePbar();
                 setmRecyclerView();
             }
         });
@@ -182,7 +170,7 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
                 filter(s.toString());
             }
         });
-        // binding.triggImgGet.setOnClickListener(this);
+        binding.triggImgGet.setOnClickListener(this);
     }
 
     public void filter(String s) {
@@ -221,7 +209,7 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         AddUserForCompany req = new AddUserForCompany();
         req.companyId = Sessions.getUserString(context, Constants.companyId);
         req.user_UID = "DYU_USER_" + Constants.getDateNowAll();
-        req.profilePicUrl = ImgData;
+        req.profilePicUrl = photos.size() != 0 ? Constants.fileToStringOfBitmap(photos.get(0).getFile()) : "";
         req.createdBy = Sessions.getUserString(context, Constants.userId);
 
         req.userName = binding.emailID.getText().toString();
@@ -246,7 +234,6 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         UpdateUserDetails req1 = new UpdateUserDetails();
         req1.data = new ArrayList<UpdateUserDetails.Data>();
         UpdateUserDetails.Data req = new UpdateUserDetails.Data();
-
 
         req.companyId = binding.companyId.getText().toString().trim();
         req.id = userIdIfEditing + "";
@@ -299,9 +286,7 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
                 viewOrEdit = !viewOrEdit;
                 break;
             case R.id.triggImgGet:
-                Intent cam = new Intent(UserForCompanyActivity.this, CamReqActivity.class);
-                cam.putExtra("CAM_REQ_Code", 501);
-                startActivityForResult(cam, 501);
+                selectImage(context);
                 break;
         }
     }
@@ -319,7 +304,7 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
         binding.roleListEditTime.setVisibility(View.GONE);
         binding.role.setSelection(0);
         userIdIfEditing = 0;
-        ImgData = null;
+        photos.clear();
 
         binding.addSignalUserForCmpy.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
@@ -370,9 +355,7 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
 
     @Override
     public void getUsersSuccess(GetUserForCompanyRes res) {
-        progressDialog.dismiss();
-        //  mDataset = response.body().resList;
-        //  setmRecyclerView();
+        hidePbar();
     }
 
     @Override
@@ -382,7 +365,6 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
             resetAll();
             viewOrEdit = true;
             viewModel.getUsers(user);
-            // getUserForCompany(user);
         } else {
             Constants.alertDialogShow(context, res.response);
         }
@@ -402,35 +384,52 @@ public class UserForCompanyActivity extends AppCompatActivity implements View.On
 
     @Override
     public void onError(String msg) {
-        progressDialog.dismiss();
+        hidePbar();
         Constants.Toasty(context, "Something went wrong, Reason: \n\t\t" + msg, Constants.error);
+    }
+
+    @Override
+    public void pbShow() {
+        showPbar(context);
+    }
+
+
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+        String date = year + "-" + Constants.oneDigToTwo(monthOfYear + 1) + "-" + Constants.oneDigToTwo(dayOfMonth);
+        binding.dob.setText(date);
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("resultCode", resultCode + "");
-        if (resultCode == 501) {
-            String Res = data.getStringExtra(CamReqActivity.CAM_REQ_ImgData);
-            if (Res != null && Res.equals("Success")) {
-                ImgData = Sessions.getUserString(context, Constants.sesImgData);
+
+        easyImage.handleActivityResult(requestCode, resultCode, data, this, new DefaultCallback() {
+            @Override
+            public void onMediaFilesPicked(MediaFile[] imageFiles, MediaSource source) {
+                photos.clear();
+                for (MediaFile imageFile : imageFiles) {
+                    photos.add(imageFile);
+                }
+                Picasso.get()
+                        .load(photos.get(0).getFile())
+                        .fit()
+                        .centerCrop()
+                        .into(binding.selectedImg);
             }
-            if (ImgData != null)
-                binding.selectedImg.setImageBitmap(CamReqActivity.stringToBitmap(ImgData));
-            else Constants.Toasty(context, "Image Loading have problem try again.");
-        }
+
+            @Override
+            public void onImagePickerError(@NonNull Throwable error, @NonNull MediaSource source) {
+                //Some error handling
+                error.printStackTrace();
+            }
+
+            @Override
+            public void onCanceled(@NonNull MediaSource source) {
+                //Not necessary to remove any files manually anymore
+            }
+        });
     }
 
-    @Override
-    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String mm = "";
-        if ((monthOfYear + 1) < 10) {
-            mm = "0" + (monthOfYear + 1);
-        } else {
-            mm = (monthOfYear + 1) + "";
-        }
-        String date = year + "-" + mm + "-" + dayOfMonth;
-        binding.dob.setText(date);
-    }
 }

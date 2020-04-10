@@ -25,10 +25,14 @@ public class UserForCompanyViewModel extends ViewModel implements IUserCallBacks
     }
 
     public void addUser(AddUserForCompany req) {
+
+        view.pbShow();
         RestFullServices.addUser(req, this);
     }
 
     public void updateUser(UpdateUserDetails req) {
+
+        view.pbShow();
         RestFullServices.updateUser(req, this);
     }
 
@@ -36,6 +40,7 @@ public class UserForCompanyViewModel extends ViewModel implements IUserCallBacks
         if (list == null) {
             list = new MutableLiveData<>();
         }
+        view.pbShow();
         RestFullServices.getUsers(req, this, null);
     }
 

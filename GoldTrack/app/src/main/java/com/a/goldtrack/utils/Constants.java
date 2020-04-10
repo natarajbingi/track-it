@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -152,6 +153,16 @@ public class Constants {
         inputManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
+    public static String oneDigToTwo(int val) {
+        String dd = "";
+        if ((val) < 10) {
+            dd = "0" + val;
+        } else {
+            dd = val + "";
+        }
+        return dd;
+    }
+
     public static String priceWithDecimal(Double price) {
         DecimalFormat formatter = new DecimalFormat("##,##,##,###.00");
         return formatter.format(price);
@@ -187,6 +198,19 @@ public class Constants {
         spr.setAdapter(spinnerArrayAdapter);
     }
 
+    public static void setAutoComplete(Context context, AutoCompleteTextView auto, String[] array) {
+        // -----------------------------------------------
+        //Creating the instance of ArrayAdapter containing list of fruit names
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
+                android.R.layout.select_dialog_item,
+                array);
+        //Getting the instance of AutoCompleteTextView
+        // binding.autoCompleteSelectCustomer.setThreshold(1);//will start working from first character
+        auto.setThreshold(1);//will start working from first character
+        auto.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
+        auto.setTextColor(Color.RED);
+    }
+
     public static String isEmptyReturn0(String str) {
         return str == null ? "0" : str.isEmpty() ? "0" : str;
     }
@@ -213,9 +237,9 @@ public class Constants {
         byte[] b = baos.toByteArray();
         String encImage = Base64.encodeToString(b, Base64.DEFAULT);
 
+        encImage = encImage == null ? "" : encImage.trim().replace("\n", "");
         return encImage;
     }
-
 
     public static Bitmap stringToBitmap(String imageString) {
         //decode base64 string to image

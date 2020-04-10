@@ -387,8 +387,9 @@
 
                 <ImageView
                     android:id="@+id/selectedImg"
-                    android:layout_width="match_parent"
-                    android:layout_height="85dp"
+                    android:layout_width="250dp"
+                    android:layout_height="155dp"
+                    android:layout_gravity="center_horizontal"
                     android:clickable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:src="@drawable/ic_menu_camera"
@@ -491,6 +492,7 @@
                     android:layout_height="1dp"
                     android:background="@color/monsoon"
                     android:padding="2dp" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -524,6 +526,7 @@
                     android:layout_height="1dp"
                     android:background="@color/monsoon"
                     android:padding="2dp" />
+
                 <ImageView
                     android:id="@+id/selectedImgText"
                     android:layout_width="match_parent"

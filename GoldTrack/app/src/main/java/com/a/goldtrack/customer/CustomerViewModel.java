@@ -21,7 +21,7 @@ import com.a.goldtrack.utils.Sessions;
 
 import java.util.List;
 
-public class CustomerViewModel extends ViewModel implements ICustomerCallBacs , IDropdownDataCallBacks {
+public class CustomerViewModel extends ViewModel implements ICustomerCallBacs, IDropdownDataCallBacks {
     public String title = "Customers";
     ICustomerhandler view;
     MutableLiveData<List<DropdownDataForCompanyRes.CustomerList>> list;
@@ -41,29 +41,32 @@ public class CustomerViewModel extends ViewModel implements ICustomerCallBacs , 
         if (list == null) {
             list = new MutableLiveData<>();
         }
-//        RestFullServices.getCusomer(req, this);
         GetCompany req1 = new GetCompany();
+        view.onPbShow();
         req1.companyId = Sessions.getUserString(GTrackApplication.getInstance().getApplicationContext(), Constants.companyId);
         RestFullServices.getDropdownDataForCompanyHome(req1, this);
     }
 
     public void addCustomer(AddCustomerReq req) {
+        view.onPbShow();
         RestFullServices.addCusomer(req, this);
     }
 
     public void updateCustomer(UpdateCustomerReq req) {
+        view.onPbShow();
         RestFullServices.updateCusomer(req, this);
     }
 
     public void addRemoveCommonImageReq(AddRemoveCommonImageReq req) {
+        view.onPbShow();
         RestFullServices.addRemoveCommonImage(req, null, this);
     }
 
 
     @Override
     public void getCustomerSuccess(GetCustomerRes body) {
-       // list.postValue(body);
-      //  view.getCustomerSuccess(body);
+        // list.postValue(body);
+        //  view.getCustomerSuccess(body);
     }
 
     @Override

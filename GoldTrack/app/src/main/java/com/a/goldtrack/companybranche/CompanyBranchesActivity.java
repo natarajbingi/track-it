@@ -32,6 +32,7 @@ import com.a.goldtrack.Model.UpdateCompanyBranchesRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityCompanyBranchesBinding;
 import com.a.goldtrack.trans.IDropdownDataCallBacks;
+import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
@@ -39,22 +40,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CompanyBranchesActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, IBranchView {
+public class CompanyBranchesActivity extends BaseActivity implements View.OnClickListener, RecycleItemClicked, IBranchView {
 
     CompanyBranchesViewModel viewModel;
     ActivityCompanyBranchesBinding binding;
-
-    ProgressDialog progressDialog;
 
     Context context;
     boolean viewOrEdit = true;
     private static final String TAG = "CompanyBranchesActivity";
     protected CustomCompanyBranchAdapter mAdapter;
 
-    protected Constants.LayoutManagerType mCurrentLayoutManagerType;
-
-
-    protected RecyclerView.LayoutManager mLayoutManager;
     protected List<DropdownDataForCompanyRes.BranchesList> mDataset;
     GetCompanyBranches reqGet;
 
@@ -71,9 +66,7 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
     }
 
     private void init() {
-        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("in Progress...");
+
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
 
@@ -87,14 +80,14 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
         reqGet = new GetCompanyBranches();
         reqGet.companyId = Sessions.getUserString(context, Constants.companyId);
         reqGet.branchId = "0";
-        progressDialog.show();
+
         viewModel.onGetBranch(reqGet);
         viewModel.onViewAvailable(this);
         viewModel.list.observe(this, new Observer<List<DropdownDataForCompanyRes.BranchesList>>() {
             @Override
             public void onChanged(List<DropdownDataForCompanyRes.BranchesList> branchesLists) {
                 mDataset = branchesLists;
-                progressDialog.dismiss();
+                hidePbar();
                 setmRecyclerView();
             }
         });
@@ -241,46 +234,18 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
             Constants.Toasty(context, "Please Enter mandatory Fields", Constants.warning);
             return;
         }
-        progressDialog.show();
         viewModel.onUpdateBranch(req);
     }
 
     void setmRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this);
-        mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-        setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
+        mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+        setRecyclerViewLayoutManager(context, mCurrentLayoutManagerType, binding.recyclerBranches);
         if (mAdapter == null) {
             mAdapter = new CustomCompanyBranchAdapter(context, mDataset);
             mAdapter.setClickListener(this);
             binding.recyclerBranches.setAdapter(mAdapter);
         } else mAdapter.updateListNew(mDataset);
-    }
-
-    public void setRecyclerViewLayoutManager(Constants.LayoutManagerType layoutManagerType) {
-        int scrollPosition = 0;
-
-        // If a layout manager has already been set, get current scroll position.
-        if (binding.recyclerBranches.getLayoutManager() != null) {
-            scrollPosition = ((LinearLayoutManager) binding.recyclerBranches.getLayoutManager())
-                    .findFirstCompletelyVisibleItemPosition();
-        }
-
-        switch (layoutManagerType) {
-            case GRID_LAYOUT_MANAGER:
-                mLayoutManager = new GridLayoutManager(context, 2);
-                mCurrentLayoutManagerType = Constants.LayoutManagerType.GRID_LAYOUT_MANAGER;
-                break;
-            case LINEAR_LAYOUT_MANAGER:
-                mLayoutManager = new LinearLayoutManager(context);
-                mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-                break;
-            default:
-                mLayoutManager = new LinearLayoutManager(context);
-                mCurrentLayoutManagerType = Constants.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
-        }
-
-        binding.recyclerBranches.setLayoutManager(mLayoutManager);
-        binding.recyclerBranches.scrollToPosition(scrollPosition);
     }
 
 
@@ -314,7 +279,7 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
 
     @Override
     public void onSuccessGetBranch(DropdownDataForCompanyRes res) {
-        progressDialog.dismiss();
+        hidePbar();
         Sessions.setUserObj(context, res, Constants.dorpDownSession);
     }
 
@@ -325,7 +290,7 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
             resetAll();
             viewModel.onGetBranch(reqGet);
         } else {
-            progressDialog.dismiss();
+            hidePbar();
             Constants.alertDialogShow(context, branchesRes.response);
         }
     }
@@ -342,9 +307,13 @@ public class CompanyBranchesActivity extends AppCompatActivity implements View.O
     public void onErrorBranch(String msg) {
 
         Constants.Toasty(context, msg, Constants.warning);
-        progressDialog.dismiss();
+        hidePbar();
     }
 
+    @Override
+    public void PbShow() {
+        showPbar(context);
+    }
 
 
 }

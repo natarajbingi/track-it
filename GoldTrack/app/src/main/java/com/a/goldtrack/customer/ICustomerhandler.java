@@ -9,10 +9,18 @@ import com.a.goldtrack.Model.UpdateCustomerRes;
 public interface ICustomerhandler {
 
     void addCustomerSuccess(AddCustomerRes res);
+
     void updateCustomerSuccess(UpdateCustomerRes res);
+
     void getCustomerSuccess(GetCustomerRes res);
+
     void onAddRemoveCommonImageSuccess(AddRemoveCommonImageRes res);
+
     void onGetDrpSuccess(DropdownDataForCompanyRes res);
 
     void onErrorSpread(String msg);
+
+    void onPbShow();
+
+
 }

@@ -15,18 +15,16 @@ import com.a.goldtrack.network.RestFullServices;
 
 public class CompanyViewModel extends ViewModel implements ICallBacks {
 
-    MutableLiveData<GetCompanyRes> list = null;
-    ICompanyView view;
+    public MutableLiveData<GetCompanyRes> list = null;
+    private ICompanyView view;
     public String title = "Company";
 
-//    public CompanyViewModel(GetCompany model) {
-//        RestFullServices.getCompanyList(model, this);
-//    }
 
     public void getCompany(GetCompany model) {
         if (list == null) {
             list = new MutableLiveData<>();
         }
+        view.PbSHow();
         RestFullServices.getCompanyList(model, this);
     }
 
@@ -35,10 +33,12 @@ public class CompanyViewModel extends ViewModel implements ICallBacks {
     }
 
     public void addCompany(AddCompany model) {
+        view.PbSHow();
         RestFullServices.addCompany(model, this);
     }
 
     public void updateCompany(UpdateCompanyDetails model) {
+        view.PbSHow();
         RestFullServices.updateCompanyDetails(model, this);
     }
 

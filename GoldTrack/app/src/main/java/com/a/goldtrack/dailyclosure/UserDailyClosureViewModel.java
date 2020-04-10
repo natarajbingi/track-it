@@ -31,18 +31,22 @@ public class UserDailyClosureViewModel extends ViewModel implements IDailyClosur
     }
 
     public void getDailyClosures(GetUserDailyClosureReq req) {
+        view.onPBShow("");
         RestFullServices.getDailyClosures(req, this);
     }
 
     public void getTrans(GetTransactionReq req) {
+        view.onPBShow("");
         RestFullServices.getTransaction(req, null, null, this);
     }
 
     public void addDailyClosure(AddUserDailyClosureReq req) {
+        view.onPBShow("");
         RestFullServices.addDailyClosure(req, this);
     }
 
     public void updateDailyClosure(UpdateUserDailyClosureReq req) {
+        view.onPBShow("");
         RestFullServices.updateDailyClosures(req, this);
     }
 

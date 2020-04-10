@@ -215,7 +215,6 @@ public class CamReqActivity extends AppCompatActivity {
         byte[] b = baos.toByteArray();
         String encImage = Base64.encodeToString(b, Base64.DEFAULT);
 
-        //        return b;
         encImage = encImage == null ? "" : encImage.trim().replace("\n", "");
         return encImage;
     }

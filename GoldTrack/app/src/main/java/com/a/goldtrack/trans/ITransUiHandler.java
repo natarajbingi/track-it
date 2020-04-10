@@ -20,4 +20,6 @@ public interface ITransUiHandler {
     void onError(String msg);
 
     void onErrorComplete(String msg);
+
+    void onpbSHow();
 }

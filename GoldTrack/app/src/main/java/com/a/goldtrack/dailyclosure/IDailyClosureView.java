@@ -11,9 +11,11 @@ public interface IDailyClosureView {
     void onAddDailyClousureSuccess(AddUserDailyClosureRes res);
 
     void onUpdateDailyClousureSuccess(UpdateUserDailyClosureRes res);
+
     void onGetTransSuccess(GetTransactionRes res);
 
     void onError(String message);
 
     void onErrorComplete(String s);
+    void onPBShow(String s);
 }
