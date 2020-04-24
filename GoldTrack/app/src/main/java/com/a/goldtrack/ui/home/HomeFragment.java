@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -26,8 +25,8 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -37,29 +36,15 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.a.goldtrack.GTrackApplication;
-import com.a.goldtrack.HomeActivity;
-import com.a.goldtrack.Interfaces.InterfaceClasses;
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompany;
-import com.a.goldtrack.Model.GetCompanyRes;
-import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.GetTransactionReq;
 import com.a.goldtrack.Model.GetTransactionRes;
-import com.a.goldtrack.Model.GetUserDailyClosureReq;
 import com.a.goldtrack.Model.GetUserForCompany;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
-import com.a.goldtrack.Model.ItemsTrans;
 import com.a.goldtrack.R;
-import com.a.goldtrack.camera.CamReqActivity;
-import com.a.goldtrack.dailyclosure.UserDailyClosureActivity;
 import com.a.goldtrack.databinding.FragmentHomeBinding;
-import com.a.goldtrack.databinding.TransItemPopupBinding;
-import com.a.goldtrack.network.APIService;
-import com.a.goldtrack.network.RestFullServices;
-import com.a.goldtrack.network.RetrofitClient;
-import com.a.goldtrack.trans.IDropdownDataCallBacks;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.ImageClickLIstener;
 import com.a.goldtrack.utils.Sessions;
@@ -68,20 +53,11 @@ import com.bumptech.glide.request.RequestOptions;
 import com.squareup.picasso.Picasso;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
