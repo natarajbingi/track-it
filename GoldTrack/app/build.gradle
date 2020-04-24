@@ -63,7 +63,7 @@ dependencies {
     /**
      * For managing request permission
      */
-    implementation 'com.karumi:dexter:4.2.0'
+//    implementation 'com.karumi:dexter:4.2.0'
     // camera n gallery  access
     implementation 'com.github.jkwiecien:EasyImage:3.0.3'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.61'

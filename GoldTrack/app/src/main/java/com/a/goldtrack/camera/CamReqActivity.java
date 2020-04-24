@@ -22,11 +22,7 @@ import com.a.goldtrack.R;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.FileCompressor;
 import com.a.goldtrack.utils.Sessions;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
 
 import android.content.Intent;
 import android.util.Base64;
@@ -178,7 +174,7 @@ public class CamReqActivity extends AppCompatActivity {
                     String filePath = mPhotoFile.getPath();
                     Bitmap bitmap = BitmapFactory.decodeFile(filePath);
                     saveImage(bitmap);
-                     // mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
+                    // mPhotoFile = mCompressor.compressToFile(mPhotoFile, mPhotoFile.getName());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -299,39 +295,6 @@ public class CamReqActivity extends AppCompatActivity {
      * On permanent denial opens settings dialog
      */
     private void requestStoragePermission(boolean isCamera) {
-        Dexter.withActivity(this)
-                .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.CAMERA)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        // check if all permissions are granted
-                        if (report.areAllPermissionsGranted()) {
-                            if (isCamera) {
-                                dispatchTakePictureIntent();
-                            } else {
-                                dispatchGalleryIntent();
-                            }
-                        }
-                        // check for permanent denial of any permission
-                        if (report.isAnyPermissionPermanentlyDenied()) {
-                            // show alert dialog navigating to Settings
-                            showSettingsDialog();
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(
-                            List<PermissionRequest> permissions,
-                            PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).withErrorListener(error -> Toast.makeText(getApplicationContext(),
-                "Error occurred! ", Toast.LENGTH_SHORT)
-                .show())
-                .onSameThread()
-                .check();
     }
 
     /**

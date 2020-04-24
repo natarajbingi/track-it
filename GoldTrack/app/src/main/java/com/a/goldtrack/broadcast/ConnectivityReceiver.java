@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.a.goldtrack.GTrackApplication;
 import com.a.goldtrack.Interfaces.ConnectivityReceiverListener;
 
 public class ConnectivityReceiver extends BroadcastReceiver {
