@@ -1072,7 +1072,7 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
                 ImageView imgNewScroll = (ImageView) newView1.findViewById(R.id.selectedImgOne);
                 TextView attachmentCount = (TextView) newView1.findViewById(R.id.attachmentCount);
                 attachmentCount.setText("Attachment " + (i + 1));
-                imgNewScroll.setImageBitmap(CamReqActivity.stringToBitmap(imgDataList.get(i)));
+                imgNewScroll.setImageBitmap(Constants.stringToBitmap(imgDataList.get(i)));
                 imgNewScroll.setOnClickListener(new ImageClickLIstener(context, stringToBitmap(imgDataList.get(i))));
                 binding.sixthLayoutParent.imgHolderInLastSetTrans.addView(newView1);
             }

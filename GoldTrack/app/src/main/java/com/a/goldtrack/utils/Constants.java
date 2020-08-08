@@ -48,6 +48,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -89,6 +90,11 @@ public class Constants {
     public static final String actionTypeADD = "ADD";
     public static final String actionTypeREMOVE = "REMOVE";
 
+    public static int SELECT_VID = 901;
+    public static final String IMG = "IMG";
+    public static final String VIDEO = "Video";
+    public static final String AUDIO = "Audio";
+    public static final String PDF = "Pdf";
 
     public static final int error = 0;
     public static final int success = 1;
@@ -296,6 +302,46 @@ public class Constants {
         Log.d("Request-", call + "");
         Log.d("LogReq-", g.toJson(req));
         Log.d("LogRes-", g.toJson(res));
+    }
+
+    public static String todayDate() {
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy_MM_dd");
+        Date today = new Date();
+        String s = dateFormatter.format(today);
+        return s;
+    }
+
+    public static String CreateFileNameWithWith_Height(int height, int width, String type) {
+
+        String filename = null;
+        try {
+            DateFormat dateFormatter = new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss");
+            dateFormatter.setLenient(false);
+            String s = dateFormatter.format(new Date());
+            int min = 1;
+            int max = 1000;
+
+            Random r = new Random();
+            int i1 = r.nextInt(max - min + 1) + min;
+
+            if (type.equalsIgnoreCase(VIDEO)) {
+                filename = "VIDEO_" + s + String.valueOf(i1) + ".mp4";
+            } else if (type.equalsIgnoreCase(AUDIO)) {
+                filename = "Audio_" + s + String.valueOf(i1) + ".mp3";
+            } else if (type.equalsIgnoreCase(PDF)) {
+                filename = "Pdf_" + s + String.valueOf(i1) + ".pdf";
+            } else {
+//            filename = height + "*" + width + "*" + "IMG_" + s + String.valueOf(i1) + ".PNG";
+                filename = height + "_" + width + "_" + "IMG_" + s + String.valueOf(i1) + ".PNG";
+            }
+
+            //filename = "IMG_"+s+String.valueOf(i1)+".JPEG";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return filename;
     }
 
     public static String getDateyyyymmmdd(String dte) {
