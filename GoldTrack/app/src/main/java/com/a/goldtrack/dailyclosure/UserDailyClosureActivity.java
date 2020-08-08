@@ -196,7 +196,8 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
             @Override
             public void onFocusChange(View view, boolean b) {
                 if (!b) {
-                    double totTrans = Double.parseDouble(binding.totalAmt.getText().toString());
+                    String totalAmt = binding.totalAmt.getText().toString();
+                    double totTrans = Double.parseDouble(totalAmt.isEmpty() ? "0" : totalAmt);
                     String str = binding.expenses.getText().toString();
                     double expesnse = Double.parseDouble(str.isEmpty() ? "0" : str);
                     String recFund = binding.fundRecieved.getText().toString();

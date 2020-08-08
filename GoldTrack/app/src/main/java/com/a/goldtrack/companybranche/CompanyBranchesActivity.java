@@ -54,6 +54,7 @@ public class CompanyBranchesActivity extends BaseActivity implements View.OnClic
         binding = DataBindingUtil.setContentView(this, R.layout.activity_company_branches);
         binding.setCmpBrnchModel(viewModel);
         context = CompanyBranchesActivity.this;
+        viewModel.onViewAvailable(this);
 
         loader = new LoaderDecorator(context);
         init();
@@ -76,7 +77,6 @@ public class CompanyBranchesActivity extends BaseActivity implements View.OnClic
         reqGet.branchId = "0";
 
         viewModel.onGetBranch(reqGet);
-        viewModel.onViewAvailable(this);
         viewModel.list.observe(this, new Observer<List<DropdownDataForCompanyRes.BranchesList>>() {
             @Override
             public void onChanged(List<DropdownDataForCompanyRes.BranchesList> branchesLists) {
