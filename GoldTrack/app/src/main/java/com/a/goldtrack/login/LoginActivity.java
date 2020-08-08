@@ -1,9 +1,5 @@
 package com.a.goldtrack.login;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -11,24 +7,24 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.a.goldtrack.HomeActivity;
 import com.a.goldtrack.Model.UserLoginReq;
 import com.a.goldtrack.Model.UserLoginRes;
 import com.a.goldtrack.R;
-import com.a.goldtrack.customer.CustomerActivity;
-import com.a.goldtrack.dailyclosure.UserDailyClosureActivity;
-import com.a.goldtrack.register.RegistrationActivity;
 import com.a.goldtrack.databinding.ActivityLoginBinding;
-import com.a.goldtrack.trans.TransActivity;
-import com.a.goldtrack.users.UserForCompanyActivity;
+import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.Constants;
+import com.a.goldtrack.utils.LoaderDecorator;
 import com.a.goldtrack.utils.Sessions;
 
 import java.util.UUID;
 
 import es.dmoral.toasty.Toasty;
 
-public class LoginActivity extends AppCompatActivity implements LoginDataHandler {
+public class LoginActivity extends BaseActivity implements LoginDataHandler {
 
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
@@ -48,13 +44,16 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = LoginActivity.this;
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
         loginViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
         loginViewModel.SetView(this);
+        binding.setViewModel(loginViewModel);
+
+        loader = new LoaderDecorator(context);
         progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
-        binding.setViewModel(loginViewModel);
+
 
         loginViewModel.email.set(binding.edEmail.getText().toString());
         loginViewModel.pwd.set(binding.edPassword.getText().toString());
@@ -110,6 +109,7 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
         keepMeSignedStr = binding.keepMeSigned.isChecked();
 
         progressDialog.show();
+        loader.start();
         loginViewModel.loginCall(req);
     }
 
@@ -139,6 +139,7 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
     @Override
     public void onLoginCallSuccess(UserLoginRes loginRes) {
         progressDialog.dismiss();
+        loader.stop();
         if (loginRes.success) {
             if (keepMeSignedStr) {
                 Sessions.setUserString(context, "TRUE", Constants.keepMeSignedStr);
@@ -161,6 +162,7 @@ public class LoginActivity extends AppCompatActivity implements LoginDataHandler
     @Override
     public void onLoginError(String msg) {
         progressDialog.dismiss();
+        loader.stop();
         Log.e(TAG, msg);
         Constants.alertDialogShow(context, "Something went wrong, please try again");
     }

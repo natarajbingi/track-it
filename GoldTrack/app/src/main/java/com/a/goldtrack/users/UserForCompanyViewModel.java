@@ -1,5 +1,6 @@
 package com.a.goldtrack.users;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -13,8 +14,8 @@ import com.a.goldtrack.network.RestFullServices;
 
 public class UserForCompanyViewModel extends ViewModel implements IUserCallBacks {
 
-    MutableLiveData<GetUserForCompanyRes> list;
-    UserCompanyHandler view;
+    private MutableLiveData<GetUserForCompanyRes> list;
+    private UserCompanyHandler view;
 
     public void onViewAvailable(UserCompanyHandler view) {
         this.view = view;
@@ -44,24 +45,32 @@ public class UserForCompanyViewModel extends ViewModel implements IUserCallBacks
         RestFullServices.getUsers(req, this, null);
     }
 
+    public LiveData<GetUserForCompanyRes> getList() {
+        return list;
+    }
+
     @Override
     public void addUserSuccess(AddUserForCompanyRes res) {
+        view.pbHide();
         view.addUserSuccess(res);
     }
 
     @Override
     public void updateUserSuccess(AddUserForCompanyRes res) {
+        view.pbHide();
         view.updateUserSuccess(res);
     }
 
     @Override
     public void getUsersSuccess(GetUserForCompanyRes res) {
         list.postValue(res);
+        view.pbHide();
         view.getUsersSuccess(res);
     }
 
     @Override
     public void onError(String msg) {
+        view.pbHide();
         view.onError(msg);
     }
 }

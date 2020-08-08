@@ -44,10 +44,18 @@ import com.a.goldtrack.dailyclosure.UserDailyClosureActivity;
 import com.a.goldtrack.databinding.ActivityUserForCompanyBinding;
 import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.Constants;
+import com.a.goldtrack.utils.LoaderDecorator;
 import com.a.goldtrack.utils.Sessions;
+import com.a.goldtrack.utils.UtilAimgWs;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.squareup.picasso.Picasso;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -93,7 +101,9 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
         viewModel = ViewModelProviders.of(this).get(UserForCompanyViewModel.class);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_user_for_company);
         binding.setUserCmpModel(viewModel);
+        viewModel.onViewAvailable(this);
         context = UserForCompanyActivity.this;
+        loader = new LoaderDecorator(context);
 
         init();
         onSetEasyImg(false, context);
@@ -105,9 +115,6 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
         final ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-//        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
-//        progressDialog.setIndeterminate(true);
-//        progressDialog.setMessage("in Progress...");
 
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
@@ -142,8 +149,7 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
         user.companyId = Sessions.getUserString(context, Constants.companyId);
         user.userId = "0";
         viewModel.getUsers(user);
-        viewModel.onViewAvailable(this);
-        viewModel.list.observe(this, new Observer<GetUserForCompanyRes>() {
+        viewModel.getList().observe(this, new Observer<GetUserForCompanyRes>() {
             @Override
             public void onChanged(GetUserForCompanyRes getUserForCompanyRes) {
                 mDataset = getUserForCompanyRes.resList;
@@ -355,7 +361,6 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void getUsersSuccess(GetUserForCompanyRes res) {
-        hidePbar();
     }
 
     @Override
@@ -384,13 +389,19 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void onError(String msg) {
-        hidePbar();
         Constants.Toasty(context, "Something went wrong, Reason: \n\t\t" + msg, Constants.error);
     }
 
     @Override
     public void pbShow() {
         showPbar(context);
+        loader.start();
+    }
+
+    @Override
+    public void pbHide() {
+        hidePbar();
+        loader.stop();
     }
 
 
@@ -417,6 +428,8 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
                         .fit()
                         .centerCrop()
                         .into(binding.selectedImg);
+
+                uploadFile(photos.get(0).getFile(), Constants.CreateFileNameWithWith_Height(500, 600, selectedType));
             }
 
             @Override
@@ -431,5 +444,80 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
             }
         });
     }
+
+    private String selectedType = "";
+    private TransferUtility transferUtility;
+    private UtilAimgWs util;
+    private String uploadedVidUrl;
+
+    private void uploadFile(File file, String filename1) {
+
+        String datemade = Constants.todayDate() + "/";
+        util = new UtilAimgWs();
+        transferUtility = util.getTransferUtility(context);
+
+        TransferObserver observer = transferUtility.upload(
+                UtilAimgWs.AMAZON_S3_USER_FILES_BUCKET_GTRACK + datemade + filename1,//
+                file, CannedAccessControlList.PublicRead
+        );
+
+        uploadedVidUrl = UtilAimgWs.AMAZON_S3_URL + UtilAimgWs.AMAZON_S3_USER_FILES_BUCKET_GTRACK + datemade + filename1;
+
+        observer.setTransferListener(new UploadListener());
+        pbShow();
+
+        Log.d(TAG, "finalImgStr:1 " + filename1);
+        Log.d(TAG, "finalImgStr:1 " + uploadedVidUrl);
+    }
+
+    /*
+     * A TransferListener class that can listen to a upload task and be notified
+     * when the status changes.
+     */
+    class UploadListener implements TransferListener {
+        // Simply updates the UI list when notified.
+        @Override
+        public void onError(int id, Exception e) {
+            // Log.e(TAG, "Error during upload: " + id, e);
+            hidePbar();
+        }
+
+        @Override
+        public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+//            Log.d(TAG, String.format("onProgressChanged: %d, total: %d, current: %d",
+//                    id, bytesTotal, bytesCurrent));
+
+            float value;
+            if (bytesTotal >= 1024)
+                value = bytesTotal / 1024f;
+            else
+                value = bytesTotal;
+
+            float cvalue;
+            if (bytesCurrent >= 1024)
+                cvalue = bytesCurrent / 1024f;
+            else
+                cvalue = bytesCurrent;
+
+            //  progressDialog.setMax((int) value);
+            //  progressDialog.setProgress((int) cvalue);
+        }
+
+        @Override
+        public void onStateChanged(int id, TransferState newState) {
+
+            if (newState.toString().equalsIgnoreCase("COMPLETED")) {
+                // req.path1 = uploadedVidUrl;
+                Log.e(TAG, "onStateChanged: " + uploadedVidUrl);
+                hidePbar();
+                //  Retro.addEventsRes(req, AddFeedBottomSheetDialog.this);
+            } else if (newState.toString().equalsIgnoreCase("FAILED")) {
+                hidePbar();
+            }
+
+            loader.stop();
+        }
+    }
+
 
 }

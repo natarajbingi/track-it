@@ -15,4 +15,6 @@ public interface UserCompanyHandler {
     void onError(String msg);
 
     void pbShow();
+
+    void pbHide();
 }

@@ -1,0 +1,20 @@
+{
+  "Version": "1.0",
+  "IdentityManager": {
+    "Default": {}
+  },
+  "CredentialsProvider": {
+    "CognitoIdentity": {
+      "Default": {
+        "PoolId": "us-east-2:162f737d-8a44-4f06-bd2c-aae5ca5b7e1b",
+        "Region": "us-east-2"
+      }
+    }
+  },
+  "S3TransferUtility": {
+    "Default": {
+      "Bucket": "schooledubucket",
+      "Region": "ap-southeast-1"
+    }
+  }
+}

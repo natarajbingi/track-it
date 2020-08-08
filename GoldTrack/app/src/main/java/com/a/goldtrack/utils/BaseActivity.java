@@ -46,6 +46,9 @@ public class BaseActivity extends AppCompatActivity implements ConnectivityRecei
 
     protected LayoutManagerType mCurrentLayoutManagerType;
     protected RecyclerView.LayoutManager mLayoutManager;
+    /*Images related starts*/
+    public LoaderDecorator loader;
+
 
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
