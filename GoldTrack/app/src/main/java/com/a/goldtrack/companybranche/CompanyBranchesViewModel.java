@@ -12,7 +12,6 @@ import com.a.goldtrack.Model.GetCompanyBranches;
 import com.a.goldtrack.Model.GetCompanyBranchesRes;
 import com.a.goldtrack.Model.UpdateCompanyBranchesReq;
 import com.a.goldtrack.Model.UpdateCompanyBranchesRes;
-import com.a.goldtrack.Model.UpdateCompanyDetails;
 import com.a.goldtrack.network.RestFullServices;
 import com.a.goldtrack.trans.IDropdownDataCallBacks;
 import com.a.goldtrack.utils.Constants;

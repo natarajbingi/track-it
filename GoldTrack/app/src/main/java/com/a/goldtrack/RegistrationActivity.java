@@ -1,22 +1,14 @@
 package com.a.goldtrack;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.a.goldtrack.login.LoginActivity;
+import androidx.appcompat.app.AppCompatActivity;
+
+import es.dmoral.toasty.Toasty;
 
 //import butterknife.BindView;
 //import butterknife.ButterKnife;
-import es.dmoral.toasty.Toasty;
 
 public class RegistrationActivity extends AppCompatActivity {
 

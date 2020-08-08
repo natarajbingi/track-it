@@ -1,6 +1,5 @@
 package com.a.goldtrack.ui.home;
 
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -47,6 +46,7 @@ import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.FragmentHomeBinding;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.ImageClickLIstener;
+import com.a.goldtrack.utils.LoaderDecorator;
 import com.a.goldtrack.utils.Sessions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -73,9 +73,10 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
     private static final int DATASET_COUNT = 60;
-    private ProgressDialog progressDialog;
+    // private ProgressDialog progressDialog;
     private Context context;
     private HomeViewModel viewModel;
+    private LoaderDecorator loader;
 
     private FragmentHomeBinding binding;
     private GetTransactionReq req;
@@ -88,9 +89,12 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         context = getContext();
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("in Progress...");
+
+        // progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
+        // progressDialog.setIndeterminate(true);
+        // progressDialog.setMessage("in Progress...");
+
+        loader = new LoaderDecorator(context);
         String str = Sessions.getUserString(context, Constants.roles);
         role = str.equals("ADMIN") || str.equals("SUPER_ADMIN");
 
@@ -133,7 +137,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         req.customerID = "0";
         req.commodity = "";
         req.transactionDate = /*Constants.getDateNowyyyymmmdd();*/"";
-        progressDialog.show();
+        loader.start();
         viewModel.getTransactions(req);
 
 
@@ -155,7 +159,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         viewModel.transList.observe(this, new Observer<GetTransactionRes>() {
             @Override
             public void onChanged(GetTransactionRes getTransactionRes) {
-                progressDialog.dismiss();
+                loader.stop();
                 binding.filterHolder.setVisibility(View.GONE);
                 holderFilter = true;
                 mDataset = getTransactionRes.dataList;
@@ -202,7 +206,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
                 binding.selectBranchFilter.setSelection(0);
                 binding.selectCommodityFilter.setSelection(0);
                 binding.selectEmployeeFilter.setSelection(0);
-                progressDialog.show();
+                loader.start();
                 viewModel.getTransactions(req);
             }
         });
@@ -252,7 +256,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
                     req.employeeID = Sessions.getUserString(context, Constants.userId);
 
                 Constants.logPrint(null, req, null);
-                progressDialog.show();
+                loader.start();
                 viewModel.getTransactions(req);
             }
         });
@@ -321,7 +325,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
 
     @Override
     public void onGetTransSuccess(GetTransactionRes res) {
-        progressDialog.dismiss();
+        loader.stop();
         if (!res.success) {
             viewModel.setmText(res.response);
             binding.textHome.setVisibility(View.VISIBLE);
@@ -394,14 +398,14 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
 
     @Override
     public void onError(String message) {
-        progressDialog.dismiss();
+        loader.stop();
         Constants.Toasty(context, message, Constants.info);
 
     }
 
     @Override
     public void onErrorComplete(String s) {
-        progressDialog.dismiss();
+        loader.stop();
         Constants.Toasty(context, s, Constants.info);
     }
 
@@ -574,7 +578,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
             if (intent.getAction() != null && intent.getAction().equals("refresh-from-home")) {
-                progressDialog.show();
+                loader.start();
                 viewModel.getTransactions(req);
                 reqDrop = new GetCompany();
                 reqDrop.companyId = Sessions.getUserString(context, Constants.companyId);

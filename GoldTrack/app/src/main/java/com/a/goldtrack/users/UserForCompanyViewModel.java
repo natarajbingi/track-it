@@ -8,7 +8,6 @@ import com.a.goldtrack.Model.AddUserForCompany;
 import com.a.goldtrack.Model.AddUserForCompanyRes;
 import com.a.goldtrack.Model.GetUserForCompany;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
-import com.a.goldtrack.Model.UpdateCompanyDetailsRes;
 import com.a.goldtrack.Model.UpdateUserDetails;
 import com.a.goldtrack.network.RestFullServices;
 

@@ -5,44 +5,35 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.a.goldtrack.Interfaces.InterfaceClasses;
-import com.a.goldtrack.company.CompanyActivity;
-import com.a.goldtrack.companybranche.CompanyBranchesActivity;
-import com.a.goldtrack.customer.CustomerActivity;
-import com.a.goldtrack.dailyclosure.UserDailyClosureActivity;
-import com.a.goldtrack.items.ItemsActivity;
-import com.a.goldtrack.login.LoginActivity;
-import com.a.goldtrack.otp.OtpActivity;
-import com.a.goldtrack.trans.TransActivity;
-import com.a.goldtrack.users.UserForCompanyActivity;
-import com.a.goldtrack.utils.Constants;
-import com.a.goldtrack.utils.Sessions;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.a.goldtrack.company.CompanyActivity;
+import com.a.goldtrack.companybranche.CompanyBranchesActivity;
+import com.a.goldtrack.customer.CustomerActivity;
+import com.a.goldtrack.dailyclosure.UserDailyClosureActivity;
+import com.a.goldtrack.items.ItemsActivity;
+import com.a.goldtrack.login.LoginActivity;
+import com.a.goldtrack.trans.TransActivity;
+import com.a.goldtrack.users.UserForCompanyActivity;
+import com.a.goldtrack.utils.Constants;
+import com.a.goldtrack.utils.Sessions;
 import com.google.android.material.navigation.NavigationView;
-
-import androidx.drawerlayout.widget.DrawerLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.view.Menu;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

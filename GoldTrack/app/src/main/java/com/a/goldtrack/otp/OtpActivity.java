@@ -18,7 +18,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityOtpBinding;
 import com.a.goldtrack.utils.Constants;
-import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

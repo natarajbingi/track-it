@@ -1,15 +1,5 @@
 package com.a.goldtrack.items;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
@@ -19,29 +9,38 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddItemReq;
 import com.a.goldtrack.Model.AddItemRes;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
-import com.a.goldtrack.Model.GetCompanyBranchesRes;
 import com.a.goldtrack.Model.GetItemsReq;
 import com.a.goldtrack.Model.GetItemsRes;
 import com.a.goldtrack.Model.UpdateItemReq;
 import com.a.goldtrack.Model.UpdateItemRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityItemsBinding;
+import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.Constants;
+import com.a.goldtrack.utils.LoaderDecorator;
 import com.a.goldtrack.utils.Sessions;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ItemsActivity extends AppCompatActivity implements View.OnClickListener, RecycleItemClicked, IItemsView {
+public class ItemsActivity extends BaseActivity implements View.OnClickListener, RecycleItemClicked, IItemsView {
 
     ItemsViewModel viewModel;
     ActivityItemsBinding binding;
-    ProgressDialog progressDialog;
+
     Context context;
     boolean viewOrEdit = true;
     GetItemsReq reqGet;
@@ -62,14 +61,14 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
         binding.setItemsModel(viewModel);
         context = ItemsActivity.this;
 
+        loader = new LoaderDecorator(context);
+
         init();
     }
 
     void init() {
 
-        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("in Progress...");
+
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
 
@@ -83,14 +82,14 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
         reqGet.companyId = Sessions.getUserString(context, Constants.companyId);
         reqGet.itemId = "0";
 
-        progressDialog.show();
+        loader.start();
         viewModel.onGetItemsForCompany(reqGet);
         viewModel.onViewAvailable(this);
         viewModel.list.observe(this, new Observer<List<DropdownDataForCompanyRes.ItemsList>>() {
             @Override
             public void onChanged(List<DropdownDataForCompanyRes.ItemsList> customerLists) {
                 mDataset = customerLists;
-                progressDialog.dismiss();
+                loader.stop();
                 setmRecyclerView();
             }
         });
@@ -232,7 +231,7 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
             Constants.Toasty(context, "Please Enter mandatory Fields", Constants.warning);
             return;
         }
-        progressDialog.show();
+        loader.start();
         viewModel.onAddItem(req);
     }
 
@@ -249,7 +248,7 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
 
-        progressDialog.show();
+        loader.start();
         viewModel.onUpdateItemDetails(req);
     }
 
@@ -302,7 +301,7 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onItemGetSuccess(GetItemsRes getItemsRes) {
-        progressDialog.dismiss();
+        loader.stop();
         /*if (getItemsRes.success) {
             mDataset = getItemsRes.resList;
             setmRecyclerView();
@@ -320,7 +319,7 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
             viewModel.onGetItemsForCompany(reqGet);
         } else {
             Constants.alertDialogShow(context, itemRes.response);
-            progressDialog.dismiss();
+            loader.stop();
         }
     }
 
@@ -333,20 +332,20 @@ public class ItemsActivity extends AppCompatActivity implements View.OnClickList
             viewModel.onGetItemsForCompany(reqGet);
         } else {
             Constants.alertDialogShow(context, itemRes.response);
-            progressDialog.dismiss();
+            loader.stop();
         }
     }
 
     @Override
     public void onGetDrpSuccess(DropdownDataForCompanyRes res) {
-        progressDialog.dismiss();
+        loader.stop();
         Sessions.setUserObj(context, res, Constants.dorpDownSession);
 
     }
 
     @Override
     public void onError(String msg) {
-        progressDialog.dismiss();
+        loader.stop();
     }
 
 }

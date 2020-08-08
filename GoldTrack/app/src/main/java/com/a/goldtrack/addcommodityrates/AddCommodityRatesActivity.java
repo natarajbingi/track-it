@@ -1,5 +1,8 @@
 package com.a.goldtrack.addcommodityrates;
 
+import android.content.Context;
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
@@ -7,14 +10,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
-import android.os.Bundle;
-
 import com.a.goldtrack.Model.GetCompanyRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityAddCommodityRatesBinding;
 import com.a.goldtrack.ui.home.CustomAdapter;
-import com.a.goldtrack.ui.home.HomeFragment;
 import com.a.goldtrack.utils.Constants;
 
 import java.util.List;

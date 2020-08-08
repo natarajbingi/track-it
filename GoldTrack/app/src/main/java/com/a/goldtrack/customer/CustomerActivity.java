@@ -1,24 +1,7 @@
 package com.a.goldtrack.customer;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -32,6 +15,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddCustomerReq;
@@ -48,6 +39,7 @@ import com.a.goldtrack.databinding.ActivityCustomerBinding;
 import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.ImageClickLIstener;
+import com.a.goldtrack.utils.LoaderDecorator;
 import com.a.goldtrack.utils.Sessions;
 import com.squareup.picasso.Picasso;
 
@@ -56,9 +48,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.aprilapps.easyphotopicker.ChooserType;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
-import pl.aprilapps.easyphotopicker.EasyImage;
 import pl.aprilapps.easyphotopicker.MediaFile;
 import pl.aprilapps.easyphotopicker.MediaSource;
 
@@ -88,6 +78,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(CustomerViewModel.class);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_customer);
         binding.setCustModel(viewModel);
+
+        loader = new LoaderDecorator(context);
 
 
         init();
@@ -306,7 +298,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         binding.selectedImgLayout.setVisibility(View.GONE);
         binding.progressbar.setVisibility(View.GONE);
         binding.imgHolderInLastSetCustUp.removeAllViews();
-        hidePbar();
+
+        loader.stop();
     }
 
     private void setEditUpdateVals(int position) {
@@ -456,7 +449,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     public void addCustomerSuccess(AddCustomerRes res) {
         currentCustID = res.id + "";
         binding.progressbar.setVisibility(View.GONE);
-        hidePbar();
+        loader.stop();
 
         binding.addDetailsHolder.setVisibility(View.VISIBLE);
         binding.firstStepLayout.setVisibility(View.GONE);
@@ -475,7 +468,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void getCustomerSuccess(GetCustomerRes res) {
         binding.progressbar.setVisibility(View.GONE);
-        hidePbar();
+        loader.stop();
         binding.listDetailsHolder.setRefreshing(false);
     }
 
@@ -486,7 +479,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             addImagesForAttach(imgFinalList.get(currentNoImgAttach));
         } else {
             binding.progressbar.setVisibility(View.GONE);
-            hidePbar();
+            loader.stop();
             resetAll();
             viewOrEdit = true;
             viewModel.getCustomer(custReq);
@@ -500,7 +493,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onGetDrpSuccess(DropdownDataForCompanyRes res) {
         binding.progressbar.setVisibility(View.GONE);
-       hidePbar();
+        loader.stop();
         binding.listDetailsHolder.setRefreshing(false);
         Sessions.setUserObj(context, res, Constants.dorpDownSession);
     }
@@ -508,13 +501,13 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onErrorSpread(String msg) {
         binding.progressbar.setVisibility(View.GONE);
-        hidePbar();
+        loader.stop();
         Constants.Toasty(context, "Something went wrong, reason: " + msg, Constants.error);
     }
 
     @Override
     public void onPbShow() {
-        showPbar(context);
+        loader.start();
     }
 
     @Override
@@ -537,7 +530,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                         ImgDataProf = Constants.fileToStringOfBitmap(imageFiles[0].getFile());
                         Picasso.get()
                                 .load(imageFiles[0].getFile())
-                               // .fit()
+                                // .fit()
                                 // .centerCrop()
                                 .into(binding.selectedImg);
                     } else if (CAM_REQ_Code_Test == CAM_REQ_Code_Aadhar) {

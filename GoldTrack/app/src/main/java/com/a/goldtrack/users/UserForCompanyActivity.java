@@ -1,24 +1,7 @@
 package com.a.goldtrack.users;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -29,18 +12,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddUserForCompany;
 import com.a.goldtrack.Model.AddUserForCompanyRes;
-import com.a.goldtrack.Model.GetCompanyBranchesRes;
 import com.a.goldtrack.Model.GetUserForCompany;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.Model.UpdateUserDetails;
 import com.a.goldtrack.R;
-import com.a.goldtrack.camera.CamReqActivity;
-import com.a.goldtrack.company.CompanyActivity;
-import com.a.goldtrack.customer.CustomerActivity;
-import com.a.goldtrack.dailyclosure.UserDailyClosureActivity;
 import com.a.goldtrack.databinding.ActivityUserForCompanyBinding;
 import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.Constants;
@@ -60,9 +45,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import pl.aprilapps.easyphotopicker.ChooserType;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
-import pl.aprilapps.easyphotopicker.EasyImage;
 import pl.aprilapps.easyphotopicker.MediaFile;
 import pl.aprilapps.easyphotopicker.MediaSource;
 
@@ -153,7 +136,7 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
             @Override
             public void onChanged(GetUserForCompanyRes getUserForCompanyRes) {
                 mDataset = getUserForCompanyRes.resList;
-                hidePbar();
+                loader.stop();
                 setmRecyclerView();
             }
         });
@@ -394,13 +377,11 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void pbShow() {
-        showPbar(context);
         loader.start();
     }
 
     @Override
     public void pbHide() {
-        hidePbar();
         loader.stop();
     }
 
@@ -479,7 +460,8 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
         @Override
         public void onError(int id, Exception e) {
             // Log.e(TAG, "Error during upload: " + id, e);
-            hidePbar();
+
+            loader.stop();
         }
 
         @Override
@@ -509,13 +491,14 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
             if (newState.toString().equalsIgnoreCase("COMPLETED")) {
                 // req.path1 = uploadedVidUrl;
                 Log.e(TAG, "onStateChanged: " + uploadedVidUrl);
-                hidePbar();
+
+                loader.stop();
                 //  Retro.addEventsRes(req, AddFeedBottomSheetDialog.this);
             } else if (newState.toString().equalsIgnoreCase("FAILED")) {
-                hidePbar();
+
+                loader.stop();
             }
 
-            loader.stop();
         }
     }
 

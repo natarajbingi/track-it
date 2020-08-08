@@ -1,6 +1,5 @@
 package com.a.goldtrack.login;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,7 +30,6 @@ public class LoginActivity extends BaseActivity implements LoginDataHandler {
 
     LoginViewModel loginViewModel;
     ActivityLoginBinding binding;
-    ProgressDialog progressDialog;
     Context context;
     boolean keepMeSignedStr;
 
@@ -50,9 +48,9 @@ public class LoginActivity extends BaseActivity implements LoginDataHandler {
         binding.setViewModel(loginViewModel);
 
         loader = new LoaderDecorator(context);
-        progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
+      //  progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
+       // progressDialog.setIndeterminate(true);
+       // progressDialog.setMessage("Authenticating...");
 
 
         loginViewModel.email.set(binding.edEmail.getText().toString());
@@ -108,7 +106,7 @@ public class LoginActivity extends BaseActivity implements LoginDataHandler {
         req.password = binding.edPassword.getText().toString().trim();
         keepMeSignedStr = binding.keepMeSigned.isChecked();
 
-        progressDialog.show();
+      //  progressDialog.show();
         loader.start();
         loginViewModel.loginCall(req);
     }
@@ -138,7 +136,7 @@ public class LoginActivity extends BaseActivity implements LoginDataHandler {
 
     @Override
     public void onLoginCallSuccess(UserLoginRes loginRes) {
-        progressDialog.dismiss();
+       // progressDialog.dismiss();
         loader.stop();
         if (loginRes.success) {
             if (keepMeSignedStr) {
@@ -161,7 +159,7 @@ public class LoginActivity extends BaseActivity implements LoginDataHandler {
 
     @Override
     public void onLoginError(String msg) {
-        progressDialog.dismiss();
+       // progressDialog.dismiss();
         loader.stop();
         Log.e(TAG, msg);
         Constants.alertDialogShow(context, "Something went wrong, please try again");

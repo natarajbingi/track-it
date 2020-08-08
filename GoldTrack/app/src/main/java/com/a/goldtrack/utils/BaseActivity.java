@@ -1,8 +1,6 @@
 package com.a.goldtrack.utils;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -18,9 +16,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.a.goldtrack.GTrackApplication;
 import com.a.goldtrack.Interfaces.ConnectivityReceiverListener;
-import com.a.goldtrack.R;
 
 import java.util.ArrayList;
 
@@ -42,7 +38,7 @@ public class BaseActivity extends AppCompatActivity implements ConnectivityRecei
     public EasyImage easyImage;
     public static final String PHOTOS_KEY = "easy_image_photos_list";
     /*Images related starts*/
-    public ProgressDialog progressDoalog;
+   // public ProgressDialog progressDoalog;
 
     protected LayoutManagerType mCurrentLayoutManagerType;
     protected RecyclerView.LayoutManager mLayoutManager;
@@ -61,7 +57,7 @@ public class BaseActivity extends AppCompatActivity implements ConnectivityRecei
     }
 
 
-    public void showPbar(Context context) {
+    /*public void showPbar(Context context) {
         if (progressDoalog == null) {
             progressDoalog = new ProgressDialog(context);
             progressDoalog.setTitle(GTrackApplication.getInstance().getApplicationContext().getString(R.string.app_name));
@@ -78,7 +74,7 @@ public class BaseActivity extends AppCompatActivity implements ConnectivityRecei
                 progressDoalog.dismiss();
             }
         }
-    }
+    }*/
 
     public void selectImage(Context context) {
         final CharSequence[] items = {"Take Photo", "Choose from Library", "Cancel"};

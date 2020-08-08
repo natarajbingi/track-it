@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
-import com.a.goldtrack.Model.GetCompanyRes;
-import com.a.goldtrack.Model.GetItemsRes;
 import com.a.goldtrack.R;
 
 import java.util.List;

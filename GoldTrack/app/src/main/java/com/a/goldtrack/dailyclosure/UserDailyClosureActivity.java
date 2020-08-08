@@ -1,15 +1,5 @@
 package com.a.goldtrack.dailyclosure;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -20,30 +10,32 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
-import com.a.goldtrack.Model.AddItemReq;
 import com.a.goldtrack.Model.AddUserDailyClosureReq;
 import com.a.goldtrack.Model.AddUserDailyClosureRes;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
-import com.a.goldtrack.Model.GetItemsRes;
 import com.a.goldtrack.Model.GetTransactionReq;
 import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.Model.GetUserDailyClosureReq;
 import com.a.goldtrack.Model.GetUserDailyClosureRes;
-import com.a.goldtrack.Model.UpdateItemReq;
 import com.a.goldtrack.Model.UpdateUserDailyClosureReq;
 import com.a.goldtrack.Model.UpdateUserDailyClosureRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityUserDailyClosureBinding;
-import com.a.goldtrack.items.CustomItemsAdapter;
 import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.Constants;
+import com.a.goldtrack.utils.LoaderDecorator;
 import com.a.goldtrack.utils.Sessions;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +62,8 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
         binding = DataBindingUtil.setContentView(this, R.layout.activity_user_daily_closure);
         binding.setDClosureModel(viewModel);
         context = UserDailyClosureActivity.this;
+
+        loader = new LoaderDecorator(context);
         init();
     }
 
@@ -499,7 +493,7 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
 
     @Override
     public void onGetDailyClosureSuccess(GetUserDailyClosureRes res) {
-        hidePbar();
+        loader.stop();
         binding.filterHolder.setVisibility(View.GONE);
         holderFilter = true;
     }
@@ -513,7 +507,7 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
         } else {
             Constants.alertDialogShow(context, res.response);
             binding.progressBarForTrans.setVisibility(View.GONE);
-            hidePbar();
+            loader.stop();
         }
     }
 
@@ -527,7 +521,7 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
         } else {
             Constants.alertDialogShow(context, res.response);
             binding.progressBarForTrans.setVisibility(View.GONE);
-            hidePbar();
+            loader.stop();
         }
 
     }
@@ -541,19 +535,19 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
     @Override
     public void onError(String message) {
         binding.progressBarForTrans.setVisibility(View.GONE);
-        hidePbar();
+        loader.stop();
         Constants.Toasty(context, message, Constants.error);
     }
 
     @Override
     public void onErrorComplete(String s) {
         binding.progressBarForTrans.setVisibility(View.GONE);
-        hidePbar();
+        loader.stop();
         Constants.Toasty(context, s, Constants.error);
     }
 
     @Override
     public void onPBShow(String s) {
-        showPbar(context);
+        loader.start();
     }
 }

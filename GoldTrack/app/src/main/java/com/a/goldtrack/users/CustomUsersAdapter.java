@@ -12,7 +12,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
-import com.a.goldtrack.Model.GetCompanyRes;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.utils.Constants;

@@ -2,7 +2,6 @@ package com.a.goldtrack.ui.home;
 
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
-import com.a.goldtrack.Model.GetCustomerRes;
 import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.utils.Constants;

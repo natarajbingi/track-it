@@ -1,6 +1,5 @@
 package com.a.goldtrack.trans;
 
-import com.a.goldtrack.Model.CustomerWithOTPRes;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 
 public interface IDropdownDataCallBacks {

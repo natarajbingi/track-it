@@ -2,7 +2,6 @@ package com.a.goldtrack.customer;
 
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
-import com.a.goldtrack.Model.GetCustomerRes;
-import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.utils.Constants;
 

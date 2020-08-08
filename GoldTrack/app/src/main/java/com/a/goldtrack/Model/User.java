@@ -6,8 +6,6 @@ import android.util.Patterns;
 import androidx.annotation.NonNull;
 import androidx.databinding.BaseObservable;
 
-import java.util.regex.Pattern;
-
 public class User extends BaseObservable {
 
     @NonNull

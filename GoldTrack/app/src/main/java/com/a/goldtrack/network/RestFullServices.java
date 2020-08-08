@@ -11,6 +11,7 @@ import com.a.goldtrack.Model.AddItemReq;
 import com.a.goldtrack.Model.AddItemRes;
 import com.a.goldtrack.Model.AddRemoveCommonImageReq;
 import com.a.goldtrack.Model.AddRemoveCommonImageRes;
+import com.a.goldtrack.Model.AddTransactionReq;
 import com.a.goldtrack.Model.AddTransactionRes;
 import com.a.goldtrack.Model.AddUserDailyClosureReq;
 import com.a.goldtrack.Model.AddUserDailyClosureRes;
@@ -52,14 +53,12 @@ import com.a.goldtrack.customer.ICustomerCallBacs;
 import com.a.goldtrack.dailyclosure.IDailyClosureCallBacks;
 import com.a.goldtrack.items.IItemsCallBacks;
 import com.a.goldtrack.login.ILoginCallBacks;
-import com.a.goldtrack.Model.AddTransactionReq;
 import com.a.goldtrack.trans.IDropdownDataCallBacks;
 import com.a.goldtrack.trans.ITransCallBacks;
 import com.a.goldtrack.ui.home.IHomeFragCallbacks;
 import com.a.goldtrack.users.IUserCallBacks;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
-import com.google.gson.Gson;
 
 import java.util.concurrent.TimeUnit;
 

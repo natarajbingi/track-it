@@ -1,23 +1,10 @@
 package com.a.goldtrack.utils;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
-import android.util.Base64;
-import android.view.View;
-import android.view.Window;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.a.goldtrack.R;
 import com.google.gson.Gson;
-import com.squareup.picasso.Picasso;
 
 /**
  * Created by Nataraj on 07-01-2018.

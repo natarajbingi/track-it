@@ -12,11 +12,7 @@ import com.a.goldtrack.Model.CustomerWithOTPRes;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetTransactionRes;
-import com.a.goldtrack.Model.ItemsTrans;
 import com.a.goldtrack.network.RestFullServices;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TransViewModel extends ViewModel implements ITransCallBacks, IDropdownDataCallBacks {
 

@@ -12,8 +12,6 @@ import com.a.goldtrack.Model.GetUserForCompany;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.network.RestFullServices;
 import com.a.goldtrack.trans.IDropdownDataCallBacks;
-import com.a.goldtrack.utils.Constants;
-import com.a.goldtrack.utils.Sessions;
 
 public class HomeViewModel extends ViewModel implements IHomeFragCallbacks, IDropdownDataCallBacks {
 

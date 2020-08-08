@@ -1,15 +1,5 @@
 package com.a.goldtrack.trans;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,6 +22,16 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddRemoveCommonImageReq;
 import com.a.goldtrack.Model.AddRemoveCommonImageRes;
@@ -44,17 +44,24 @@ import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.Model.ItemsTrans;
 import com.a.goldtrack.R;
-import com.a.goldtrack.camera.CamReqActivity;
 import com.a.goldtrack.databinding.ActivityTransBinding;
 import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.ImageClickLIstener;
+import com.a.goldtrack.utils.LoaderDecorator;
 import com.a.goldtrack.utils.Sessions;
+import com.a.goldtrack.utils.UtilAimgWs;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -101,6 +108,8 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
         binding = DataBindingUtil.setContentView(this, R.layout.activity_trans);
         binding.setTransModel(viewModel);
         context = TransActivity.this;
+
+        loader = new LoaderDecorator(context);
 
         list = new ArrayList<>();
         imgDataList = new ArrayList<>();
@@ -1222,7 +1231,7 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onUiVerifyOtpSuccess(CustomerWithOTPRes body) {
-        hidePbar();
+        loader.stop();
         current = second;
         binding.numbver.setText("Verify +91 " + binding.autoCompleteSelectCustomer.getText().toString().split("-")[1]);
         startCounter();
@@ -1233,7 +1242,7 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onAddTransSuccess(AddTransactionRes res) {
-        hidePbar();
+        loader.stop();
         final SpannableString s = new SpannableString(res.transactionInvoiceURL);
         Linkify.addLinks(s, Linkify.ALL);
         currentTransactionID = res.transactionID;
@@ -1267,7 +1276,7 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onGetDropDownsSuccess(DropdownDataForCompanyRes res) {
-        hidePbar();
+        loader.stop();
 
     }
 
@@ -1278,7 +1287,7 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
             addImagesForAttach(currentTransactionID, imgDataList.get(currentNoImgAttach));
         } else {
             current = sixth;
-            hidePbar();
+            loader.stop();
             Constants.Toasty(context, "Transaction Done Successfully," + "\nBill No:" + currentTransactionRefNo, Constants.success);
             setCurrentLayoutVisible();
         }
@@ -1287,18 +1296,97 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onError(String msg) {
-        hidePbar();
+        loader.stop();
         Constants.Toasty(context, msg, Constants.error);
     }
 
     @Override
     public void onErrorComplete(String msg) {
-        hidePbar();
+        loader.stop();
         Constants.Toasty(context, msg, Constants.warning);
     }
 
     @Override
     public void onpbSHow() {
-        showPbar(context);
+        loader.start();
     }
+
+
+
+    private String selectedType = "";
+    private TransferUtility transferUtility;
+    private UtilAimgWs util;
+    private String uploadedVidUrl;
+
+    private void uploadFile(File file, String filename1) {
+
+        String datemade = Constants.todayDate() + "/";
+        util = new UtilAimgWs();
+        transferUtility = util.getTransferUtility(context);
+
+        TransferObserver observer = transferUtility.upload(
+                UtilAimgWs.AMAZON_S3_USER_FILES_BUCKET_GTRACK + datemade + filename1,//
+                file, CannedAccessControlList.PublicRead
+        );
+
+        uploadedVidUrl = UtilAimgWs.AMAZON_S3_URL + UtilAimgWs.AMAZON_S3_USER_FILES_BUCKET_GTRACK + datemade + filename1;
+
+        observer.setTransferListener(new UploadListener());
+        loader.start();
+
+        Log.d(TAG, "finalImgStr:1 " + filename1);
+        Log.d(TAG, "finalImgStr:1 " + uploadedVidUrl);
+    }
+
+    /*
+     * A TransferListener class that can listen to a upload task and be notified
+     * when the status changes.
+     */
+    class UploadListener implements TransferListener {
+        // Simply updates the UI list when notified.
+        @Override
+        public void onError(int id, Exception e) {
+            // Log.e(TAG, "Error during upload: " + id, e);
+
+            loader.stop();
+        }
+
+        @Override
+        public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+//            Log.d(TAG, String.format("onProgressChanged: %d, total: %d, current: %d",
+//                    id, bytesTotal, bytesCurrent));
+
+            float value;
+            if (bytesTotal >= 1024)
+                value = bytesTotal / 1024f;
+            else
+                value = bytesTotal;
+
+            float cvalue;
+            if (bytesCurrent >= 1024)
+                cvalue = bytesCurrent / 1024f;
+            else
+                cvalue = bytesCurrent;
+
+            //  progressDialog.setMax((int) value);
+            //  progressDialog.setProgress((int) cvalue);
+        }
+
+        @Override
+        public void onStateChanged(int id, TransferState newState) {
+
+            if (newState.toString().equalsIgnoreCase("COMPLETED")) {
+                // req.path1 = uploadedVidUrl;
+                Log.e(TAG, "onStateChanged: " + uploadedVidUrl);
+
+                loader.stop();
+                //  Retro.addEventsRes(req, AddFeedBottomSheetDialog.this);
+            } else if (newState.toString().equalsIgnoreCase("FAILED")) {
+
+                loader.stop();
+            }
+
+        }
+    }
+
 }

@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.GetCompanyRes;
-import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.R;
 import com.squareup.picasso.Picasso;
 

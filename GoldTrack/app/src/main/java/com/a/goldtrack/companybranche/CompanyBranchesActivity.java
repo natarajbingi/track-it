@@ -1,16 +1,5 @@
 package com.a.goldtrack.companybranche;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.ProgressDialog;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
@@ -20,20 +9,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddCompanyBranchesReq;
 import com.a.goldtrack.Model.AddCompanyBranchesRes;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompanyBranches;
-import com.a.goldtrack.Model.GetCompanyBranchesRes;
-import com.a.goldtrack.Model.GetCompanyRes;
 import com.a.goldtrack.Model.UpdateCompanyBranchesReq;
 import com.a.goldtrack.Model.UpdateCompanyBranchesRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityCompanyBranchesBinding;
-import com.a.goldtrack.trans.IDropdownDataCallBacks;
 import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.Constants;
+import com.a.goldtrack.utils.LoaderDecorator;
 import com.a.goldtrack.utils.Sessions;
 
 import java.util.ArrayList;
@@ -62,6 +55,7 @@ public class CompanyBranchesActivity extends BaseActivity implements View.OnClic
         binding.setCmpBrnchModel(viewModel);
         context = CompanyBranchesActivity.this;
 
+        loader = new LoaderDecorator(context);
         init();
     }
 
@@ -87,7 +81,7 @@ public class CompanyBranchesActivity extends BaseActivity implements View.OnClic
             @Override
             public void onChanged(List<DropdownDataForCompanyRes.BranchesList> branchesLists) {
                 mDataset = branchesLists;
-                hidePbar();
+                loader.stop();
                 setmRecyclerView();
             }
         });
@@ -279,7 +273,7 @@ public class CompanyBranchesActivity extends BaseActivity implements View.OnClic
 
     @Override
     public void onSuccessGetBranch(DropdownDataForCompanyRes res) {
-        hidePbar();
+        loader.stop();
         Sessions.setUserObj(context, res, Constants.dorpDownSession);
     }
 
@@ -290,7 +284,7 @@ public class CompanyBranchesActivity extends BaseActivity implements View.OnClic
             resetAll();
             viewModel.onGetBranch(reqGet);
         } else {
-            hidePbar();
+            loader.stop();
             Constants.alertDialogShow(context, branchesRes.response);
         }
     }
@@ -307,12 +301,12 @@ public class CompanyBranchesActivity extends BaseActivity implements View.OnClic
     public void onErrorBranch(String msg) {
 
         Constants.Toasty(context, msg, Constants.warning);
-        hidePbar();
+        loader.stop();
     }
 
     @Override
     public void PbShow() {
-        showPbar(context);
+        loader.start();
     }
 
 
