@@ -3,6 +3,7 @@ package com.a.goldtrack.customer;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -27,6 +28,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.a.goldtrack.Interfaces.RecycleItemClicked;
 import com.a.goldtrack.Model.AddCustomerReq;
 import com.a.goldtrack.Model.AddCustomerRes;
+import com.a.goldtrack.Model.AddRemoveCommonImage;
 import com.a.goldtrack.Model.AddRemoveCommonImageReq;
 import com.a.goldtrack.Model.AddRemoveCommonImageRes;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
@@ -41,10 +43,17 @@ import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.ImageClickLIstener;
 import com.a.goldtrack.utils.LoaderDecorator;
 import com.a.goldtrack.utils.Sessions;
+import com.a.goldtrack.utils.UtilAimgWs;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +72,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     protected CustomCustomersAdapter mAdapter;
     protected List<DropdownDataForCompanyRes.CustomerList> mDataset;
 
-    List<AddRemoveCommonImageReq> imgFinalList;
+    List<AddRemoveCommonImage> imgFinalList;
     GetCustomerReq custReq;
     String ImgData = "", ImgDataProf = "", currentCustID = "";
     int CAM_REQ_Code_Test = 0, CAM_REQ_Code_Profile = 1001,
@@ -85,7 +94,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         init();
     }
 
-    void init() {
+   private void init() {
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         final ActionBar ab = getSupportActionBar();
@@ -186,7 +195,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         req.pin = binding.pin.getText().toString();
         req.companyID = Sessions.getUserString(context, Constants.companyId);
         req.createdBy = Sessions.getUserString(context, Constants.userId);
-        req.profilePicData = ImgDataProf;
+        req.profilePicUrl = ImgDataProf;//todo
 
         if (req.firstName.isEmpty() || req.mobileNum.isEmpty() || req.address1.isEmpty() || req.pin.isEmpty()) {
             Constants.Toasty(context, "Please fill the mandatory fields.", Constants.warning);
@@ -195,7 +204,21 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         viewModel.addCustomer(req);
     }
 
-    void addImagesForAttach(AddRemoveCommonImageReq req) {
+   private void addImagesForAttach(List<AddRemoveCommonImage> imgFinalList) {
+        AddRemoveCommonImageReq req = new AddRemoveCommonImageReq();
+        req.data = new ArrayList<>();
+        for (int i = 0; i < imgFinalList.size(); i++) {
+            AddRemoveCommonImageReq.Data req1 = new AddRemoveCommonImageReq.Data();
+            String imgPath = imgFinalList.get(i).imageType + "_" + imgFinalList.get(i).commonID + ".PNG";
+            uploadFile(imgFinalList.get(i).imageData, imgPath);
+            req1.id = imgFinalList.get(i).id;
+            req1.commonID = imgFinalList.get(i).commonID;
+            req1.actionType = imgFinalList.get(i).actionType;
+            req1.createdBy = imgFinalList.get(i).createdBy;
+            req1.imageType = imgFinalList.get(i).imageType;
+            req1.imageTable = imgFinalList.get(i).imageTable;
+            req1.imagePath = "";//imgFinalList.get(i).imageTable;
+        }
         viewModel.addRemoveCommonImageReq(req);
     }
 
@@ -231,8 +254,13 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 ImageView imgNewScroll = (ImageView) newView1.findViewById(R.id.selectedImgOne);
                 TextView attachmentCount = (TextView) newView1.findViewById(R.id.attachmentCount);
                 attachmentCount.setText(imgFinalList.get(i).imageType + " " + (i + 1));
-                imgNewScroll.setImageBitmap(Constants.stringToBitmap(imgFinalList.get(i).imageData));
-                imgNewScroll.setOnClickListener(new ImageClickLIstener(context, Constants.stringToBitmap(imgFinalList.get(i).imageData)));
+                // imgNewScroll.setImageBitmap(Constants.stringToBitmap(imgFinalList.get(i).imageData));
+                // imgNewScroll.setOnClickListener(new ImageClickLIstener(context, Constants.stringToBitmap(imgFinalList.get(i).imageData)));
+
+                Bitmap myBitmap = BitmapFactory.decodeFile(imgFinalList.get(i).imageData.getAbsolutePath());
+                imgNewScroll.setImageBitmap(myBitmap);
+
+                imgNewScroll.setOnClickListener(new ImageClickLIstener(context, myBitmap));
                 binding.imgHolderInLastSetTrans.addView(newView1);
             }
         } else {
@@ -417,7 +445,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 if (imgFinalList.size() == 0) {
                     Constants.Toasty(context, "Please select at least one image to proceed.");
                 } else {
-                    addImagesForAttach(imgFinalList.get(currentNoImgAttach));
+                    addImagesForAttach(imgFinalList);
                 }
             }
             break;
@@ -476,7 +504,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     public void onAddRemoveCommonImageSuccess(AddRemoveCommonImageRes res) {
         currentNoImgAttach++;
         if (imgFinalList.size() > currentNoImgAttach) {
-            addImagesForAttach(imgFinalList.get(currentNoImgAttach));
+            uploadFile(imgFinalList.get(currentNoImgAttach).imageData, Constants.CreateFileNameWithWith_Height(600, 500, "IMG"));
         } else {
             binding.progressbar.setVisibility(View.GONE);
             loader.stop();
@@ -538,8 +566,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                             if (i == 3) {
                                 break;
                             }
-                            AddRemoveCommonImageReq req = new AddRemoveCommonImageReq();
-                            req.imageData = Constants.fileToStringOfBitmap(imageFile.getFile());
+                            AddRemoveCommonImage req = new AddRemoveCommonImage();
+                            req.imageData = (imageFile.getFile());
                             req.imageType = Constants.imageTypeAADHAR;
                             req.imageTable = Constants.imageTableCUSTOMER_IMAGE;
                             req.actionType = Constants.actionTypeADD;
@@ -555,8 +583,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                             if (i == 3) {
                                 break;
                             }
-                            AddRemoveCommonImageReq req = new AddRemoveCommonImageReq();
-                            req.imageData = Constants.fileToStringOfBitmap(imageFile.getFile());
+                            AddRemoveCommonImage req = new AddRemoveCommonImage();
+                            req.imageData = (imageFile.getFile());
                             req.imageType = Constants.imageTypeDL;
                             req.imageTable = Constants.imageTableCUSTOMER_IMAGE;
                             req.actionType = Constants.actionTypeADD;
@@ -571,8 +599,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                             if (i == 3) {
                                 break;
                             }
-                            AddRemoveCommonImageReq req = new AddRemoveCommonImageReq();
-                            req.imageData = Constants.fileToStringOfBitmap(imageFile.getFile());
+                            AddRemoveCommonImage req = new AddRemoveCommonImage();
+                            req.imageData = (imageFile.getFile());
                             req.imageType = Constants.imageTypeANYTHING;
                             req.imageTable = Constants.imageTableCUSTOMER_IMAGE;
                             req.actionType = Constants.actionTypeADD;
@@ -583,6 +611,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                             i++;
                         }
                     }
+
                     addImgs();
                     if (imageFiles.length > 3) {
                         Constants.Toasty(context, "Max 3 Image can upload.");
@@ -606,6 +635,73 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 //Not necessary to remove any files manually anymore
             }
         });
+    }
+
+
+    private String selectedType = "";
+    private TransferUtility transferUtility;
+    private UtilAimgWs util;
+    private String uploadedVidUrl;
+
+    private void uploadFile(File file, String filename1) {
+
+        String datemade = Constants.todayDate() + "/";
+        util = new UtilAimgWs();
+        transferUtility = util.getTransferUtility(context);
+
+        TransferObserver observer = transferUtility.upload(
+                UtilAimgWs.AMAZON_S3_USER_FILES_BUCKET_GTRACK + datemade + filename1,//
+                file, CannedAccessControlList.PublicRead
+        );
+
+        uploadedVidUrl = UtilAimgWs.AMAZON_S3_URL + UtilAimgWs.AMAZON_S3_USER_FILES_BUCKET_GTRACK + datemade + filename1;
+
+        loader.start();
+        /*
+         * A TransferListener class that can listen to a upload task and be notified
+         * when the status changes.
+         */
+        observer.setTransferListener(new TransferListener() {
+            @Override
+            public void onStateChanged(int id, TransferState newState) {
+
+                if (newState.toString().equalsIgnoreCase("COMPLETED")) {
+                    // req.path1 = uploadedVidUrl;
+                    Log.e(TAG, "onStateChanged: " + uploadedVidUrl);
+                    loader.stop();
+                    //  Retro.addEventsRes(req, AddFeedBottomSheetDialog.this);
+                } else if (newState.toString().equalsIgnoreCase("FAILED")) {
+                    loader.stop();
+                }
+            }
+
+            @Override
+            public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+//            Log.d(TAG, String.format("onProgressChanged: %d, total: %d, current: %d",
+//                    id, bytesTotal, bytesCurrent));
+
+                float value;
+                if (bytesTotal >= 1024)
+                    value = bytesTotal / 1024f;
+                else
+                    value = bytesTotal;
+
+                float cvalue;
+                if (bytesCurrent >= 1024)
+                    cvalue = bytesCurrent / 1024f;
+                else
+                    cvalue = bytesCurrent;
+            }
+
+            @Override
+            public void onError(int id, Exception ex) {
+                loader.stop();
+            }
+        });
+
+        Log.d(TAG, "finalImgStr:1 " + uploadedVidUrl);
+
+
     }
 
 

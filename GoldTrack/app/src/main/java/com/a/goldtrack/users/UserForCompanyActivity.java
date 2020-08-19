@@ -28,6 +28,7 @@ import com.a.goldtrack.Model.UpdateUserDetails;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityUserForCompanyBinding;
 import com.a.goldtrack.utils.BaseActivity;
+import com.a.goldtrack.utils.BitmapTransform;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.LoaderDecorator;
 import com.a.goldtrack.utils.Sessions;
@@ -198,8 +199,9 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
         AddUserForCompany req = new AddUserForCompany();
         req.companyId = Sessions.getUserString(context, Constants.companyId);
         req.user_UID = "DYU_USER_" + Constants.getDateNowAll();
-        req.profilePicUrl = photos.size() != 0 ? Constants.fileToStringOfBitmap(photos.get(0).getFile()) : "";
         req.createdBy = Sessions.getUserString(context, Constants.userId);
+        //req.profilePicUrl = photos.size() != 0 ? Constants.fileToStringOfBitmap(photos.get(0).getFile()) : "";
+        req.profilePicUrl = uploadedImgUrl;
 
         req.userName = binding.emailID.getText().toString();
         req.emailID = binding.emailID.getText().toString();
@@ -238,7 +240,7 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
         req.add = false;
         req.updatedDt = Constants.getDateNowyyyymmmdd();
         req.updatedBy = Sessions.getUserString(context, Constants.userId);
-        req.profilePicUrl = "";
+        // req.profilePicUrl = "";
 
         if (req.firstName.isEmpty() || req.mobileNo.isEmpty() || req.emailID.isEmpty() || req.roles.size() == 0) {
             Constants.Toasty(context, "Please Enter mandatory Fields", Constants.warning);
@@ -253,10 +255,15 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_add_user:
-                if (binding.btnAddUser.getText().toString().equals("Add User"))
-                    setValidNcall();
-                else
+                if (binding.btnAddUser.getText().toString().equals("Add User")) {
+                    if (photos.size() != 0) {
+                        uploadFile(photos.get(0).getFile(), Constants.CreateFileNameWithWith_Height(500, 600, selectedType));
+                    } else {
+                        setValidNcall();
+                    }
+                } else {
                     setValidateUpdate();
+                }
                 break;
             case R.id.add_signal_user_for_Cmpy:
                 if (viewOrEdit) {
@@ -316,6 +323,7 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
         binding.lastName.setText(mDataset.get(position).lastName);
         binding.mobileNo.setText(mDataset.get(position).mobileNo);
         binding.dob.setText(mDataset.get(position).dob);
+
         if (mDataset.get(position).gender.equalsIgnoreCase("MALE"))
             binding.gender.setSelection(1);
         else if (mDataset.get(position).gender.equalsIgnoreCase("FEMALE"))
@@ -334,6 +342,25 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
 
         binding.btnAddUser.setText("Update");
         binding.textView.setText("Update");
+        try {
+            // Loads given image
+            int size = (int) Math.ceil(Math.sqrt(800 * 600));
+            if (mDataset.get(position).profilePicUrl != null)
+                Picasso.get()
+                        .load(mDataset.get(position).profilePicUrl)
+                        .transform(new BitmapTransform(800, 600))
+                        .resize(size, size)
+                        // .centerInside()
+                        // .noPlaceholder()
+                        .placeholder(R.drawable.loader)
+                        .error(R.drawable.load_failed)
+                        .into(binding.selectedImg);
+            else {
+                binding.selectedImg.setImageResource(R.drawable.profile_icon_menu);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         binding.addSignalUserForCmpy.setImageDrawable(getResources().getDrawable(R.drawable.ic_arrow_back));
         binding.listDetailsHolder.setVisibility(View.GONE);
@@ -410,7 +437,9 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
                         .centerCrop()
                         .into(binding.selectedImg);
 
-                uploadFile(photos.get(0).getFile(), Constants.CreateFileNameWithWith_Height(500, 600, selectedType));
+                if (userIdIfEditing > 0) {
+                    uploadFile(photos.get(0).getFile(), Constants.CreateFileNameWithWith_Height(500, 600, selectedType));
+                }
             }
 
             @Override
@@ -429,7 +458,7 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
     private String selectedType = "";
     private TransferUtility transferUtility;
     private UtilAimgWs util;
-    private String uploadedVidUrl;
+    private String uploadedImgUrl;
 
     private void uploadFile(File file, String filename1) {
 
@@ -442,13 +471,13 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
                 file, CannedAccessControlList.PublicRead
         );
 
-        uploadedVidUrl = UtilAimgWs.AMAZON_S3_URL + UtilAimgWs.AMAZON_S3_USER_FILES_BUCKET_GTRACK + datemade + filename1;
+        uploadedImgUrl = UtilAimgWs.AMAZON_S3_URL + UtilAimgWs.AMAZON_S3_USER_FILES_BUCKET_GTRACK + datemade + filename1;
 
         observer.setTransferListener(new UploadListener());
         pbShow();
 
         Log.d(TAG, "finalImgStr:1 " + filename1);
-        Log.d(TAG, "finalImgStr:1 " + uploadedVidUrl);
+        Log.d(TAG, "finalImgStr:1 " + uploadedImgUrl);
     }
 
     /*
@@ -490,12 +519,27 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
 
             if (newState.toString().equalsIgnoreCase("COMPLETED")) {
                 // req.path1 = uploadedVidUrl;
-                Log.e(TAG, "onStateChanged: " + uploadedVidUrl);
-
+                Log.e(TAG, "onStateChanged: " + uploadedImgUrl);
                 loader.stop();
-                //  Retro.addEventsRes(req, AddFeedBottomSheetDialog.this);
-            } else if (newState.toString().equalsIgnoreCase("FAILED")) {
+                if (userIdIfEditing == 0) {
+                    setValidNcall();
+                } else {
+                    UpdateUserDetails req1 = new UpdateUserDetails();
+                    req1.data = new ArrayList<UpdateUserDetails.Data>();
+                    UpdateUserDetails.Data req = new UpdateUserDetails.Data();
+                    req.companyId = binding.companyId.getText().toString().trim();
+                    req.id = userIdIfEditing + "";
+                    req.modify = true;
+                    req.updatedDt = Constants.getDateNowyyyymmmdd();
+                    req.updatedBy = Sessions.getUserString(context, Constants.userId);
+                    req.profilePicUrl = uploadedImgUrl;
 
+                    req1.data.add(req);
+                    viewModel.updateUser(req1);
+                }
+
+            } else if (newState.toString().equalsIgnoreCase("FAILED")) {
+                Constants.Toasty(context, "Image upload failed, please try again.");
                 loader.stop();
             }
 

@@ -20,16 +20,19 @@
         android:background="@color/light_me"
         android:padding="10dp">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/logo_id"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:layout_alignParentLeft="true"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="8dp"
             android:src="@drawable/placeholder"
-            android:visibility="gone" />
-
+            android:tintMode="@color/white"
+            android:visibility="gone"
+            app:civ_border_color="@color/light_me"
+            app:civ_border_width="2dp" />
 
         <TextView
             android:id="@+id/text_header"
