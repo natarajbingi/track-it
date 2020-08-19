@@ -13,7 +13,9 @@ import com.a.goldtrack.HomeActivity;
 import com.a.goldtrack.Model.UserLoginReq;
 import com.a.goldtrack.Model.UserLoginRes;
 import com.a.goldtrack.R;
+import com.a.goldtrack.customer.CustomerActivity;
 import com.a.goldtrack.databinding.ActivityLoginBinding;
+import com.a.goldtrack.trans.TransActivity;
 import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.LoaderDecorator;
@@ -106,7 +108,6 @@ public class LoginActivity extends BaseActivity implements LoginDataHandler {
         req.password = binding.edPassword.getText().toString().trim();
         keepMeSignedStr = binding.keepMeSigned.isChecked();
 
-      //  progressDialog.show();
         loader.start();
         loginViewModel.loginCall(req);
     }

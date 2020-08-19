@@ -51,7 +51,8 @@ public class UtilAimgWs {
     // S3 BUCKET
     public static final String AMAZON_S3_USER_FILES_BUCKET = "schooledubucket";
     public static final String AMAZON_S3_USER_FILES_BUCKET_GAL = "ins_news_gallery/";
-    public static final String AMAZON_S3_USER_FILES_BUCKET_GTRACK = "g_tracking_app/";
+   // public static final String AMAZON_S3_USER_FILES_BUCKET_GTRACK = "g_tracking_app/";
+    public static final String AMAZON_S3_USER_FILES_BUCKET_GTRACK = "goldtrackingapp/";
 
     /**
      * Gets an instance of AWSMobileClient which is

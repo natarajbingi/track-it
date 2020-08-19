@@ -12,6 +12,6 @@ public class AddCustomerReq {
     public String pin;
     public String state;
     public String createdBy;
-    public String profilePicData;
+    public String profilePicUrl;
     public String companyID;
 }

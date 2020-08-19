@@ -318,6 +318,33 @@
                             android:layout_height="wrap_content"
                             android:visibility="gone" />
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/selectedImg"
+                                android:layout_width="105dp"
+                                android:layout_height="105dp"
+                                android:layout_gravity="center_horizontal"
+                                android:src="@drawable/profile_icon_menu"
+                                android:tintMode="@color/white"
+                                app:civ_border_color="@color/light_me"
+                                app:civ_border_width="2dp" />
+
+                            <ImageView
+                                android:id="@+id/triggImgGet"
+                                android:layout_width="55dp"
+                                android:layout_height="55dp"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginTop="-35dp"
+                                android:layout_marginRight="-35dp"
+                                android:padding="10dp"
+                                android:src="@drawable/add_a_photo"
+                                android:tint="@color/button_success" />
+
+                        </LinearLayout>
                         <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -441,8 +468,7 @@
 
                         </LinearLayout>
 
-
-                        <LinearLayout
+                        <!--<LinearLayout
                             android:id="@+id/take_img_customer"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -456,7 +482,7 @@
                                 android:padding="10dp"
                                 android:text="Select profile Image"
                                 android:textSize="14sp" />
-                            <!--Capture / -->
+                            &lt;!&ndash;Capture / &ndash;&gt;
                             <ImageView
                                 android:id="@+id/triggImgGet"
                                 android:layout_width="0dp"
@@ -475,7 +501,7 @@
                             android:layout_width="250dp"
                             android:layout_height="155dp"
                             android:layout_gravity="center_horizontal"
-                            android:src="@drawable/profile_icon_menu" />
+                            android:src="@drawable/profile_icon_menu" />-->
 
                         <LinearLayout
                             android:id="@+id/selectedImgLayout"

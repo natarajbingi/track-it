@@ -70,6 +70,8 @@ dependencies {
     implementation 'com.github.jkwiecien:EasyImage:3.0.3'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.61'
     implementation 'com.airbnb.android:lottie:3.1.0'
+    // Circle Image crop Lib
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
 
     //amazon
     //BEGIN AWS DEPENDENCIES

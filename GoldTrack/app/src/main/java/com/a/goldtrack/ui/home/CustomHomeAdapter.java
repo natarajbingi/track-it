@@ -80,8 +80,8 @@ public class CustomHomeAdapter extends RecyclerView.Adapter<CustomHomeAdapter.Vi
 
         // Log.d(TAG, "Element " + position + " set.");
         viewHolder.textView.setText(mDataSet.get(position).customerName);
-        viewHolder.text_date.setText("Date: " + Constants.getMiliToDateyyyymmmdd(mDataSet.get(position).createdDt)
-                + "\nBill No: " + mDataSet.get(position).billNumber);
+        viewHolder.text_date.setText("Date: " + Constants.getMiliToDateyyyymmmdd(mDataSet.get(position).createdDt));
+              //  + "\nBill No: " + mDataSet.get(position).billNumber);
         String str = "";
         if (mDataSet.get(position).amountPayable.contains("-")) {
             str += "\nPayable Amt: " + Constants.priceToString(mDataSet.get(position).amountPayable);

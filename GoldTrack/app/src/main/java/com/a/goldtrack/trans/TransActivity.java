@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -99,7 +100,9 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
     Map<String, String> customersArr = null;
     AddTransactionReq addTransactionReq;
     int position;
-    List<String> imgDataList;
+    // List<String> imgDataList;
+    List<String> imgUrlList;
+    List<File> imgFileList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +115,9 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
         loader = new LoaderDecorator(context);
 
         list = new ArrayList<>();
-        imgDataList = new ArrayList<>();
+        // imgDataList = new ArrayList<>();
+        imgUrlList = new ArrayList<>();
+        imgFileList = new ArrayList<>();
         init();
     }
 
@@ -316,7 +321,8 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
                             if (i == 3) {
                                 break;
                             }
-                            imgDataList.add(Constants.fileToStringOfBitmap(imageFile.getFile()));
+                            // imgDataList.add(Constants.fileToStringOfBitmap(imageFile.getFile()));
+                            imgFileList.add(imageFile.getFile());
                             i++;
                         }
                         addImgs();
@@ -756,28 +762,34 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
             }
             break;
             case R.id.triggImgGet_Sixth: {
-                if (imgDataList.size() < 2) {
+                // if (imgDataList.size() < 5) {
+                if (imgFileList.size() < 5) {
                     CAM_REQ_Code_Test = CAM_REQ_Code_Two;
                     onSetEasyImg(true, context);
                     selectImage(context);
                 } else {
-                    Constants.Toasty(context, "Max 2 images can attach.");
+                    Constants.Toasty(context, "Max 5 images can attach.");
                 }
             }
             break;
 
             case R.id.btn_addImagesToTrans: {
-                if (imgDataList.size() == 0) {
+//                if (imgDataList.size() == 0) {
+                if (imgFileList.size() == 0) {
                     Constants.Toasty(context, "Please select at least one image to proceed.");
                 } else {
+                    String imgPath = currentTransactionRefNo + "_" + currentNoImgAttach + ".PNG";
+                    uploadFile(imgFileList.get(currentNoImgAttach), imgPath);
 
-                    addImagesForAttach(currentTransactionID, imgDataList.get(currentNoImgAttach));
+                    //  addImagesForAttach(currentTransactionID, imgDataList.get(currentNoImgAttach));
+//                    addImagesForAttach(currentTransactionID, imgFileList.get(currentNoImgAttach));
 
                 }
             }
             break;
             case R.id.removeAll: {
-                imgDataList.clear();
+                // imgDataList.clear();
+                imgFileList.clear();
                 addImgs();
             }
             break;
@@ -788,12 +800,12 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
-    String isEmptyReturn0(String str) {
+  private   String isEmptyReturn0(String str) {
         return str == null ? "0" : str.isEmpty() ? "0" : str;
     }
     // int imc = 0;
 
-    void settingFinalPageVals() {
+  private   void settingFinalPageVals() {
         //  imc++;
         binding.finalLayoutParent.customer.setText(binding.selectedCustomerName.getText().toString());
         binding.selectedTextCommodityPrice.setText("Price: " + Constants.priceToString(binding.commodityRate.getText().toString()));
@@ -850,7 +862,8 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
     private void resetInnerAddItem(boolean finalReset) {
         if (finalReset) {
             list.clear();
-            imgDataList.clear();
+            // imgDataList.clear();
+            imgFileList.clear();
             addImgs();
 
             current = first;
@@ -929,7 +942,7 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
 
     }
 
-    void setCurrentLayoutVisible() {
+    private void setCurrentLayoutVisible() {
         binding.nestedScroll.setVisibility(View.GONE);
         binding.firstStepLayout.setVisibility(View.GONE);
         binding.secondStepOtp.setVisibility(View.GONE);
@@ -974,7 +987,7 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
-    void makeItemVisible(View... v) {
+    private void makeItemVisible(View... v) {
         for (View vv : v) {
             vv.setVisibility(View.VISIBLE);
         }
@@ -999,10 +1012,11 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
         return true;
     }
 
-    void startCounter() {
-        timer = new CountDownTimer(500000, 1000) {
+    private void startCounter() {
+        timer = new CountDownTimer(300000, 1000) {
             public void onTick(long millisUntilFinished) {
-                binding.timer.setText("Resend Code in " + millisUntilFinished / 1000);
+                //binding.timer.setText("Resend Code in " + millisUntilFinished / 1000/60);
+                binding.timer.setText("Resend Code in - " + (millisUntilFinished / 60000)+":"+(millisUntilFinished % 60000 / 1000));
             }
 
             public void onFinish() {
@@ -1013,7 +1027,7 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
         }.start();
     }
 
-    void askBeforeExit() {
+    private void askBeforeExit() {
         new AlertDialog.Builder(TransActivity.this, R.style.AppTheme_Dark_Dialog)
                 .setTitle("Confirm")
                 .setMessage("Are you sure you want to cancel the Transaction process?")
@@ -1032,7 +1046,7 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
     }
 
 
-    CustomerWithOTPReq firstLayoutValidate() {
+    private CustomerWithOTPReq firstLayoutValidate() {
         CustomerWithOTPReq req = new CustomerWithOTPReq();
         req.companyID = Sessions.getUserString(context, Constants.companyId);
         req.userID = Sessions.getUserString(context, Constants.userId);
@@ -1073,16 +1087,21 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
 
     private void addImgs() {
         binding.sixthLayoutParent.imgHolderInLastSetTrans.removeAllViews();
-        if (imgDataList.size() > 0) {
+        // if (imgDataList.size() > 0) {
+        if (imgFileList.size() > 0) {
             binding.sixthLayoutParent.removeAll.setVisibility(View.VISIBLE);
-            for (int i = 0; i < imgDataList.size(); i++) {
+            //            for (int i = 0; i < imgDataList.size(); i++) {
+            for (int i = 0; i < imgFileList.size(); i++) {
                 final ViewGroup newView1 = (ViewGroup) LayoutInflater.from(context)
                         .inflate(R.layout.img_layout, binding.sixthLayoutParent.imgHolderInLastSetTrans, false);
                 ImageView imgNewScroll = (ImageView) newView1.findViewById(R.id.selectedImgOne);
                 TextView attachmentCount = (TextView) newView1.findViewById(R.id.attachmentCount);
                 attachmentCount.setText("Attachment " + (i + 1));
-                imgNewScroll.setImageBitmap(Constants.stringToBitmap(imgDataList.get(i)));
-                imgNewScroll.setOnClickListener(new ImageClickLIstener(context, stringToBitmap(imgDataList.get(i))));
+                Bitmap myBitmap = BitmapFactory.decodeFile(imgFileList.get(i).getAbsolutePath());
+                imgNewScroll.setImageBitmap(myBitmap);
+                // imgNewScroll.setImageBitmap(Constants.stringToBitmap(imgDataList.get(i)));
+                // imgNewScroll.setOnClickListener(new ImageClickLIstener(context, stringToBitmap(imgDataList.get(i))));
+                imgNewScroll.setOnClickListener(new ImageClickLIstener(context, myBitmap));
                 binding.sixthLayoutParent.imgHolderInLastSetTrans.addView(newView1);
             }
         } else {
@@ -1254,19 +1273,26 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
         setCurrentLayoutVisible();
     }
 
-    void addImagesForAttach(String strId, String imgData) {
+    void addImagesForAttach(String strId, List<String> imgUrlList) {
 
-        AddRemoveCommonImageReq req = new AddRemoveCommonImageReq();
-        req.id = null;
-        req.commonID = strId;//.split("/")[0];
-        req.imageData = imgData;
-        req.companyID = Sessions.getUserString(context, Constants.companyId);
-        req.createdBy = Sessions.getUserString(context, Constants.userId);
-        req.actionType = Constants.actionTypeADD;
-        req.imageTable = Constants.imageTableTRANSACTION_IMAGE;
-        req.imageType = Constants.imageTypeANYTHING;
+        AddRemoveCommonImageReq req1 = new AddRemoveCommonImageReq();
+        req1.data = new ArrayList<>();
+        for (String url : imgUrlList) {
+            AddRemoveCommonImageReq.Data req = new AddRemoveCommonImageReq.Data();
+            req.id = strId;//null;
+            req.commonID = strId;//.split("/")[0];
+            // req.imageData = imgData;
+            req.imagePath = url;
+            req.companyID = Sessions.getUserString(context, Constants.companyId);
+            req.createdBy = Sessions.getUserString(context, Constants.userId);
+            req.actionType = Constants.actionTypeADD;
+            req.imageTable = Constants.imageTableTRANSACTION_IMAGE;
+            req.imageType = Constants.imageTypeANYTHING;
 
-        viewModel.addRemoveCommonImageReq(req);
+            req1.data.add(req);
+        }
+
+        viewModel.addRemoveCommonImageReq(req1);
     }
 
     @Override
@@ -1282,21 +1308,22 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onAddRemoveCommonImageSuccess(AddRemoveCommonImageRes res) {
-        currentNoImgAttach++;
-        if (imgDataList.size() > currentNoImgAttach) {
-            addImagesForAttach(currentTransactionID, imgDataList.get(currentNoImgAttach));
-        } else {
-            current = sixth;
-            loader.stop();
-            Constants.Toasty(context, "Transaction Done Successfully," + "\nBill No:" + currentTransactionRefNo, Constants.success);
-            setCurrentLayoutVisible();
-        }
+        // currentNoImgAttach++;
+        //  if (imgDataList.size() > currentNoImgAttach) {
+        //     addImagesForAttach(currentTransactionID, imgDataList.get(currentNoImgAttach), imgUrlList);
+        // } else {
+        current = sixth;
+        loader.stop();
+        Constants.Toasty(context, "Transaction Done Successfully," + "\nBill No:" + currentTransactionRefNo, Constants.success);
+        setCurrentLayoutVisible();
+        //  }
         // todo:
     }
 
     @Override
     public void onError(String msg) {
         loader.stop();
+        if (msg.isEmpty()) msg = "Something went wrong, please try again.";
         Constants.Toasty(context, msg, Constants.error);
     }
 
@@ -1310,7 +1337,6 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
     public void onpbSHow() {
         loader.start();
     }
-
 
 
     private String selectedType = "";
@@ -1378,8 +1404,20 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
             if (newState.toString().equalsIgnoreCase("COMPLETED")) {
                 // req.path1 = uploadedVidUrl;
                 Log.e(TAG, "onStateChanged: " + uploadedVidUrl);
+                //loader.stop();
+                imgUrlList.add(uploadedVidUrl);
+                currentNoImgAttach++;
+                String imgPath = currentTransactionRefNo + "_" + currentNoImgAttach + ".PNG";
+                if (imgFileList.size() > currentNoImgAttach) {
+                    uploadFile(imgFileList.get(currentNoImgAttach), imgPath);
+                } else {
+                    // current = sixth;
+                    addImagesForAttach(currentTransactionID, imgUrlList);
+                    // loader.stop();
 
-                loader.stop();
+                    // Constants.Toasty(context, "Transaction Done Successfully," + "\nBill No:" + currentTransactionRefNo, Constants.success);
+                    // setCurrentLayoutVisible();
+                }
                 //  Retro.addEventsRes(req, AddFeedBottomSheetDialog.this);
             } else if (newState.toString().equalsIgnoreCase("FAILED")) {
 

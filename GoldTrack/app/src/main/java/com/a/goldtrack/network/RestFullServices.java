@@ -345,6 +345,7 @@ public class RestFullServices {
         getClient().getUserForCompany(req).enqueue(new Callback<GetUserForCompanyRes>() {
             @Override
             public void onResponse(Call<GetUserForCompanyRes> call, Response<GetUserForCompanyRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
                 if (response.isSuccessful()) {
                     if (callBacks != null) callBacks.getUsersSuccess(response.body());
                     if (homeFragCallbacks != null)
