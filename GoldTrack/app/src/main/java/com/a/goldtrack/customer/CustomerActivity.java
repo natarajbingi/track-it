@@ -74,7 +74,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     List<AddRemoveCommonImage> imgFinalList;
     GetCustomerReq custReq;
-    String ImgData = "", ImgDataProf = "", currentCustID = "";
+    String ImgDataProfURL = "", currentCustID = "";
+    File ImgDataProf;
     int CAM_REQ_Code_Test = 0, CAM_REQ_Code_Profile = 1001,
             CAM_REQ_Code_Aadhar = 1002, CAM_REQ_Code_Dl = 1003,
             CAM_REQ_Code_Pan = 1004;
@@ -94,7 +95,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         init();
     }
 
-   private void init() {
+    private void init() {
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         final ActionBar ab = getSupportActionBar();
@@ -182,8 +183,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         });
     }
 
+    private AddCustomerReq req;
+
     private void setValidateAdd() {
-        AddCustomerReq req = new AddCustomerReq();
+        req = new AddCustomerReq();
 
         req.firstName = binding.firstName.getText().toString();
         req.lastName = binding.lastName.getText().toString();
@@ -195,29 +198,31 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         req.pin = binding.pin.getText().toString();
         req.companyID = Sessions.getUserString(context, Constants.companyId);
         req.createdBy = Sessions.getUserString(context, Constants.userId);
-        req.profilePicUrl = ImgDataProf;//todo
+        req.profilePicUrl = ImgDataProfURL;//todo
 
         if (req.firstName.isEmpty() || req.mobileNum.isEmpty() || req.address1.isEmpty() || req.pin.isEmpty()) {
             Constants.Toasty(context, "Please fill the mandatory fields.", Constants.warning);
             return;
         }
-        viewModel.addCustomer(req);
+
+        uploadFile(ImgDataProf, req.firstName + "_" + req.mobileNum);
     }
 
-   private void addImagesForAttach(List<AddRemoveCommonImage> imgFinalList) {
+    private void addImagesForAttach(List<AddRemoveCommonImage> imgFinalList) {
         AddRemoveCommonImageReq req = new AddRemoveCommonImageReq();
         req.data = new ArrayList<>();
         for (int i = 0; i < imgFinalList.size(); i++) {
             AddRemoveCommonImageReq.Data req1 = new AddRemoveCommonImageReq.Data();
-            String imgPath = imgFinalList.get(i).imageType + "_" + imgFinalList.get(i).commonID + ".PNG";
-            uploadFile(imgFinalList.get(i).imageData, imgPath);
             req1.id = imgFinalList.get(i).id;
             req1.commonID = imgFinalList.get(i).commonID;
+            req1.companyID = imgFinalList.get(i).companyID;
             req1.actionType = imgFinalList.get(i).actionType;
             req1.createdBy = imgFinalList.get(i).createdBy;
             req1.imageType = imgFinalList.get(i).imageType;
             req1.imageTable = imgFinalList.get(i).imageTable;
-            req1.imagePath = "";//imgFinalList.get(i).imageTable;
+            req1.imagePath = imgFinalList.get(i).imagePath;
+
+            req.data.add(req1);
         }
         viewModel.addRemoveCommonImageReq(req);
     }
@@ -313,9 +318,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         binding.address2.setText("");
         binding.state.setText("");
         binding.pin.setText("");
-        ImgData = null;
+        // ImgData = null;
 
         imgFinalList.clear();
+        currentNoImgAttach = 0;
         binding.addSignalCustomer.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
         binding.selectedImg.setImageDrawable(getResources().getDrawable(R.drawable.profile_icon_menu));
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
@@ -341,7 +347,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         binding.address2.setText(mDataset.get(position).address2);
         binding.state.setText(mDataset.get(position).state);
         binding.pin.setText(mDataset.get(position).pin);
-        ImgData = "";
+        // ImgData = "";
         binding.btnAddCustomer.setText("Update");
         binding.textView.setText("Update");
 
@@ -445,7 +451,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 if (imgFinalList.size() == 0) {
                     Constants.Toasty(context, "Please select at least one image to proceed.");
                 } else {
-                    addImagesForAttach(imgFinalList);
+                    String imgPath = imgFinalList.get(currentNoImgAttach).imageType + "_" + imgFinalList.get(currentNoImgAttach).commonID + ".PNG";
+                    uploadFile(imgFinalList.get(currentNoImgAttach).imageData, imgPath);
+
+                    //  addImagesForAttach(imgFinalList);
                 }
             }
             break;
@@ -502,18 +511,18 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onAddRemoveCommonImageSuccess(AddRemoveCommonImageRes res) {
-        currentNoImgAttach++;
-        if (imgFinalList.size() > currentNoImgAttach) {
-            uploadFile(imgFinalList.get(currentNoImgAttach).imageData, Constants.CreateFileNameWithWith_Height(600, 500, "IMG"));
-        } else {
-            binding.progressbar.setVisibility(View.GONE);
-            loader.stop();
-            resetAll();
-            viewOrEdit = true;
-            viewModel.getCustomer(custReq);
-            Constants.Toasty(context, "Customer Added successfully", Constants.success);
+        // currentNoImgAttach++;
+        // if (imgFinalList.size() > currentNoImgAttach) {
+        //     uploadFile(imgFinalList.get(currentNoImgAttach).imageData, Constants.CreateFileNameWithWith_Height(600, 500, "IMG"));
+        // } else {
+        binding.progressbar.setVisibility(View.GONE);
+        loader.stop();
+        resetAll();
+        viewOrEdit = true;
+        viewModel.getCustomer(custReq);
+        Constants.Toasty(context, "Customer Added successfully", Constants.success);
 
-        }
+        // }
         // todo:
 
     }
@@ -555,7 +564,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 if (imageFiles.length != 0) {
                     int i = 0;
                     if (CAM_REQ_Code_Test == CAM_REQ_Code_Profile) {
-                        ImgDataProf = Constants.fileToStringOfBitmap(imageFiles[0].getFile());
+                        ImgDataProf = imageFiles[0].getFile();
+                        // ImgDataProf = Constants.fileToStringOfBitmap(imageFiles[0].getFile());
                         Picasso.get()
                                 .load(imageFiles[0].getFile())
                                 // .fit()
@@ -666,10 +676,22 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             public void onStateChanged(int id, TransferState newState) {
 
                 if (newState.toString().equalsIgnoreCase("COMPLETED")) {
-                    // req.path1 = uploadedVidUrl;
                     Log.e(TAG, "onStateChanged: " + uploadedVidUrl);
-                    loader.stop();
-                    //  Retro.addEventsRes(req, AddFeedBottomSheetDialog.this);
+                    // loader.stop();
+
+                    if (CAM_REQ_Code_Test != CAM_REQ_Code_Profile) {
+                        imgFinalList.get(currentNoImgAttach).imagePath = uploadedVidUrl;
+                        currentNoImgAttach++;
+                        if (imgFinalList.size() > currentNoImgAttach) {
+                            uploadFile(imgFinalList.get(currentNoImgAttach).imageData, Constants.CreateFileNameWithWith_Height(600, 500, "IMG"));
+                        } else {
+                            addImagesForAttach(imgFinalList);
+                        }
+                    } else {
+                        req.profilePicUrl = uploadedVidUrl;
+                        viewModel.addCustomer(req);
+                    }
+
                 } else if (newState.toString().equalsIgnoreCase("FAILED")) {
                     loader.stop();
                 }
@@ -677,8 +699,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
             @Override
             public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
-//            Log.d(TAG, String.format("onProgressChanged: %d, total: %d, current: %d",
-//                    id, bytesTotal, bytesCurrent));
+                // Log.d(TAG, String.format("onProgressChanged: %d, total: %d, current: %d",  id, bytesTotal, bytesCurrent));
 
                 float value;
                 if (bytesTotal >= 1024)
@@ -698,8 +719,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 loader.stop();
             }
         });
-
-        Log.d(TAG, "finalImgStr:1 " + uploadedVidUrl);
 
 
     }
