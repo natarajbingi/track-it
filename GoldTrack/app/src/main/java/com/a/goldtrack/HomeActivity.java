@@ -41,6 +41,7 @@ public class HomeActivity extends AppCompatActivity
     private AppBarConfiguration mAppBarConfiguration;
     Context context;
     NavigationView navigationView;
+    TextView versionView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,9 @@ public class HomeActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+        versionView = findViewById(R.id.versionView);
+
+        versionView.setText(Constants.versionView);
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow,

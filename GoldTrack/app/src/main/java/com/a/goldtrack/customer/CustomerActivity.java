@@ -184,6 +184,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     private AddCustomerReq req;
+    private UpdateCustomerReq reqUps;
 
     private void setValidateAdd() {
         req = new AddCustomerReq();
@@ -205,7 +206,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             return;
         }
 
-        uploadFile(ImgDataProf, req.firstName + "_" + req.mobileNum);
+        uploadFile(ImgDataProf, req.firstName + "_" + req.mobileNum + "_" + Constants.getDateNowAll());
     }
 
     private void addImagesForAttach(List<AddRemoveCommonImage> imgFinalList) {
@@ -228,25 +229,27 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void setValidateUpdate() {
-        UpdateCustomerReq req = new UpdateCustomerReq();
-        req.id = binding.companyId.getText().toString();
-        req.firstName = binding.firstName.getText().toString();
-        req.lastName = binding.lastName.getText().toString();
-        req.mobileNum = binding.mobileNum.getText().toString();
-        req.emailId = binding.emailId.getText().toString();
-        req.address1 = binding.address1.getText().toString();
-        req.address2 = binding.address2.getText().toString();
-        req.state = binding.state.getText().toString();
-        req.pin = binding.pin.getText().toString();
-        req.delete = false;
+        reqUps = new UpdateCustomerReq();
+        reqUps.id = binding.companyId.getText().toString();
+        reqUps.firstName = binding.firstName.getText().toString();
+        reqUps.lastName = binding.lastName.getText().toString();
+        reqUps.mobileNum = binding.mobileNum.getText().toString();
+        reqUps.emailId = binding.emailId.getText().toString();
+        reqUps.address1 = binding.address1.getText().toString();
+        reqUps.address2 = binding.address2.getText().toString();
+        reqUps.state = binding.state.getText().toString();
+        reqUps.pin = binding.pin.getText().toString();
+        reqUps.delete = false;
+        reqUps.profilePicUrl = "";
         //req.companyID = Sessions.getUserString(context, Constants.companyId);
-        req.updatedBy = Sessions.getUserString(context, Constants.userName);
+        reqUps.updatedBy = Sessions.getUserString(context, Constants.userName);
 
-        if (req.firstName.isEmpty() || req.mobileNum.isEmpty() || req.address1.isEmpty() || req.pin.isEmpty()) {
+        if (reqUps.firstName.isEmpty() || reqUps.mobileNum.isEmpty() || reqUps.address1.isEmpty() || reqUps.pin.isEmpty()) {
             Constants.Toasty(context, "Please fill the mandatory fields.", Constants.warning);
             return;
         }
-        viewModel.updateCustomer(req);
+        uploadFile(ImgDataProf, reqUps.firstName + "_" + reqUps.mobileNum + "_" + Constants.getDateNowAll());
+
     }
 
     private void addImgs() {
@@ -511,19 +514,13 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onAddRemoveCommonImageSuccess(AddRemoveCommonImageRes res) {
-        // currentNoImgAttach++;
-        // if (imgFinalList.size() > currentNoImgAttach) {
-        //     uploadFile(imgFinalList.get(currentNoImgAttach).imageData, Constants.CreateFileNameWithWith_Height(600, 500, "IMG"));
-        // } else {
+
         binding.progressbar.setVisibility(View.GONE);
         loader.stop();
         resetAll();
         viewOrEdit = true;
         viewModel.getCustomer(custReq);
         Constants.Toasty(context, "Customer Added successfully", Constants.success);
-
-        // }
-        // todo:
 
     }
 
@@ -687,9 +684,16 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                         } else {
                             addImagesForAttach(imgFinalList);
                         }
+
                     } else {
-                        req.profilePicUrl = uploadedVidUrl;
-                        viewModel.addCustomer(req);
+                        if (binding.btnAddCustomer.getText().toString().equals("Add Customer")) {
+                            req.profilePicUrl = uploadedVidUrl;
+                            viewModel.addCustomer(req);
+                        } else {
+                            reqUps.profilePicUrl = uploadedVidUrl;
+                            viewModel.updateCustomer(reqUps);
+                        }
+
                     }
 
                 } else if (newState.toString().equalsIgnoreCase("FAILED")) {
@@ -700,7 +704,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             @Override
             public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
                 // Log.d(TAG, String.format("onProgressChanged: %d, total: %d, current: %d",  id, bytesTotal, bytesCurrent));
-
                 float value;
                 if (bytesTotal >= 1024)
                     value = bytesTotal / 1024f;
@@ -719,8 +722,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 loader.stop();
             }
         });
-
-
     }
 
 
