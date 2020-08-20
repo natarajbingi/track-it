@@ -94,6 +94,7 @@ public class HomeActivity extends AppCompatActivity
             case "EXECUTIVE":
                 nav_Menu.findItem(R.id.nav_slideshow).setVisible(false);
                 nav_Menu.findItem(R.id.nav_share).setVisible(false);
+                nav_Menu.findItem(R.id.nav_daily_closure).setVisible(false);
                 break;
             case "REPORT":
                 break;
@@ -121,12 +122,8 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             sendMessage();
             Constants.Toasty(context, " Refreshing..", Constants.info);

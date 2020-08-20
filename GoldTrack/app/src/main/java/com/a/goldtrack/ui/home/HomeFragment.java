@@ -83,7 +83,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
     private GetCompany reqDrop;
 
     boolean holderFilter = true, role;
-    Map<String, String> branchesArr = null, usersArr = null;
+    //Map<String, String> branchesArr = null, usersArr = null;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -233,7 +233,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
                 if (strBrnc.equals("Select")) {
                     strBrnc = "0";
                 } else
-                    strBrnc = branchesArr.get(strBrnc);
+                    strBrnc = Constants.branchesArr.get(strBrnc);
 
                 if (strCom.equals("Select")) {
                     strCom = "";
@@ -248,7 +248,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
                 req.transactionDate = dateFilr;
                 req.commodity = strCom;
                 if (role) {
-                    req.employeeID = struser.equals("0") ? struser : usersArr.get(struser);
+                    req.employeeID = struser.equals("0") ? struser : Constants.usersArr.get(struser);
                 } else
                     req.employeeID = Sessions.getUserString(context, Constants.userId);
 
@@ -337,15 +337,15 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
             Sessions.setUserObj(context, dropdownRes, Constants.dorpDownSession);
             Log.d("TAG", "Saving Dropdown Data");
             if (dropdownRes != null) {
-                branchesArr = new LinkedHashMap<String, String>();
-                branchesArr.put("Select", "Select");
+                Constants.branchesArr = new LinkedHashMap<String, String>();
+                Constants.branchesArr.put("Select", "Select");
                 /* Branches */
                 try {
                     for (int i = 0; i < dropdownRes.branchesList.size(); i++) {
-                        branchesArr.put(dropdownRes.branchesList.get(i).branchName.toUpperCase()
+                        Constants.branchesArr.put(dropdownRes.branchesList.get(i).branchName.toUpperCase()
                                 + "-" + dropdownRes.branchesList.get(i).id, dropdownRes.branchesList.get(i).id);
                     }
-                    setSpinners(binding.selectBranchFilter, branchesArr.keySet().toArray(new String[0]));
+                    setSpinners(binding.selectBranchFilter, Constants.branchesArr.keySet().toArray(new String[0]));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -362,15 +362,15 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         if (res.success) {
             Log.d("TAG", "GetUserForCompanyRes Data");
             if (res != null) {
-                usersArr = new LinkedHashMap<String, String>();
-                usersArr.put("Select", "Select");
+                Constants.usersArr = new LinkedHashMap<String, String>();
+                Constants.usersArr.put("Select", "Select");
                 /* users */
                 try {
                     for (int i = 0; i < res.resList.size(); i++) {
-                        usersArr.put(res.resList.get(i).firstName.toUpperCase()
+                        Constants.usersArr.put(res.resList.get(i).firstName.toUpperCase()
                                 + "-" + res.resList.get(i).lastName, res.resList.get(i).id);
                     }
-                    setSpinners(binding.selectEmployeeFilter, usersArr.keySet().toArray(new String[0]));
+                    setSpinners(binding.selectEmployeeFilter, Constants.usersArr.keySet().toArray(new String[0]));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
