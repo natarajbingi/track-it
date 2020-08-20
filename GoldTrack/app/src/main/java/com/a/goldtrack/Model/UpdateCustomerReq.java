@@ -12,5 +12,6 @@ public class UpdateCustomerReq {
     public String pin;
     public String state;
     public boolean delete;
+    public String profilePicUrl;
     public String updatedBy;
 }

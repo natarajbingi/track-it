@@ -800,12 +800,12 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
-  private   String isEmptyReturn0(String str) {
+    private String isEmptyReturn0(String str) {
         return str == null ? "0" : str.isEmpty() ? "0" : str;
     }
     // int imc = 0;
 
-  private   void settingFinalPageVals() {
+    private void settingFinalPageVals() {
         //  imc++;
         binding.finalLayoutParent.customer.setText(binding.selectedCustomerName.getText().toString());
         binding.selectedTextCommodityPrice.setText("Price: " + Constants.priceToString(binding.commodityRate.getText().toString()));
@@ -1016,7 +1016,7 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
         timer = new CountDownTimer(300000, 1000) {
             public void onTick(long millisUntilFinished) {
                 //binding.timer.setText("Resend Code in " + millisUntilFinished / 1000/60);
-                binding.timer.setText("Resend Code in - " + (millisUntilFinished / 60000)+":"+(millisUntilFinished % 60000 / 1000));
+                binding.timer.setText("Resend Code in - " + (millisUntilFinished / 60000) + ":" + (millisUntilFinished % 60000 / 1000));
             }
 
             public void onFinish() {
@@ -1056,7 +1056,10 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
         if (mob.isEmpty()) {
             return null;
         }
-        req.customerMob = mob.split("-")[1].trim();
+        String[] mobStrings = mob.split("-");
+        req.customerMob = mobStrings[1].trim();
+        req.customerName = mobStrings[0].trim();
+        req.userName = Sessions.getUserString(context, Constants.userName);
         req.counter = (counter + 1) + "";
         req.totalTransactionAmount = totalTransactionAmount;
         req.otp = otp;
