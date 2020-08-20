@@ -90,9 +90,6 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         context = getContext();
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
 
-        // progressDialog = new ProgressDialog(context, R.style.AppTheme_ProgressBar);
-        // progressDialog.setIndeterminate(true);
-        // progressDialog.setMessage("in Progress...");
 
         loader = new LoaderDecorator(context);
         String str = Sessions.getUserString(context, Constants.roles);
