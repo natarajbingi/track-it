@@ -50,6 +50,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.util.Random;
 import java.util.TimeZone;
 
@@ -96,8 +97,20 @@ public class Constants {
     public static final int info = 2;
     public static final int warning = 3;
     public static final int custom = 4;
-    public static final String versionView = "SMG_version1.0.22";
+    public static final String versionView = "SMG_version1.0.23";
     private static ProgressDialog pd;
+    public static Map<String, String> branchesArr = null, usersArr = null;
+
+    public Map<String, String> getBranchesArr() {
+        return branchesArr;
+    }
+
+
+    public Map<String, String> getUsersArr() {
+        return usersArr;
+    }
+
+
 
     public static enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,

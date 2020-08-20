@@ -222,6 +222,7 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
         viewModel.getDailyClosures(req);
         setSpinners(binding.selectBranch, branchesArr.keySet().toArray(new String[0]));
         setSpinners(binding.selectBranchFilter, branchesArr.keySet().toArray(new String[0]));
+        setSpinners(binding.selectUser, Constants.usersArr.keySet().toArray(new String[0]));
 
     }
 
@@ -352,7 +353,8 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
 
         req.companyId = Sessions.getUserString(context, Constants.companyId);
         req.branchId = branchesArr.get(binding.selectBranch.getSelectedItem().toString());//.split("-")[1];
-        req.userId = Sessions.getUserString(context, Constants.userId);
+        // req.userId = Sessions.getUserString(context, Constants.userId);
+        req.userId = Constants.usersArr.get(binding.selectUser.getSelectedItem().toString());
 
         req.date = binding.dateClosure.getText().toString();
         req.fundRecieved = binding.fundRecieved.getText().toString();
@@ -362,6 +364,9 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
         req.comments = binding.comments.getText().toString();
         req.createdBy = Sessions.getUserString(context, Constants.userId);
 
+        if (req.userId.equals("Select")) {
+            Constants.Toasty(context, "Please select user to proceed", Constants.warning);
+        }
 
         if (req.comments.isEmpty() || req.date.isEmpty() || req.cashInHand.isEmpty()
                 || req.fundRecieved.isEmpty() || req.branchId.equalsIgnoreCase("Select")) {
