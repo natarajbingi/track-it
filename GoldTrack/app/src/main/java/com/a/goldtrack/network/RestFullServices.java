@@ -451,6 +451,29 @@ public class RestFullServices {
         });
 
     }
+    /*
+     * Customer Reg*/
+    public static void getPTOCustomer(CustomerWithOTPReq req, ICustomerCallBacs callBacks) {
+
+        getClient().validateCustomerWithOTP(req).enqueue(new Callback<CustomerWithOTPRes>() {
+            @Override
+            public void onResponse(Call<CustomerWithOTPRes> call, Response<CustomerWithOTPRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
+                if (response.isSuccessful())
+                    if (response.body().success)
+                        callBacks.onOtpSuccess(response.body());
+                    else
+                        callBacks.onErrorComplete(response.body().response);
+                else callBacks.onErrorComplete("Something went wrong, Server Error");
+            }
+
+            @Override
+            public void onFailure(Call<CustomerWithOTPRes> call, Throwable t) {
+                callBacks.onError(t.getMessage());
+            }
+        });
+
+    }
 
     public static void addTransaction(AddTransactionReq req, ITransCallBacks callBacks) {
         getClient().addTransaction(req).enqueue(new Callback<AddTransactionRes>() {

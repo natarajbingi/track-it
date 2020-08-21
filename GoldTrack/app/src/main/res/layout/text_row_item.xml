@@ -59,7 +59,7 @@
             android:layout_marginBottom="15dp"
             android:layout_toRightOf="@+id/logo_id"
             android:ellipsize="end"
-            android:maxLines="3"
+            android:maxLines="4"
             android:text="@string/element_text"
             android:textColor="@color/oil"
             android:textSize="16sp" />

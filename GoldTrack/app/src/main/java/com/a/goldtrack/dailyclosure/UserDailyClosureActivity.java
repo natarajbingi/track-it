@@ -162,6 +162,7 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
         });
         binding.addSignalClosure.setOnClickListener(this);
         binding.btnAddClosure.setOnClickListener(this);
+        binding.fetchTrans.setOnClickListener(this);
 
         binding.filterReq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,6 +178,24 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
         binding.selectBranch.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                binding.dateClosure.setText("");
+                binding.fundRecieved.setText("");
+                binding.expenses.setText("");
+                binding.expensesDesc.setText("");
+                binding.cashInHand.setText("");
+                binding.totalAmt.setText("");
+                binding.comments.setText("");
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        binding.selectUser.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                binding.selectBranch.setSelection(0);
                 binding.dateClosure.setText("");
                 binding.fundRecieved.setText("");
                 binding.expenses.setText("");
@@ -241,16 +260,20 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
     void gettingTrans() {
         GetTransactionReq reqTrans = new GetTransactionReq();
         // String recFund = binding.fundRecieved.getText().toString();
-        reqTrans.branchID = branchesArr.get(binding.selectBranch.getSelectedItem().toString());
         reqTrans.transactionDate = binding.dateClosure.getText().toString();
         reqTrans.companyID = Sessions.getUserString(context, Constants.companyId);
-        reqTrans.employeeID = Sessions.getUserString(context, Constants.userId);
-        /*if (recFund.isEmpty()) {
-            Constants.Toasty(context, "Please enter Fund received amount.");
-            return;
-        }*/
-        if (reqTrans.branchID.equals("Select") || reqTrans.transactionDate.isEmpty()) {
-            Constants.Toasty(context, "Please select Branch and date");
+
+        if (binding.btnAddClosure.getText().toString().contains("Update")) {
+            String[] sDete = dete.split("_");
+            reqTrans.branchID = sDete[0];
+            reqTrans.employeeID = sDete[1];
+        } else {
+            reqTrans.branchID = branchesArr.get(binding.selectBranch.getSelectedItem().toString());
+            String empId = Constants.usersArr.get(binding.selectUser.getSelectedItem().toString());
+            reqTrans.employeeID = empId;
+        }
+        if (reqTrans.branchID.equals("Select") || reqTrans.employeeID.equals("Select") || reqTrans.transactionDate.isEmpty()) {
+            Constants.Toasty(context, "Please select User , Branch and date");
         } else {
             binding.progressBarForTrans.setVisibility(View.VISIBLE);
             binding.btnAddClosure.setEnabled(false);
@@ -344,12 +367,15 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
                 }
                 viewOrEdit = !viewOrEdit;
                 break;
+
+            case R.id.fetchTrans:
+                gettingTrans();
+                break;
         }
     }
 
     private void setValidateAdd() {
         AddUserDailyClosureReq req = new AddUserDailyClosureReq();
-
 
         req.companyId = Sessions.getUserString(context, Constants.companyId);
         req.branchId = branchesArr.get(binding.selectBranch.getSelectedItem().toString());//.split("-")[1];
@@ -373,6 +399,8 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
             Constants.Toasty(context, "Please Enter mandatory Fields", Constants.warning);
             return;
         }
+
+        req.comments = req.comments + "_" + binding.totalAmt.getText().toString();
 
         viewModel.addDailyClosure(req);
     }
@@ -398,6 +426,7 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
             Constants.Toasty(context, "Please Enter mandatory Fields", Constants.warning);
             return;
         }
+        reqData.comments = reqData.comments + "_" + binding.totalAmt.getText().toString();
 
         req.data = new ArrayList<>();
         req.data.add(reqData);
@@ -407,6 +436,7 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
 
     private void resetAll() {
         binding.selectBranch.setSelection(0);
+        binding.selectUser.setSelection(0);
         binding.dateClosure.setText("");
         binding.fundRecieved.setText("");
         binding.companyId.setText("");
@@ -423,8 +453,10 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
         binding.addSignalClosure.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
         binding.listDetailsHolder.setVisibility(View.VISIBLE);
         binding.extraData.setVisibility(View.GONE);
-        binding.selectBranch.setVisibility(View.VISIBLE);
+        binding.selectBranchLayout.setVisibility(View.VISIBLE);
+        binding.selectUserLayout.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.GONE);
+        binding.fetchTrans.setVisibility(View.GONE);
 
     }
 
@@ -433,6 +465,8 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
         Constants.Toasty(context, "Edit " + mDataset.get(position).userName, Constants.info);
         setEditUpdateVals(position);
     }
+
+    String dete = "";
 
     private void setEditUpdateVals(int position) {
 
@@ -443,17 +477,23 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
         binding.expenses.setText(mDataset.get(position).expenses);
         binding.cashInHand.setText(mDataset.get(position).cashInHand);
         binding.expensesDesc.setText(mDataset.get(position).expensesDesc);
-        binding.comments.setText(mDataset.get(position).comments);
-        binding.extraData.setText("Branch: " + mDataset.get(position).companyBranchName);
-       /* binding.selectBranch.setSelection(
-                ((ArrayAdapter<String>)
-                        binding.selectBranch.getAdapter()
-                ).getPosition(mDataset.get(position).branchId));*/
-        binding.selectBranch.setVisibility(View.GONE);
+        dete = mDataset.get(position).branchId + "_" + mDataset.get(position).userId;
+        if (mDataset.get(position).comments.contains("_")) {
+            String[] cmts = mDataset.get(position).comments.split("_");
+            binding.comments.setText(cmts[0]);
+            binding.totalAmt.setText(cmts[1]);
+
+        } else
+            binding.comments.setText(mDataset.get(position).comments);
+
+        binding.selectBranchLayout.setVisibility(View.GONE);
+        binding.selectUserLayout.setVisibility(View.GONE);
         binding.extraData.setVisibility(View.VISIBLE);
 
-        String extra = "User Name: " + mDataset.get(position).userName
-                + "\nCompany Name: " + mDataset.get(position).companyName + "\n";
+        String extra = "User: " + mDataset.get(position).userName
+                + "\nBranch: " + mDataset.get(position).companyBranchName
+                + "\nCompany Name: " + mDataset.get(position).companyName
+                + "\n";
         binding.extraData.setText(extra);
 
         double expesnse = Double.parseDouble(mDataset.get(position).expenses.isEmpty() ? "0" : mDataset.get(position).expenses);
@@ -470,8 +510,9 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
 
         binding.addSignalClosure.setImageDrawable(getResources().getDrawable(R.drawable.ic_arrow_back));
         binding.listDetailsHolder.setVisibility(View.GONE);
+        binding.fetchTrans.setVisibility(View.VISIBLE);
         binding.addDetailsHolder.setVisibility(View.VISIBLE);
-        viewOrEdit = !viewOrEdit;
+        viewOrEdit = false;
     }
 
     @Override
@@ -481,12 +522,6 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
             binding.dateClosureFilter.setText(date);
 
         } else if (whichDate == closureDate) {
-            if (!role) {
-                gettingTrans();
-            } else if (binding.btnAddClosure.getText().toString().equalsIgnoreCase("Add")) {
-                gettingTrans();
-            }
-
             binding.dateClosure.setText(date);
             binding.fundRecieved.setText("");
             binding.expenses.setText("");
@@ -494,6 +529,13 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
             binding.cashInHand.setText("");
             binding.totalAmt.setText("");
             binding.comments.setText("");
+
+            if (!role) {
+                gettingTrans();
+            } else if (binding.btnAddClosure.getText().toString().equalsIgnoreCase("Add")) {
+                gettingTrans();
+            }
+
         }
     }
 
@@ -535,6 +577,7 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
     @Override
     public void onGetTransSuccess(GetTransactionRes res) {
         binding.progressBarForTrans.setVisibility(View.GONE);
+        loader.stop();
         binding.btnAddClosure.setEnabled(true);
     }
 

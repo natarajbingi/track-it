@@ -260,6 +260,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:padding="8dp"
+                        android:maxLength="2"
                         android:text="Margin Amount"
                         android:textColor="@color/oil"
                         android:textStyle="bold" />

@@ -86,6 +86,9 @@ public class Constants {
     public static final String actionTypeADD = "ADD";
     public static final String actionTypeREMOVE = "REMOVE";
 
+    public static final String VALIDATE_CUSTOMER = "VALIDATE_CUSTOMER";///
+    public static final String VALIDATE_TRANSACTION = "VALIDATE_TRANSACTION";///
+
     public static int SELECT_VID = 901;
     public static final String IMG = "IMG";
     public static final String VIDEO = "Video";
@@ -97,7 +100,7 @@ public class Constants {
     public static final int info = 2;
     public static final int warning = 3;
     public static final int custom = 4;
-    public static final String versionView = "SMG_version1.0.23";
+    public static final String versionView = "SMG_version1.0.24";
     private static ProgressDialog pd;
     public static Map<String, String> branchesArr = null, usersArr = null;
 

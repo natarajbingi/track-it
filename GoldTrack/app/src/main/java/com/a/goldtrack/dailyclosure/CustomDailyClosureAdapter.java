@@ -78,9 +78,15 @@ public class CustomDailyClosureAdapter extends RecyclerView.Adapter<CustomDailyC
         } else {
             viewHolder.parent_tile_bg.setBackgroundColor(context.getResources().getColor(R.color.white));
         }
-        viewHolder.textView.setText(mDataSet.get(position).userName + "\t\tBranch: " + mDataSet.get(position).branchId);
+        viewHolder.textView.setText(mDataSet.get(position).userName + "\t\tBranch: " + mDataSet.get(position).companyBranchName);
+        String transAmt = "";
+        if (mDataSet.get(position).comments.contains("_")) {
+            String[] cmts = mDataSet.get(position).comments.split("_");
+            transAmt = "\nTrans Amt: " + cmts[1];
+        }
         viewHolder.text_sub.setText("Fund Received: " + mDataSet.get(position).fundRecieved
-                + "\t\tCash In Hand: " + mDataSet.get(position).cashInHand
+                + "\nCash In Hand: " + mDataSet.get(position).cashInHand
+                + transAmt
                 + "\nExpenses: " + mDataSet.get(position).expenses);
         viewHolder.text_date.setText(mDataSet.get(position).date);
     }

@@ -93,6 +93,7 @@
                         android:layout_height="wrap_content"
                         android:hint="Commodity Weight in Grms*"
                         android:inputType="text|number"
+                        android:maxLength="7"
                         android:text="" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -115,6 +116,7 @@
                             android:layout_height="wrap_content"
                             android:hint="Stone Wastage in Grms"
                             android:inputType="text|number"
+                            android:maxLength="6"
                             android:text="" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -130,6 +132,7 @@
                             android:layout_height="wrap_content"
                             android:hint="Other Wastage in Grms"
                             android:inputType="text|number"
+                            android:maxLength="6"
                             android:text="" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -154,6 +157,7 @@
                             android:layout_height="wrap_content"
                             android:hint="Purity % *"
                             android:inputType="text|number"
+                            android:maxLength="2"
                             android:text="" />
                     </com.google.android.material.textfield.TextInputLayout>
 

@@ -21,6 +21,7 @@
             android:id="@+id/list_details_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:animateLayoutChanges="true"
             android:orientation="vertical">
 
@@ -162,8 +163,7 @@
             android:id="@+id/add_details_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:animateLayoutChanges="true"
-            android:visibility="gone">
+            android:animateLayoutChanges="true">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -212,35 +212,50 @@
                         android:layout_height="wrap_content"
                         android:visibility="gone" />
 
-
-                    <TextView
+                    <LinearLayout
+                        android:id="@+id/select_User_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
-                        android:text="Select Branch *"
-                        android:textSize="12sp" />
+                        android:orientation="vertical">
 
-                    <Spinner
-                        android:id="@+id/select_branch"
-                        style="@style/Widget.AppCompat.Spinner.Underlined"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:entries="@array/example" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:text="Select User *"
+                            android:textSize="12sp" />
 
+                        <Spinner
+                            android:id="@+id/select_user"
+                            style="@style/Widget.AppCompat.Spinner.Underlined"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:entries="@array/example" />
 
-                    <TextView
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/select_Branch_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
-                        android:text="Select User *"
-                        android:textSize="12sp" />
+                        android:orientation="vertical">
 
-                    <Spinner
-                        android:id="@+id/select_user"
-                        style="@style/Widget.AppCompat.Spinner.Underlined"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:entries="@array/example" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:text="Select Branch *"
+                            android:textSize="12sp" />
+
+                        <Spinner
+                            android:id="@+id/select_branch"
+                            style="@style/Widget.AppCompat.Spinner.Underlined"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:entries="@array/example" />
+
+                    </LinearLayout>
+
 
                     <TextView
                         android:id="@+id/extraData"
@@ -330,6 +345,11 @@
                         android:orientation="horizontal"
                         android:padding="8dp">
 
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:id="@+id/fetchTrans"
+                            android:text="Fetch"
+                            android:layout_height="35dp"/>
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"

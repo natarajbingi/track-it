@@ -701,6 +701,11 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
                     break;
                 }
 
+                if (commodityWeight1 < (stoneWastage1 + otherWastage1)) {
+                    Constants.Toasty(context, "Please enter Stone & other wastage less than Commodity", Constants.warning);
+                    break;
+                }
+
                 float netWeight1 = (commodityWeight1 - (stoneWastage1 + otherWastage1));
                 float netWeight1WithPurity = (netWeight1 * purity1) / 100;
 
@@ -757,7 +762,7 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
                     onSetEasyImg(false, context);
                     selectImage(context);
                 } else {
-                    Constants.Toasty(context, "NFC not enabled.");
+                    Constants.Toasty(context, "NBFC not enabled.");
                 }
             }
             break;
@@ -1063,6 +1068,7 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
         req.counter = (counter + 1) + "";
         req.totalTransactionAmount = totalTransactionAmount;
         req.otp = otp;
+        req.type = Constants.VALIDATE_TRANSACTION;
 
         for (int i = 0; i < dropdownRes.customerList.size(); i++) {
             if (dropdownRes.customerList.get(i).id.equals(req.customerID)) {

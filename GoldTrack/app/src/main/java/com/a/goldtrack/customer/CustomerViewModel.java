@@ -8,6 +8,8 @@ import com.a.goldtrack.Model.AddCustomerReq;
 import com.a.goldtrack.Model.AddCustomerRes;
 import com.a.goldtrack.Model.AddRemoveCommonImageReq;
 import com.a.goldtrack.Model.AddRemoveCommonImageRes;
+import com.a.goldtrack.Model.CustomerWithOTPReq;
+import com.a.goldtrack.Model.CustomerWithOTPRes;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetCustomerReq;
@@ -45,6 +47,11 @@ public class CustomerViewModel extends ViewModel implements ICustomerCallBacs, I
         view.onPbShow();
         req1.companyId = Sessions.getUserString(GTrackApplication.getInstance().getApplicationContext(), Constants.companyId);
         RestFullServices.getDropdownDataForCompanyHome(req1, this);
+    }
+
+    public void verifyOtp(CustomerWithOTPReq req) {
+        view.onPbShow();
+        RestFullServices.getPTOCustomer(req, this);
     }
 
     public void addCustomer(AddCustomerReq req) {
@@ -98,6 +105,11 @@ public class CustomerViewModel extends ViewModel implements ICustomerCallBacs, I
     @Override
     public void addCustomerSuccess(AddCustomerRes body) {
         view.addCustomerSuccess(body);
+    }
+
+    @Override
+    public void onOtpSuccess(CustomerWithOTPRes body) {
+        view.onOtpSuccess(body);
     }
 
 

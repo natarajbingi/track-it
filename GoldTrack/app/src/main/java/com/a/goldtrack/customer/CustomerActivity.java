@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -31,6 +32,8 @@ import com.a.goldtrack.Model.AddCustomerRes;
 import com.a.goldtrack.Model.AddRemoveCommonImage;
 import com.a.goldtrack.Model.AddRemoveCommonImageReq;
 import com.a.goldtrack.Model.AddRemoveCommonImageRes;
+import com.a.goldtrack.Model.CustomerWithOTPReq;
+import com.a.goldtrack.Model.CustomerWithOTPRes;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCustomerReq;
 import com.a.goldtrack.Model.GetCustomerRes;
@@ -112,6 +115,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         binding.triggImgKYC.setOnClickListener(this);
         binding.btnAddImagesToCust.setOnClickListener(this);
         binding.removeAll.setOnClickListener(this);
+        binding.submitOtp.setOnClickListener(this);
         onSetEasyImg(false, context);
 
         custReq = new GetCustomerReq();
@@ -185,9 +189,28 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     private AddCustomerReq req;
     private UpdateCustomerReq reqUps;
+    private int counter = 0;
+    private String otp = "";
+    CountDownTimer timer;
+
+    private void startCounter() {
+        timer = new CountDownTimer(300000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                //binding.timer.setText("Resend Code in " + millisUntilFinished / 1000/60);
+                binding.timer.setText("Resend Code in - " + (millisUntilFinished / 60000) + ":" + (millisUntilFinished % 60000 / 1000));
+            }
+
+            public void onFinish() {
+                binding.resend.setEnabled(true);
+                binding.resend.setVisibility(View.VISIBLE);
+                binding.timer.setText("Tap on resend");
+            }
+        }.start();
+    }
 
     private void setValidateAdd() {
         req = new AddCustomerReq();
+        otp = Constants.getRandomNumberString();
 
         req.firstName = binding.firstName.getText().toString();
         req.lastName = binding.lastName.getText().toString();
@@ -206,7 +229,21 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             return;
         }
 
-        uploadFile(ImgDataProf, req.firstName + "_" + req.mobileNum + "_" + Constants.getDateNowAll());
+        CustomerWithOTPReq reqOtp = new CustomerWithOTPReq();
+        reqOtp.companyID = Sessions.getUserString(context, Constants.companyId);
+        reqOtp.userID = Sessions.getUserString(context, Constants.userId);
+        String totalTransactionAmount = "0";
+        reqOtp.customerID = "0";
+
+        reqOtp.customerMob = binding.mobileNum.getText().toString();
+        reqOtp.customerName = req.firstName + " " + req.lastName;
+        reqOtp.userName = Sessions.getUserString(context, Constants.userName);
+        reqOtp.counter = (counter + 1) + "";
+        reqOtp.totalTransactionAmount = totalTransactionAmount;
+        reqOtp.otp = otp;
+        reqOtp.type = Constants.VALIDATE_CUSTOMER;
+
+        viewModel.verifyOtp(reqOtp);
     }
 
     private void addImagesForAttach(List<AddRemoveCommonImage> imgFinalList) {
@@ -240,7 +277,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         reqUps.state = binding.state.getText().toString();
         reqUps.pin = binding.pin.getText().toString();
         reqUps.delete = false;
-        reqUps.profilePicUrl = "";
+        // reqUps.profilePicUrl = "";
         //req.companyID = Sessions.getUserString(context, Constants.companyId);
         reqUps.updatedBy = Sessions.getUserString(context, Constants.userName);
 
@@ -248,7 +285,13 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             Constants.Toasty(context, "Please fill the mandatory fields.", Constants.warning);
             return;
         }
-        uploadFile(ImgDataProf, reqUps.firstName + "_" + reqUps.mobileNum + "_" + Constants.getDateNowAll());
+
+        if (ImgDataProf == null) {
+            viewModel.updateCustomer(reqUps);
+        } else {
+            uploadFile(ImgDataProf, reqUps.firstName + "_" + reqUps.mobileNum + "_" + Constants.getDateNowAll());
+        }
+
 
     }
 
@@ -321,8 +364,9 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         binding.address2.setText("");
         binding.state.setText("");
         binding.pin.setText("");
+        binding.otpedit.setText("");
         // ImgData = null;
-
+        counter = 0;
         imgFinalList.clear();
         currentNoImgAttach = 0;
         binding.addSignalCustomer.setImageDrawable(getResources().getDrawable(R.drawable.ic_add));
@@ -332,6 +376,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         binding.firstStepLayout.setVisibility(View.GONE);
         binding.secondStepLayout.setVisibility(View.GONE);
         binding.editAgainHolder.setVisibility(View.VISIBLE);
+        binding.secondStepOtp.setVisibility(View.GONE);
         binding.selectedImgLayout.setVisibility(View.GONE);
         binding.progressbar.setVisibility(View.GONE);
         binding.imgHolderInLastSetCustUp.removeAllViews();
@@ -410,6 +455,26 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.submitOtp:
+
+                String otpeditStr = binding.otpedit.getText().toString();
+                if (otpeditStr.isEmpty()) {
+                    Constants.Toasty(context, "Please enter OTP to proceed", Constants.error);
+                } else {
+                    if (otp.equals(otpeditStr)) {
+                        timer.cancel();
+                        binding.secondStepOtp.setVisibility(View.GONE);
+                        if (ImgDataProf == null) {
+                            viewModel.addCustomer(req);
+                        } else {
+                            uploadFile(ImgDataProf, req.firstName + "_" + req.mobileNum + "_" + Constants.getDateNowAll());
+                        }
+                    } else {
+                        Constants.Toasty(context, "Please enter Valid OTP, try again.", Constants.error);
+                    }
+                }
+
+                break;
             case R.id.removeAll:
                 imgFinalList.clear();
                 addImgs();
@@ -530,6 +595,16 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         loader.stop();
         binding.listDetailsHolder.setRefreshing(false);
         Sessions.setUserObj(context, res, Constants.dorpDownSession);
+    }
+
+    @Override
+    public void onOtpSuccess(CustomerWithOTPRes body) {
+        loader.stop();
+        binding.numbver.setText("Verify +91 " + req.mobileNum);
+        startCounter();
+        binding.firstStepLayout.setVisibility(View.GONE);
+        binding.secondStepOtp.setVisibility(View.VISIBLE);
+
     }
 
     @Override
