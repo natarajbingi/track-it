@@ -78,7 +78,7 @@ public class CustomCompanyAdapter extends RecyclerView.Adapter<CustomCompanyAdap
         } else {
             viewHolder.parent_tile_bg.setBackgroundColor(context.getResources().getColor(R.color.white));
         }
-        Log.d(TAG, "Element " + position + " set.");
+        //Log.d(TAG, "Element " + position + " set.");
         viewHolder.textView.setText(mDataSet.get(position).name);
         viewHolder.text_sub.setText(mDataSet.get(position).desc);
         viewHolder.text_date.setText("");

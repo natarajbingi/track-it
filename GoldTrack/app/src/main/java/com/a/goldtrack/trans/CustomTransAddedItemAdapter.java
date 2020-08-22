@@ -87,7 +87,7 @@ public class CustomTransAddedItemAdapter extends RecyclerView.Adapter<CustomTran
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        Log.d(TAG, "Element " + position + " set.");
+     //   Log.d(TAG, "Element " + position + " set.");
         viewHolder.commodity_name.setText(mDataSet.get(position).commodity);
         viewHolder.commodity_amount.setText("Rs. " + Constants.priceToString(mDataSet.get(position).amount));
         viewHolder.commodity_weight.setText("Commodity Wt: " + mDataSet.get(position).commodityWeight + " Grms");

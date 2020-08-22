@@ -98,7 +98,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
         binding.setHomeFragModel(viewModel);
 
-        LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("refresh-from-home"));
+        LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("refresh-from-trans"));
         // View root1 = binding.getRoot();//inflater.inflate(R.layout.fragment_home, container, false);
         binding.textHome.setVisibility(View.GONE);
         binding.radioGrp.setVisibility(View.GONE);
@@ -574,7 +574,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
-            if (intent.getAction() != null && intent.getAction().equals("refresh-from-home")) {
+            if (intent.getAction() != null && intent.getAction().equals("refresh-from-trans")) {
                 loader.start();
                 viewModel.getTransactions(req);
                 reqDrop = new GetCompany();

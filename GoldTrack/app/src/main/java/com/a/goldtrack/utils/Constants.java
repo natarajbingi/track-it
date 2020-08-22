@@ -47,6 +47,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -112,7 +113,6 @@ public class Constants {
     public Map<String, String> getUsersArr() {
         return usersArr;
     }
-
 
 
     public static enum LayoutManagerType {
@@ -380,6 +380,21 @@ public class Constants {
         return s.format(date1);
     }
 
+    public static String getDateMMM(String dte) {
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat s = new SimpleDateFormat("dd MMM yyyy");
+        Date input = null;
+
+        try {
+            if (!dte.isEmpty())
+                input = inputFormat.parse(dte);
+            else input = new Date();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return s.format(input);
+    }
+
     public static void setGilde(String logoImagePath, ImageView view) {
 
         Glide.with(GTrackApplication.getInstance())
@@ -608,25 +623,7 @@ public class Constants {
         return dialog;
     }
 
-    public static void showProgress(Context ctx) {
-        if (!((Activity) ctx).isFinishing()) {
-            pd = new ProgressDialog(ctx);
-            pd.setMessage("loading");
-            pd.setCancelable(false);
-            pd.show();
-        }
-    }
 
-
-    public static void hideProgress(Context ctx) {
-        if (pd != null) {
-            if (!((Activity) ctx).isFinishing()) {
-                if (pd.isShowing()) {
-                    pd.dismiss();
-                }
-            }
-        }
-    }
         /*new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
@@ -637,142 +634,4 @@ public class Constants {
                     }
                 }, 3000);*/
 
-
-    public static String listme = "{\n" +
-            "  \"branchesList\": [\n" +
-            "    {\n" +
-            "      \"companyId\": 1,\n" +
-            "      \"branchAddress1\": \"No.123, Vijaynagr, Gulbarga\",\n" +
-            "      \"branchCity\": \"Gulbarga\",\n" +
-            "      \"branchCode\": \"DYU_GUL_02\",\n" +
-            "      \"branchDesc\": \"It is in Vijay Nagar, Gulbarga\",\n" +
-            "      \"branchName\": \"Gulbarga_Branch\",\n" +
-            "      \"branchPhNumber\": \"123456889\",\n" +
-            "      \"branchPin\": \"5853555\",\n" +
-            "      \"response\": null,\n" +
-            "      \"success\": false,\n" +
-            "      \"id\": 1,\n" +
-            "      \"createdBy\": null,\n" +
-            "      \"updatedBy\": null,\n" +
-            "      \"createdDt\": null,\n" +
-            "      \"updatedDt\": null\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"companyId\": 1,\n" +
-            "      \"branchAddress1\": \"Bangalore\",\n" +
-            "      \"branchCity\": \"Bangalore\",\n" +
-            "      \"branchCode\": \"DYU_20200225123918\",\n" +
-            "      \"branchDesc\": \"test generator branches\",\n" +
-            "      \"branchName\": \"Bangalore branch\",\n" +
-            "      \"branchPhNumber\": \"9988669966\",\n" +
-            "      \"branchPin\": \"964664\",\n" +
-            "      \"response\": null,\n" +
-            "      \"success\": false,\n" +
-            "      \"id\": 3,\n" +
-            "      \"createdBy\": null,\n" +
-            "      \"updatedBy\": null,\n" +
-            "      \"createdDt\": null,\n" +
-            "      \"updatedDt\": null\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"companyId\": 1,\n" +
-            "      \"branchAddress1\": \"yugfvvv\",\n" +
-            "      \"branchCity\": \"vhbh\",\n" +
-            "      \"branchCode\": \"DYU_20200225124941\",\n" +
-            "      \"branchDesc\": \"ghghhg\",\n" +
-            "      \"branchName\": \"wahhh and\",\n" +
-            "      \"branchPhNumber\": \"1226659889\",\n" +
-            "      \"branchPin\": \"524488\",\n" +
-            "      \"response\": null,\n" +
-            "      \"success\": false,\n" +
-            "      \"id\": 4,\n" +
-            "      \"createdBy\": null,\n" +
-            "      \"updatedBy\": null,\n" +
-            "      \"createdDt\": null,\n" +
-            "      \"updatedDt\": null\n" +
-            "    }\n" +
-            "  ],\n" +
-            "  \"customerList\": [\n" +
-            "    {\n" +
-            "      \"uniqueId\": \"2341\",\n" +
-            "      \"firstName\": \"Test1\",\n" +
-            "      \"lastName\": \"tt1\",\n" +
-            "      \"mobileNum\": \"9980766166\",\n" +
-            "      \"emailId\": \"test1@gmail.com\",\n" +
-            "      \"address1\": \"Channasandra1\",\n" +
-            "      \"address2\": \"Bangalore1\",\n" +
-            "      \"pin\": \"578886\",\n" +
-            "      \"id\": 1,\n" +
-            "      \"state\": \"Karnataka1\",\n" +
-            "      \"createdBy\": null,\n" +
-            "      \"updatedBy\": null,\n" +
-            "      \"createdDt\": null,\n" +
-            "      \"updatedDt\": null\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"uniqueId\": \"2158\",\n" +
-            "      \"firstName\": \"one days\",\n" +
-            "      \"lastName\": \"second hand\",\n" +
-            "      \"mobileNum\": \"9980766166\",\n" +
-            "      \"emailId\": \"oneday@gmail.com\",\n" +
-            "      \"address1\": \"test generator\",\n" +
-            "      \"address2\": \"best wishes\",\n" +
-            "      \"pin\": \"986686\",\n" +
-            "      \"id\": 2,\n" +
-            "      \"state\": \"karnataka\",\n" +
-            "      \"createdBy\": null,\n" +
-            "      \"updatedBy\": null,\n" +
-            "      \"createdDt\": null,\n" +
-            "      \"updatedDt\": null\n" +
-            "    }\n" +
-            "  ],\n" +
-            "  \"itemsList\": [\n" +
-            "    {\n" +
-            "      \"companyID\": 1,\n" +
-            "      \"commodity\": \"GOLD\",\n" +
-            "      \"itemName\": \"Chain\",\n" +
-            "      \"itemDesc\": \"Gold chain longp\",\n" +
-            "      \"id\": 1,\n" +
-            "      \"createdBy\": null,\n" +
-            "      \"updatedBy\": null,\n" +
-            "      \"createdDt\": null,\n" +
-            "      \"updatedDt\": null\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"companyID\": 1,\n" +
-            "      \"commodity\": \"GOLD\",\n" +
-            "      \"itemName\": \"Chain Long\",\n" +
-            "      \"itemDesc\": \"Gold chain long long\",\n" +
-            "      \"id\": 2,\n" +
-            "      \"createdBy\": null,\n" +
-            "      \"updatedBy\": null,\n" +
-            "      \"createdDt\": null,\n" +
-            "      \"updatedDt\": null\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"companyID\": 1,\n" +
-            "      \"commodity\": \"GOLD\",\n" +
-            "      \"itemName\": \"silevr chain \",\n" +
-            "      \"itemDesc\": \"added chai\",\n" +
-            "      \"id\": 3,\n" +
-            "      \"createdBy\": null,\n" +
-            "      \"updatedBy\": null,\n" +
-            "      \"createdDt\": null,\n" +
-            "      \"updatedDt\": null\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"companyID\": 1,\n" +
-            "      \"commodity\": \"SILVER\",\n" +
-            "      \"itemName\": \"chain KMC silver\",\n" +
-            "      \"itemDesc\": \"silver ade\",\n" +
-            "      \"id\": 4,\n" +
-            "      \"createdBy\": null,\n" +
-            "      \"updatedBy\": null,\n" +
-            "      \"createdDt\": null,\n" +
-            "      \"updatedDt\": null\n" +
-            "    }\n" +
-            "  ],\n" +
-            "  \"response\": \"Data fetched successfully\",\n" +
-            "  \"success\": true\n" +
-            "}";
 }

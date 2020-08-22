@@ -33,6 +33,10 @@
         <activity
             android:name=".company.CompanyActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".utils.AssessmentActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"

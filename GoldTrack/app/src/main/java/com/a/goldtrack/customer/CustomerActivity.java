@@ -107,7 +107,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         binding.addDetailsHolder.setVisibility(View.GONE);
         binding.editAgainHolder.setVisibility(View.GONE);
 
-        Constants.hideProgress(context);
+        loader.stop();
+        // Constants.hideProgress(context);
 
         binding.addSignalCustomer.setOnClickListener(this);
         binding.btnAddCustomer.setOnClickListener(this);

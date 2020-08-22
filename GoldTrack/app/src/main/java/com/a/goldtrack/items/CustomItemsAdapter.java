@@ -71,7 +71,7 @@ public class CustomItemsAdapter extends RecyclerView.Adapter<CustomItemsAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        Log.d(TAG, "Element " + position + " set.");
+      //  Log.d(TAG, "Element " + position + " set.");
         if (position % 2 == 1) {
             viewHolder.parent_tile_bg.setBackgroundColor(context.getResources().getColor(R.color.light_me));
         } else {

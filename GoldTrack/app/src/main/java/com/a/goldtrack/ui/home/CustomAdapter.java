@@ -54,7 +54,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        Log.d(TAG, "Element " + position + " set.");
+       // Log.d(TAG, "Element " + position + " set.");
         viewHolder.getTextView().setText(mDataSet.get(position).name);
     }
 
