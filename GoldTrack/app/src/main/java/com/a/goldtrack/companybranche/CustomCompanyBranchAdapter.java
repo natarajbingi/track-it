@@ -82,7 +82,7 @@ public class CustomCompanyBranchAdapter extends RecyclerView.Adapter<CustomCompa
         } else {
             viewHolder.parent_tile_bg.setBackgroundColor(context.getResources().getColor(R.color.white));
         }
-        Log.d(TAG, "Element " + position + " set.");
+       // Log.d(TAG, "Element " + position + " set.");
         viewHolder.textView.setText(mDataSet.get(position).branchName);
         viewHolder.text_sub.setText(mDataSet.get(position).branchDesc);
     }
