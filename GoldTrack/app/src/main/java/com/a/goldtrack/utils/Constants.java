@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
+import com.a.goldtrack.BuildConfig;
 import com.a.goldtrack.GTrackApplication;
 import com.a.goldtrack.R;
 import com.bumptech.glide.Glide;
@@ -101,7 +102,7 @@ public class Constants {
     public static final int info = 2;
     public static final int warning = 3;
     public static final int custom = 4;
-    public static final String versionView = "SMG_version1.0.24";
+    public static final String versionView = "SMG_version1.0.25";
     private static ProgressDialog pd;
     public static Map<String, String> branchesArr = null, usersArr = null;
 
@@ -310,10 +311,12 @@ public class Constants {
     }
 
     public static void logPrint(String call, Object req, Object res) {
-        Gson g = new Gson();
-        Log.d("Request-", call + "");
-        Log.d("LogReq-", g.toJson(req));
-        Log.d("LogRes-", g.toJson(res));
+        if (BuildConfig.BUILD_TYPE.equals("debug")) {
+            Gson g = new Gson();
+            Log.d("Request-", call + "");
+            Log.d("LogReq-", g.toJson(req));
+            Log.d("LogRes-", g.toJson(res));
+        }
     }
 
     public static String todayDate() {

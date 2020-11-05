@@ -99,6 +99,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<UserLoginRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -117,6 +118,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<GetCompanyRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -134,6 +136,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<AddCompanyRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -151,6 +154,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<UpdateCompanyDetailsRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -170,6 +174,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<AddCompanyBranchesRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -187,6 +192,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<GetCompanyBranchesRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -207,6 +213,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<DropdownDataForCompanyRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
 
             }
         });
@@ -225,6 +232,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<DropdownDataForCompanyRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -245,6 +253,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<UpdateCompanyBranchesRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -263,6 +272,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<AddItemRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -281,6 +291,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<GetItemsRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -299,6 +310,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<UpdateItemRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -319,6 +331,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<AddUserForCompanyRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -336,6 +349,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<AddUserForCompanyRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -359,6 +373,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<GetUserForCompanyRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 if (callBacks != null) callBacks.onError(t.getMessage());
                 if (homeFragCallbacks != null) homeFragCallbacks.onError(t.getMessage());
             }
@@ -383,6 +398,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<AddCustomerRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -400,6 +416,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<UpdateCustomerRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -417,6 +434,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<GetCustomerRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -446,6 +464,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<CustomerWithOTPRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -469,6 +488,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<CustomerWithOTPRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -490,6 +510,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<AddTransactionRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -517,6 +538,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<GetTransactionRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 if (callTransBacks != null) callTransBacks.onError(t.getMessage());
                 if (callHomebacks != null) callHomebacks.onError(t.getMessage());
                 if (callClosureBacks != null) callClosureBacks.onError(t.getMessage());
@@ -553,6 +575,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<AddRemoveCommonImageRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 if (callTransBacks != null) callTransBacks.onError(t.getMessage());
                 if (callCustomerBacks != null) callCustomerBacks.onError(t.getMessage());
             }
@@ -577,6 +600,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<AddUserDailyClosureRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -596,6 +620,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<UpdateUserDailyClosureRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
@@ -615,6 +640,7 @@ public class RestFullServices {
 
             @Override
             public void onFailure(Call<GetUserDailyClosureRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
                 callBacks.onError(t.getMessage());
             }
         });
