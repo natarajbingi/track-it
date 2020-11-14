@@ -28,6 +28,10 @@
             android:id="@+id/nav_trans"
             android:icon="@drawable/ic_transaction"
             android:title="Transaction" />
+        <item
+            android:id="@+id/nav_report"
+            android:icon="@drawable/ic_repeat"
+            android:title="Reports" />
     </group>
 
     <item android:title="Communicate">

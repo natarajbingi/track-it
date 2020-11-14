@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="dReportModel"
+            type="com.a.goldtrack.dailyclosure.UserDailyReportViewModel" />
+    </data>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        tools:context=".dailyclosure.UserDailyReportActivity">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/list_details_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/filter_holder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/oil"
+                        android:padding="4dp"
+                        android:text="Filter "
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:paddingLeft="5dp"
+                        android:text="Select Branch *"
+                        android:textSize="12sp" />
+
+                    <Spinner
+                        android:id="@+id/select_branch_filter"
+                        style="@style/Widget.AppCompat.Spinner.Underlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:entries="@array/example" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.9">
+
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/date_closure_filter"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:enabled="false"
+                                android:hint="Closure Date  YYYY-MM-DD"
+                                android:inputType="text" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <ImageView
+                            android:id="@+id/img_date_click_filter"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.1"
+                            android:src="@drawable/ic_date" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:orientation="horizontal"
+                        android:padding="15dp">
+
+                        <Button
+                            android:id="@+id/filter_clear"
+                            style="@style/greyButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Clear FIlter" />
+
+                        <Button
+                            android:id="@+id/filter_submit"
+                            style="@style/blueButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="40dp"
+                            android:layout_weight="1"
+                            android:text="Apply FIlter" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/ediittext_selector"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@color/grey"
+                    android:hint="Search..."
+                    android:inputType="text"
+                    android:padding="10dp"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/runningAdminPaid"
+                        style="@style/TextViewHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="Admin Paid: "
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/runningExpense"
+                        style="@style/TextViewHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="Expenses : "
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/runningBalance"
+                        style="@style/TextViewHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="Balance : "
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/runningDate"
+                        style="@style/TextViewHeader"
+                        android:layout_width="155dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:gravity="right"
+                        android:maxLines="2"
+                        android:text="Date: 2-22-2012"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_text_border"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/slNo"
+                        style="@style/TextViewHeader"
+                        android:layout_width="55dp"
+                        android:layout_height="wrap_content"
+                        android:text="Sl.No"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/name"
+                        style="@style/TextViewHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Name"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/cashPaid"
+                        style="@style/TextViewHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Cash paid"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/expenses"
+                        style="@style/TextViewHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Expns"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/noOfBills"
+                        style="@style/TextViewHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="No of Bills"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/grossWt"
+                        style="@style/TextViewHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="GrossWt"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/netWt"
+                        style="@style/TextViewHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="NetWt(waste)"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/TotalBill"
+                        style="@style/TextViewHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Total Bill"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/ClBal"
+                        style="@style/TextViewHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="CL Bal"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey"
+                    android:paddingTop="1dp" />
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_daily_closures"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:paddingLeft="@dimen/recycle_padding"
+                    android:paddingRight="@dimen/recycle_padding"
+                    tools:listitem="@layout/report_list_text" />
+
+                <LinearLayout
+                    android:id="@+id/nodataImg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="185dp"
+                        android:layout_height="185dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/nopost" />
+
+                    <TextView
+                        style="@style/TextViewHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="No transaction found on selected date, thank you."
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </ScrollView>
+
+
+    </RelativeLayout>
+</layout>

@@ -35,6 +35,7 @@ import androidx.core.content.ContextCompat;
 
 import com.a.goldtrack.BuildConfig;
 import com.a.goldtrack.GTrackApplication;
+import com.a.goldtrack.Model.GetUserDailyClosureRes;
 import com.a.goldtrack.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -52,6 +53,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TimeZone;
@@ -102,7 +104,7 @@ public class Constants {
     public static final int info = 2;
     public static final int warning = 3;
     public static final int custom = 4;
-    public static final String versionView = "SMG_version1.0.25";
+    public static final String versionView = "SMG_version1.0.26";
     private static ProgressDialog pd;
     public static Map<String, String> branchesArr = null, usersArr = null;
 
@@ -296,6 +298,28 @@ public class Constants {
                 Toasty.Config.reset();*/ // Use this if you want to use the configuration above only once
                 break;
         }
+    }
+
+    public static String getTotalGross(List<GetUserDailyClosureRes.TransactionsForday> transactionsForday) {
+        double totalNettWeight = 0.0;
+        double totalStoneOtherWastage = 0.0;
+        double grossAmount = 0.0;
+        double nettAmount = 0.0;
+
+        for (int i = 0; i < transactionsForday.size(); i++) {
+            nettAmount += Double.parseDouble(transactionsForday.get(i).nettAmount);
+            grossAmount += Double.parseDouble(transactionsForday.get(i).grossAmount);
+            totalNettWeight += Double.parseDouble(transactionsForday.get(i).totalNettWeight);
+            totalStoneOtherWastage += (Double.parseDouble(transactionsForday.get(i).totalStoneWastage)
+                    + Double.parseDouble(transactionsForday.get(i).totalOtherWastage));
+        }
+        return getFormattedNumber(totalNettWeight) + "_" + getFormattedNumber(totalStoneOtherWastage)
+                + "_" + getFormattedNumber(grossAmount) + "_" + getFormattedNumber(nettAmount);
+    }
+
+    public static String getFormattedNumber(double val) {
+        DecimalFormat precision = new DecimalFormat("0.00");
+        return precision.format(val);
     }
 
     public static boolean checkSecurPermission(Context ctx) {

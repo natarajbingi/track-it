@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent_tile_bg"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/listIdHolder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/slNo"
+            style="@style/TextViewHeader"
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:text="Sl.No" />
+
+        <TextView
+            android:id="@+id/name"
+            style="@style/TextViewHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Name" />
+
+        <TextView
+            android:id="@+id/cashPaid"
+            style="@style/TextViewHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cash paid" />
+
+        <TextView
+            android:id="@+id/expenses"
+            style="@style/TextViewHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Expns" />
+
+        <TextView
+            android:id="@+id/noOfBills"
+            style="@style/TextViewHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="No of Bills" />
+
+        <TextView
+            android:id="@+id/grossWt"
+            style="@style/TextViewHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="GrossWt" />
+
+        <TextView
+            android:id="@+id/netWt"
+            style="@style/TextViewHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="NetWt(waste)" />
+
+        <TextView
+            android:id="@+id/TotalBill"
+            style="@style/TextViewHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Total Bill" />
+
+        <TextView
+            android:id="@+id/ClBal"
+            style="@style/TextViewHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="CL Bal" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/listIdHolder"
+        android:background="@color/grey"
+        android:paddingTop="1dp" />
+</RelativeLayout>

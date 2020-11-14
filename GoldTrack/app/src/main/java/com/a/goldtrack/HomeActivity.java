@@ -27,6 +27,7 @@ import com.a.goldtrack.company.CompanyActivity;
 import com.a.goldtrack.companybranche.CompanyBranchesActivity;
 import com.a.goldtrack.customer.CustomerActivity;
 import com.a.goldtrack.dailyclosure.UserDailyClosureActivity;
+import com.a.goldtrack.dailyclosure.UserDailyReportActivity;
 import com.a.goldtrack.items.ItemsActivity;
 import com.a.goldtrack.login.LoginActivity;
 import com.a.goldtrack.trans.TransActivity;
@@ -163,6 +164,11 @@ public class HomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_trans:
                 i = new Intent(this, TransActivity.class);
+                startActivity(i);
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                break;
+            case R.id.nav_report:
+                i = new Intent(this, UserDailyReportActivity.class);
                 startActivity(i);
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 break;

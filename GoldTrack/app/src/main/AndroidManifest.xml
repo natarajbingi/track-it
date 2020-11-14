@@ -26,6 +26,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".dailyclosure.UserDailyClosureActivity"></activity>
+        <activity android:name=".dailyclosure.UserDailyReportActivity"
+            android:screenOrientation="landscape" />
         <activity android:name=".camera.CamReqActivity" />
         <activity
             android:name=".customer.CustomerActivity"
