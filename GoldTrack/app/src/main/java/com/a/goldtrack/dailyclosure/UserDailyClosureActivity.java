@@ -3,6 +3,9 @@ package com.a.goldtrack.dailyclosure;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -243,8 +246,43 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
         setSpinners(binding.selectBranchFilter, branchesArr.keySet().toArray(new String[0]));
         setSpinners(binding.selectUser, Constants.usersArr.keySet().toArray(new String[0]));
 
+        try {
+            binding.search.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        binding.search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filter(s.toString());
+            }
+        });
     }
 
+    public void filter(String s) {
+        Log.d("mDataset", "" + mDataset.size());
+        List<GetUserDailyClosureRes.DataList> temp = new ArrayList<>();
+        if (mDataset != null && mDataset.size() > 0) {
+            for (GetUserDailyClosureRes.DataList d : mDataset) {
+
+                if (d.userName.toLowerCase().contains(s.toLowerCase())) {
+                    temp.add(d);
+                }
+            }
+            if (mAdapter != null) {
+                mAdapter.updateListNew(temp);
+            }
+        } else {
+        }
+    }
     private void callDatePicker() {
         Calendar now = Calendar.getInstance();
         DatePickerDialog dpd = DatePickerDialog.newInstance(

@@ -11,6 +11,8 @@ import androidx.lifecycle.ViewModel;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetTransactionRes;
+import com.a.goldtrack.Model.GetUserDailyClosureReq;
+import com.a.goldtrack.Model.GetUserDailyClosureRes;
 import com.a.goldtrack.Model.GetUserForCompany;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.network.RestFullServices;
@@ -20,10 +22,11 @@ import com.a.goldtrack.ui.home.IHomeUiView;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
-public class DashBrdViewModel extends AndroidViewModel implements IHomeFragCallbacks, IDropdownDataCallBacks {
+public class DashBrdViewModel extends AndroidViewModel implements IHomeFragCallbacks, IDailyClosureDashCallBacks {
 
     private MutableLiveData<String> mText;
     IHomeUiView view;
+    IDailyClosureDashCallBacks viewDash;
 
     public DashBrdViewModel(@NonNull Application application) {
         super(application);
@@ -32,16 +35,23 @@ public class DashBrdViewModel extends AndroidViewModel implements IHomeFragCallb
         mText.setValue("Welcome, " + str);
 
     }
-    public void onViewAvailable(IHomeUiView view) {
+
+    public void onViewAvailable(IHomeUiView view, IDailyClosureDashCallBacks viewDash) {
         this.view = view;
+        this.viewDash = viewDash;
     }
 
 
     public void getUsers(GetUserForCompany req) {
-        RestFullServices.getUsers(req, null,this);
+        RestFullServices.getUsers(req, null, this);
     }
+
     public void getDropdown(GetCompany req) {
-        RestFullServices.getDropdownDataForCompanyHome(req, this);
+        RestFullServices.getDropdownDataForCompanyHome(req, (IDropdownDataCallBacks) this);
+    }
+
+    public void getDailyClosures(GetUserDailyClosureReq req) {
+        RestFullServices.getDailyClosures(req, this);
     }
 
 
@@ -59,9 +69,13 @@ public class DashBrdViewModel extends AndroidViewModel implements IHomeFragCallb
         view.getUsersSuccess(res);
     }
 
-    @Override
     public void onDropDownSuccess(DropdownDataForCompanyRes body) {
         view.onGetDrpSuccess(body);
+    }
+
+    @Override
+    public void onGetDailyClosureSuccess(GetUserDailyClosureRes res) {
+        viewDash.onGetDailyClosureSuccess(res);
     }
 
     @Override

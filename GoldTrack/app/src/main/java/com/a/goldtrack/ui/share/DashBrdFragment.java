@@ -22,6 +22,8 @@ import com.a.goldtrack.GTrackApplication;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompany;
 import com.a.goldtrack.Model.GetTransactionRes;
+import com.a.goldtrack.Model.GetUserDailyClosureReq;
+import com.a.goldtrack.Model.GetUserDailyClosureRes;
 import com.a.goldtrack.Model.GetUserForCompany;
 import com.a.goldtrack.Model.GetUserForCompanyRes;
 import com.a.goldtrack.R;
@@ -36,7 +38,7 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 
-public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDateSetListener, IHomeUiView {
+public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDateSetListener, IHomeUiView,IDailyClosureDashCallBacks {
 
     private DashBrdViewModel viewModel;
     private DashboardFragBinding binding;
@@ -44,6 +46,8 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
     private Context context;
     private LoaderDecorator loader;
     private GetCompany reqDrop;
+    private boolean role;
+    private GetUserDailyClosureReq reqClsour;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         context = getContext();
@@ -55,8 +59,10 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
         binding = DataBindingUtil.inflate(inflater, R.layout.dashboard_frag, container, false);
         binding.setDashModel(viewModel);
         binding.currentDate.setText(Constants.getDateMMM(""));
-        viewModel.onViewAvailable(this);
+        viewModel.onViewAvailable(this,this);
 
+        String str = Sessions.getUserString(context, Constants.roles);
+        role = str.equals("ADMIN") || str.equals("SUPER_ADMIN");
 
         viewModel.getText().observe(this, new Observer<String>() {
             @Override
@@ -102,6 +108,17 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
         reqDrop.companyId = Sessions.getUserString(context, Constants.companyId);
         viewModel.getDropdown(reqDrop);
 
+
+        reqClsour = new GetUserDailyClosureReq();
+        reqClsour.companyID = Sessions.getUserString(context, Constants.companyId);
+        reqClsour.date = Constants.getDateNowyyyymmmdd();
+        if (role) {
+            reqClsour.userID = "0";
+        } else {
+            reqClsour.userID = Sessions.getUserString(context, Constants.userId);
+        }
+        viewModel.getDailyClosures(reqClsour);
+
         return binding.getRoot();
     }
 
@@ -111,6 +128,9 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
         selectedDate = date;
 
         binding.currentDate.setText(Constants.getDateMMM(date));
+
+        reqClsour.date = selectedDate;
+        viewModel.getDailyClosures(reqClsour);
     }
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
@@ -201,6 +221,12 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
         } else {
             Constants.Toasty(context, res.response + ", Please refresh again.", 1);
         }
+    }
+
+    @Override
+    public void onGetDailyClosureSuccess(GetUserDailyClosureRes res) {
+
+        // cal it
     }
 
     @Override

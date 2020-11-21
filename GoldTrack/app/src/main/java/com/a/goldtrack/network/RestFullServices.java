@@ -56,6 +56,7 @@ import com.a.goldtrack.login.ILoginCallBacks;
 import com.a.goldtrack.trans.IDropdownDataCallBacks;
 import com.a.goldtrack.trans.ITransCallBacks;
 import com.a.goldtrack.ui.home.IHomeFragCallbacks;
+import com.a.goldtrack.ui.share.IDailyClosureDashCallBacks;
 import com.a.goldtrack.users.IUserCallBacks;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
@@ -627,6 +628,26 @@ public class RestFullServices {
     }
 
     public static void getDailyClosures(GetUserDailyClosureReq req, IDailyClosureCallBacks callBacks) {
+        getClient().getUserDailyClosureForFilters(req).enqueue(new Callback<GetUserDailyClosureRes>() {
+            @Override
+            public void onResponse(Call<GetUserDailyClosureRes> call, Response<GetUserDailyClosureRes> response) {
+                Constants.logPrint(call.request().toString(), req, response.body());
+                if (response.isSuccessful()) {
+                    callBacks.onGetDailyClosureSuccess(response.body());
+                } else {
+                    callBacks.onErrorComplete("Something went wrong, Server Error");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetUserDailyClosureRes> call, Throwable t) {
+                Constants.logPrint(call.request().toString(), req, t.getMessage());
+                callBacks.onError(t.getMessage());
+            }
+        });
+    }
+
+    public static void getDailyClosures(GetUserDailyClosureReq req, IDailyClosureDashCallBacks callBacks) {
         getClient().getUserDailyClosureForFilters(req).enqueue(new Callback<GetUserDailyClosureRes>() {
             @Override
             public void onResponse(Call<GetUserDailyClosureRes> call, Response<GetUserDailyClosureRes> response) {
