@@ -222,7 +222,7 @@ public class HomeActivity extends AppCompatActivity
         Log.d("sender", "Broadcasting message");
         Intent intent = new Intent("refresh-from-home");
         // You can also include some extra data.
-        intent.putExtra("message", "Refresh the recycler view for new Transaction !");
+        intent.putExtra("message", "Refresh the recycler view for new Dashboard !");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }
