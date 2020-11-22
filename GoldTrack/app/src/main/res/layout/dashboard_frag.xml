@@ -94,7 +94,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="6.5"
-                            android:text="Total Transaction: "
+                            android:text="Total Transactions: "
                             android:textColor="@color/white"
                             android:textSize="22sp"
                             android:textStyle="bold" />
@@ -104,6 +104,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="3.5"
                             android:text="42"
+                            android:id="@+id/totalTrans"
                             android:textColor="@color/white"
                             android:textSize="26sp"
                             android:textStyle="bold" />
@@ -128,6 +129,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="3.5"
+                            android:id="@+id/totAmt"
                             android:text="55 K"
                             android:textColor="@color/white"
                             android:textSize="26sp"
@@ -144,7 +146,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="6.5"
-                            android:text="Amount Spent/Lent: "
+                            android:text="Amount Expenses: "
                             android:textColor="@color/white"
                             android:textSize="22sp"
                             android:textStyle="bold" />
@@ -153,6 +155,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="3.5"
+                            android:id="@+id/totExpenses"
                             android:text="82 K"
                             android:textColor="@color/white"
                             android:textSize="26sp"

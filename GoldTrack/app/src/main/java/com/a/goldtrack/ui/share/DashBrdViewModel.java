@@ -22,7 +22,7 @@ import com.a.goldtrack.ui.home.IHomeUiView;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
-public class DashBrdViewModel extends AndroidViewModel implements IHomeFragCallbacks, IDailyClosureDashCallBacks {
+public class DashBrdViewModel extends AndroidViewModel implements IHomeFragCallbacks,IDropdownDataCallBacks, IDailyClosureDashCallBacks {
 
     private MutableLiveData<String> mText;
     IHomeUiView view;
@@ -47,7 +47,7 @@ public class DashBrdViewModel extends AndroidViewModel implements IHomeFragCallb
     }
 
     public void getDropdown(GetCompany req) {
-        RestFullServices.getDropdownDataForCompanyHome(req, (IDropdownDataCallBacks) this);
+        RestFullServices.getDropdownDataForCompanyHome(req,  this);
     }
 
     public void getDailyClosures(GetUserDailyClosureReq req) {
@@ -69,13 +69,15 @@ public class DashBrdViewModel extends AndroidViewModel implements IHomeFragCallb
         view.getUsersSuccess(res);
     }
 
-    public void onDropDownSuccess(DropdownDataForCompanyRes body) {
-        view.onGetDrpSuccess(body);
-    }
 
     @Override
     public void onGetDailyClosureSuccess(GetUserDailyClosureRes res) {
         viewDash.onGetDailyClosureSuccess(res);
+    }
+
+    @Override
+    public void onDropDownSuccess(DropdownDataForCompanyRes body) {
+        view.onGetDrpSuccess(body);
     }
 
     @Override

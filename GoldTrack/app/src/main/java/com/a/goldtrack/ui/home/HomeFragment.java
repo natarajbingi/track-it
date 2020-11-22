@@ -345,7 +345,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
                         Constants.branchesArr.put(dropdownRes.branchesList.get(i).branchName.toUpperCase()
                                 + "-" + dropdownRes.branchesList.get(i).id, dropdownRes.branchesList.get(i).id);
                     }
-                    setSpinners(binding.selectBranchFilter, Constants.branchesArr.keySet().toArray(new String[0]));
+                    Constants.setSpinners(binding.selectBranchFilter, Constants.branchesArr.keySet().toArray(new String[0]));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -370,7 +370,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
                         Constants.usersArr.put(res.resList.get(i).firstName.toUpperCase()
                                 + "-" + res.resList.get(i).lastName, res.resList.get(i).id);
                     }
-                    setSpinners(binding.selectEmployeeFilter, Constants.usersArr.keySet().toArray(new String[0]));
+                    Constants.setSpinners(binding.selectEmployeeFilter, Constants.usersArr.keySet().toArray(new String[0]));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -382,16 +382,6 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         }
     }
 
-
-    public void setSpinners(Spinner spr, String[] array) {
-        // -----------------------------------------------
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(context,
-                R.layout.custom_spinner,
-                array);
-        spinnerArrayAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
-        // The drop down view
-        spr.setAdapter(spinnerArrayAdapter);
-    }
 
     @Override
     public void onError(String message) {

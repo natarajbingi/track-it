@@ -96,6 +96,7 @@ public class HomeActivity extends AppCompatActivity
                 nav_Menu.findItem(R.id.nav_slideshow).setVisible(false);
                 nav_Menu.findItem(R.id.nav_share).setVisible(false);
                 nav_Menu.findItem(R.id.nav_daily_closure).setVisible(false);
+                nav_Menu.findItem(R.id.nav_report).setVisible(false);
                 break;
             case "REPORT":
                 break;

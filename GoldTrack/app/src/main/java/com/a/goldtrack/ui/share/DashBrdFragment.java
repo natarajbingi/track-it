@@ -98,10 +98,16 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
             }
         });
 
+        callFirstLaodData();
+
+        return binding.getRoot();
+    }
+
+    private void callFirstLaodData(){
+        loader.start();
         GetUserForCompany req1 = new GetUserForCompany();
         req1.companyId = Sessions.getUserString(context, Constants.companyId);
         req1.userId = "0";
-        loader.start();
         viewModel.getUsers(req1);
 
         reqDrop = new GetCompany();
@@ -118,8 +124,6 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
             reqClsour.userID = Sessions.getUserString(context, Constants.userId);
         }
         viewModel.getDailyClosures(reqClsour);
-
-        return binding.getRoot();
     }
 
     @Override
@@ -129,6 +133,7 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
 
         binding.currentDate.setText(Constants.getDateMMM(date));
 
+        loader.start();
         reqClsour.date = selectedDate;
         viewModel.getDailyClosures(reqClsour);
     }
@@ -145,11 +150,9 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
                 //  viewModel.getDropdown(reqDrop);
 
 
-                GetUserForCompany req1 = new GetUserForCompany();
-                req1.companyId = Sessions.getUserString(context, Constants.companyId);
-                req1.userId = "0";
-                loader.start();
-                viewModel.getUsers(req1);
+
+                callFirstLaodData();
+                binding.currentDate.setText(Constants.getDateMMM(reqClsour.date));
             }
             String message = intent.getStringExtra("message");
             Log.d("receiver", "Got message: " + message);
@@ -167,7 +170,7 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
 
     @Override
     public void onGetTransSuccess(GetTransactionRes res) {
-
+        loader.stop();
     }
 
     @Override
@@ -225,8 +228,21 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
 
     @Override
     public void onGetDailyClosureSuccess(GetUserDailyClosureRes res) {
+        // call it
+        loader.stop();
+        double totAmt = 0.0, cashInHand = 0.0, expenses = 0.0;int TotTrans = 0;
+        for (int i = 0; i < res.dataList.size(); i++) {
+            // fundReceived += Double.parseDouble(res.dataList.get(i).fundRecieved);
+            expenses += Double.parseDouble(res.dataList.get(i).expenses);
+            cashInHand += Double.parseDouble(res.dataList.get(i).cashInHand);
+            TotTrans += res.dataList.get(i).transactionsForday.size();
+            String[] strAmts = Constants.getTotalGross(res.dataList.get(i).transactionsForday).split("_");
+            totAmt += Double.parseDouble(strAmts[3]);//ClBal
+        }
 
-        // cal it
+        binding.totalTrans.setText(TotTrans + "");
+        binding.totExpenses.setText(Constants.getFormattedNumber(expenses));
+        binding.totAmt.setText(Constants.getFormattedNumber(totAmt));
     }
 
     @Override

@@ -108,12 +108,20 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
                 binding.totalAmt.setText("" + totTrans);
             }
         });*/
+
+        if (role) {
+            binding.selectEmployeeFilter.setVisibility(View.VISIBLE);
+        } else {
+            binding.selectEmployeeFilter.setVisibility(View.GONE);
+        }
         binding.filterClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 binding.dateClosureFilter.setText("");
                 binding.selectBranchFilter.setSelection(0);
+                binding.selectEmployeeFilter.setSelection(0);
                 req.branchID = "0";
+                req.userID = "0";
                 req.date = Constants.getDateNowyyyymmmdd();
                 viewModel.getDailyClosures(req);
             }
@@ -125,17 +133,24 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
                 String dateFilr = binding.dateClosureFilter.getText().toString();
                 if (strBrnc.equals("Select")) {
                     strBrnc = "0";
-                } else
+                } else {
                     strBrnc = branchesArr.get(strBrnc);
+                }
 
                 //GetUserDailyClosureReq req = new GetUserDailyClosureReq();
                 // req.companyID = Sessions.getUserString(context, Constants.companyId);
                 req.branchID = strBrnc == null ? "0" : strBrnc;
                 req.date = dateFilr;
                 if (role) {
-                    req.userID = "0";
-                } else
+                    //req.userID = "0";
+                    String struser = binding.selectEmployeeFilter.getSelectedItem().toString();
+                    if (struser.equals("Select")) {
+                        struser = "0";
+                    }
+                    req.userID = struser == null ? "0" : Constants.usersArr.get(struser);
+                } else {
                     req.userID = Sessions.getUserString(context, Constants.userId);
+                }
 
 
                 viewModel.getDailyClosures(req);
@@ -173,8 +188,8 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
 
 
         viewModel.getDailyClosures(req);
-        setSpinners(binding.selectBranchFilter, branchesArr.keySet().toArray(new String[0]));
-        // setSpinners(binding.selectUser, Constants.usersArr.keySet().toArray(new String[0]));
+        Constants.setSpinners(binding.selectBranchFilter, branchesArr.keySet().toArray(new String[0]));
+        Constants.setSpinners(binding.selectEmployeeFilter, Constants.usersArr.keySet().toArray(new String[0]));
 
     }
 
@@ -190,16 +205,6 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
         dpd.show(getSupportFragmentManager(), "Datepickerdialog");
     }
 
-
-    private void setSpinners(Spinner spr, String[] array) {
-        // -----------------------------------------------
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(context,
-                R.layout.custom_spinner,
-                array);
-        spinnerArrayAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
-        // The drop down view
-        spr.setAdapter(spinnerArrayAdapter);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
