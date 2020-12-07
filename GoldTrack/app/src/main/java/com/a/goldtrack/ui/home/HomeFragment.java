@@ -441,9 +441,9 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
             customer.setText("Customer: " + res.customerName.toUpperCase());
             commodity.setText("Commodity: " + res.commodity);
             presentDayCommodityRate.setText("Commodity Rate: " + Constants.priceToString(res.presentDayCommodityRate));
-            totalCommodityWeight.setText("Cmd Weight:\n" + res.totalCommodityWeight);
-            totalStoneWastage.setText("Stone Wst:\n" + res.totalStoneWastage);
-            totalOtherWastage.setText("Other Wst:\n" + res.totalOtherWastage);
+            totalCommodityWeight.setText("Cmd Weight:" + res.totalCommodityWeight);
+            totalStoneWastage.setText("Stone Wst:" + res.totalStoneWastage);
+            totalOtherWastage.setText("Other Wst:" + res.totalOtherWastage);
             totalNettWeight.setText("Total NetWeight: " + res.totalNettWeight);
             totalAmount.setText("Total Amt: " + Constants.priceToString(res.totalAmount));
             grossAmount.setText("Gross Amt: " + Constants.priceToString(res.grossAmount));

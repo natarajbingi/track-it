@@ -167,9 +167,10 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:maxLines="2"
                         android:gravity="left"
-                        android:text="Admin Paid: "
-                        android:textSize="18sp" />
+                        android:text="Fund Received \nfrom Admin: "
+                        android:textSize="17sp" />
 
                     <TextView
                         android:id="@+id/runningExpense"
@@ -177,19 +178,21 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
                         android:gravity="left"
                         android:text="Expenses : "
-                        android:textSize="18sp" />
+                        android:textSize="17sp" />
 
                     <TextView
                         android:id="@+id/runningBalance"
                         style="@style/TextViewHeader"
                         android:layout_width="0dp"
+                        android:layout_gravity="center_vertical"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="left"
                         android:text="Balance : "
-                        android:textSize="18sp" />
+                        android:textSize="17sp" />
 
                     <TextView
                         android:id="@+id/runningDate"
@@ -198,6 +201,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
                         android:gravity="right"
+                        android:layout_gravity="center_vertical"
                         android:maxLines="2"
                         android:text="Date: 2-22-2012"
                         android:textSize="14sp" />

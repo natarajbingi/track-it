@@ -192,6 +192,13 @@
                         android:text="Stone Wst"
                         android:textColor="@color/oil" />
 
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/totalOtherWastage"
                         android:layout_width="0dp"
@@ -201,16 +208,18 @@
                         android:text="Other Wst"
                         android:textColor="@color/oil" />
 
+                    <TextView
+                        android:id="@+id/totalNettWeight"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="8dp"
+                        android:textStyle="bold"
+                        android:text="Total Net Weight"
+                        android:textColor="@color/oil" />
+
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/totalNettWeight"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="8dp"
-                    android:text="Total Net Weight"
-                    android:textColor="@color/oil" />
 
                 <TextView
                     android:layout_width="match_parent"

@@ -256,7 +256,7 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
             expenses += Double.parseDouble(mDataset.get(i).expenses);
             cashInHand += Double.parseDouble(mDataset.get(i).cashInHand);
         }
-        binding.runningAdminPaid.setText("Admin Paid: " + Constants.getFormattedNumber(fundRecieved));
+        binding.runningAdminPaid.setText("Fund Received \nfrom Admin: " + Constants.getFormattedNumber(fundRecieved));
         binding.runningExpense.setText("Expenses: " + Constants.getFormattedNumber(expenses));
         binding.runningBalance.setText("Balance: " + Constants.getFormattedNumber(cashInHand));
     }

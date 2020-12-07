@@ -19,7 +19,7 @@ public class GetTransactionRes {
         public String branchName;
         public String referencePicData;
         public String presentDayCommodityRate;
-        public String totalCommodityWeight;
+    public String totalCommodityWeight;
         public String totalStoneWastage;
         public String totalOtherWastage;
         public String totalNettWeight;

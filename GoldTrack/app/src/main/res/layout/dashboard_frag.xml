@@ -103,7 +103,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="3.5"
-                            android:text="42"
+                            android:text="0"
                             android:id="@+id/totalTrans"
                             android:textColor="@color/white"
                             android:textSize="26sp"
@@ -130,7 +130,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="3.5"
                             android:id="@+id/totAmt"
-                            android:text="55 K"
+                            android:text="0.00"
                             android:textColor="@color/white"
                             android:textSize="26sp"
                             android:textStyle="bold" />
@@ -156,7 +156,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="3.5"
                             android:id="@+id/totExpenses"
-                            android:text="82 K"
+                            android:text="0.00"
                             android:textColor="@color/white"
                             android:textSize="26sp"
                             android:textStyle="bold" />
