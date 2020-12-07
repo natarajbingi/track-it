@@ -84,16 +84,16 @@ public class CustomDailyReportAdapter extends RecyclerView.Adapter<CustomDailyRe
         }
         viewHolder.slNo.setText((position + 1) + "");
         viewHolder.name.setText(mDataSet.get(position).userName);
-        viewHolder.cashPaid.setText(mDataSet.get(position).fundRecieved);
-        viewHolder.expenses.setText(mDataSet.get(position).expenses);
+        viewHolder.cashPaid.setText(Constants.priceToString(mDataSet.get(position).fundRecieved));
+        viewHolder.expenses.setText(Constants.priceToString(mDataSet.get(position).expenses));
 
         if (mDataSet.get(position).transactionsForday != null && mDataSet.get(position).transactionsForday.size() > 0) {
             viewHolder.noOfBills.setText(mDataSet.get(position).transactionsForday.size() + "");
             String[] strAmts = Constants.getTotalGross(mDataSet.get(position).transactionsForday).split("_");
-            viewHolder.grossWt.setText(strAmts[0]);   // totalNettWeight
-            viewHolder.netWt.setText(strAmts[1]);     // totalStoneOtherWastage
-            viewHolder.TotalBill.setText(strAmts[2]); // grossAmount
-            viewHolder.ClBal.setText(strAmts[3]);     // nettAmount
+            viewHolder.grossWt.setText(Constants.priceToString(strAmts[0]));   // totalNettWeight
+            viewHolder.netWt.setText(Constants.priceToString(strAmts[1]));     // totalStoneOtherWastage
+            viewHolder.TotalBill.setText(Constants.priceToString(strAmts[2])); // grossAmount
+            viewHolder.ClBal.setText(Constants.priceToString(strAmts[3]));     // nettAmount
         } else {
             viewHolder.noOfBills.setText("0");
             viewHolder.grossWt.setText("0");   // totalNettWeight

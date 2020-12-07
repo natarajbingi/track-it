@@ -27,7 +27,11 @@
         <item
             android:id="@+id/nav_trans"
             android:icon="@drawable/ic_transaction"
-            android:title="Transaction" />
+            android:title="New Transaction" />
+        <item
+            android:id="@+id/nav_list_trans"
+            android:icon="@drawable/ic_transaction"
+            android:title="Transactions" />
         <item
             android:id="@+id/nav_report"
             android:icon="@drawable/ic_repeat"

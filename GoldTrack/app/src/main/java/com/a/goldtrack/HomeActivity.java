@@ -32,6 +32,7 @@ import com.a.goldtrack.items.ItemsActivity;
 import com.a.goldtrack.login.LoginActivity;
 import com.a.goldtrack.trans.TransActivity;
 import com.a.goldtrack.users.UserForCompanyActivity;
+import com.a.goldtrack.utils.AssessmentActivity;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 import com.google.android.material.navigation.NavigationView;
@@ -165,6 +166,13 @@ public class HomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_trans:
                 i = new Intent(this, TransActivity.class);
+                startActivity(i);
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                break;
+            case R.id.nav_list_trans:
+                i = new Intent(this, AssessmentActivity.class);
+                i.putExtra("title", "Transactions");
+                i.putExtra("data", "trans");
                 startActivity(i);
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 break;

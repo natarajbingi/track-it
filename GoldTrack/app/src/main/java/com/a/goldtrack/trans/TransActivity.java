@@ -592,7 +592,7 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
                                             + "\nMargin Amt: " + Constants.priceToString(addTransactionReq.marginAmount)
                                             + "\nNet Amt: " + Constants.priceToString(addTransactionReq.nettAmount)
                                             //+ "\nReleasing Amt: " + (addTransactionReq.paidAmountForRelease.isEmpty() ? "0.00" : Constants.priceToString(addTransactionReq.paidAmountForRelease))
-                                            + "\nReleasing Amt: " + isEmptyReturn0(addTransactionReq.paidAmountForRelease)
+                                            + "\nReleasing Amt: " + Constants.priceToString(isEmptyReturn0(addTransactionReq.paidAmountForRelease))
                                             + "\nPayable Amt: " + Constants.priceToString(addTransactionReq.amountPayable);
 
                                     Constants.alertDialogShowWithCancel(context, strR, new DialogInterface.OnClickListener() {
