@@ -36,7 +36,7 @@
         android:layout_gravity="bottom|end"
         android:layout_width="match_parent"
         android:layout_margin="@dimen/fab_margin"
-        android:text="Version-debug: 1.0.11"
+        android:text=""
         android:textSize="13sp"
         android:textColor="@color/button_red"
         android:gravity="right"

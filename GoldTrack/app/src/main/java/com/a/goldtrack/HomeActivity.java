@@ -56,8 +56,11 @@ public class HomeActivity extends AppCompatActivity
         navigationView = findViewById(R.id.nav_view);
         versionView = findViewById(R.id.versionView);
 
-        versionView.setText(Constants.versionView);
-
+        if (BuildConfig.DEBUG) {
+            versionView.setText(Constants.versionView);
+        } else {
+            versionView.setVisibility(View.GONE);
+        }
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow,
                 R.id.nav_tools, R.id.nav_share, R.id.menu_logout)
