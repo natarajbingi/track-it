@@ -235,9 +235,11 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
             // fundReceived += Double.parseDouble(res.dataList.get(i).fundRecieved);
             expenses += Double.parseDouble(res.dataList.get(i).expenses);
             cashInHand += Double.parseDouble(res.dataList.get(i).cashInHand);
-            TotTrans += res.dataList.get(i).transactionsForday.size();
-            String[] strAmts = Constants.getTotalGross(res.dataList.get(i).transactionsForday).split("_");
-            totAmt += Double.parseDouble(strAmts[3]);//ClBal
+            if (res.dataList.get(i).transactionsForday != null) {
+                TotTrans += res.dataList.get(i).transactionsForday.size();
+                String[] strAmts = Constants.getTotalGross(res.dataList.get(i).transactionsForday).split("_");
+                totAmt += Double.parseDouble(strAmts[3]);//ClBal
+            }
         }
 
         binding.totalTrans.setText(TotTrans + "");
