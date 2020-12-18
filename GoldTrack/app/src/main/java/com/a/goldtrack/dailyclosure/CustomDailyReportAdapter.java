@@ -39,7 +39,7 @@ public class CustomDailyReportAdapter extends RecyclerView.Adapter<CustomDailyRe
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private final TextView slNo, name, cashPaid, noOfBills,expenses, grossWt, netWt, TotalBill, ClBal;
+        private final TextView slNo, name, cashPaid, noOfBills,expenses, grossWt,Wstg, netWt, TotalBill, ClBal;
         private final RelativeLayout parent_tile_bg;
 
         public ViewHolder(View v) {
@@ -52,6 +52,7 @@ public class CustomDailyReportAdapter extends RecyclerView.Adapter<CustomDailyRe
             expenses = (TextView) v.findViewById(R.id.expenses);
             grossWt = (TextView) v.findViewById(R.id.grossWt);
             netWt = (TextView) v.findViewById(R.id.netWt);
+            Wstg = (TextView) v.findViewById(R.id.Wstg);
             TotalBill = (TextView) v.findViewById(R.id.TotalBill);
             ClBal = (TextView) v.findViewById(R.id.ClBal);
 
@@ -91,15 +92,22 @@ public class CustomDailyReportAdapter extends RecyclerView.Adapter<CustomDailyRe
             viewHolder.noOfBills.setText(mDataSet.get(position).transactionsForday.size() + "");
             String[] strAmts = Constants.getTotalGross(mDataSet.get(position).transactionsForday).split("_");
             viewHolder.grossWt.setText(Constants.priceToString(strAmts[0]));   // totalNettWeight
-            viewHolder.netWt.setText(Constants.priceToString(strAmts[1]));     // totalStoneOtherWastage
-            viewHolder.TotalBill.setText(Constants.priceToString(strAmts[2])); // grossAmount
-            viewHolder.ClBal.setText(Constants.priceToString(strAmts[3]));     // nettAmount
+            viewHolder.Wstg.setText(Constants.priceToString(strAmts[1]));      // totalStoneOtherWastage
+            viewHolder.netWt.setText(Constants.priceToString(strAmts[2]));     // totalNetWastage
+            viewHolder.TotalBill.setText(Constants.priceToString(strAmts[3])); // grossAmount
+            double clBal = Double.parseDouble(mDataSet.get(position).fundRecieved) -
+                    (Double.parseDouble(mDataSet.get(position).expenses) + Double.parseDouble(strAmts[3])) ;
+
+            viewHolder.ClBal.setText(Constants.priceToString(clBal+""));     // nettAmount
         } else {
             viewHolder.noOfBills.setText("0");
-            viewHolder.grossWt.setText("0");   // totalNettWeight
-            viewHolder.netWt.setText("0");     // totalStoneOtherWastage
-            viewHolder.TotalBill.setText("0"); // grossAmount
-            viewHolder.ClBal.setText("0");     // nettAmount
+            viewHolder.grossWt.setText("0");     // totalNettWeight
+            viewHolder.Wstg.setText("0");        // totalStoneOtherWastage
+            viewHolder.netWt.setText("0");       // totalNetWastage
+            viewHolder.TotalBill.setText("0");   // grossAmount
+            double clBal = Double.parseDouble(mDataSet.get(position).fundRecieved) -
+                    (Double.parseDouble(mDataSet.get(position).expenses));
+            viewHolder.ClBal.setText(Constants.priceToString(clBal+""));       // nettAmount
         }
     }
 

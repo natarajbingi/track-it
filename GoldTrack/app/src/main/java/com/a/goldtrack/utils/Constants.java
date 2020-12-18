@@ -104,7 +104,7 @@ public class Constants {
     public static final int info = 2;
     public static final int warning = 3;
     public static final int custom = 4;
-    public static final String versionView = "SMG_version1.0.30";
+    public static final String versionView = "SMG_version1.0.31";
     private static ProgressDialog pd;
     public static Map<String, String> branchesArr = null, usersArr = null;
 
@@ -303,17 +303,22 @@ public class Constants {
     public static String getTotalGross(List<GetUserDailyClosureRes.TransactionsForday> transactionsForday) {
         double totalNettWeight = 0.0;
         double totalStoneOtherWastage = 0.0;
+        double totalNetWastage = 0.0;
         double grossAmount = 0.0;
         double nettAmount = 0.0;
 
         for (int i = 0; i < transactionsForday.size(); i++) {
-            nettAmount += Double.parseDouble(transactionsForday.get(i).nettAmount);
-            grossAmount += Double.parseDouble(transactionsForday.get(i).grossAmount);
             totalNettWeight += Double.parseDouble(transactionsForday.get(i).totalNettWeight);
             totalStoneOtherWastage += (Double.parseDouble(transactionsForday.get(i).totalStoneWastage)
                     + Double.parseDouble(transactionsForday.get(i).totalOtherWastage));
+            totalNetWastage += (Double.parseDouble(transactionsForday.get(i).totalNettWeight) -
+                    (Double.parseDouble(transactionsForday.get(i).totalStoneWastage)
+                    + Double.parseDouble(transactionsForday.get(i).totalOtherWastage)));
+            grossAmount += Double.parseDouble(transactionsForday.get(i).grossAmount);
+            nettAmount += Double.parseDouble(transactionsForday.get(i).nettAmount);
         }
         return getFormattedNumber(totalNettWeight) + "_" + getFormattedNumber(totalStoneOtherWastage)
+                + "_" + getFormattedNumber(totalNetWastage)
                 + "_" + getFormattedNumber(grossAmount) + "_" + getFormattedNumber(nettAmount);
     }
 

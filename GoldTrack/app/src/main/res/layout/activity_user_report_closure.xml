@@ -267,12 +267,21 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/Wstg"
+                        style="@style/TextViewHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Wstg"
+                        android:textSize="14sp" />
+
+                    <TextView
                         android:id="@+id/netWt"
                         style="@style/TextViewHeader"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="NetWt(Wst)"
+                        android:text="NetWt"
                         android:textSize="14sp" />
 
                     <TextView
@@ -290,7 +299,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="CL Bal"
+                        android:text="Cl Bal"
                         android:textSize="14sp" />
                 </LinearLayout>
 
