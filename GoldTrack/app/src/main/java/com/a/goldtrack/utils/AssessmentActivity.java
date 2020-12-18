@@ -26,7 +26,7 @@ public class AssessmentActivity extends BaseActivity  {
     FragmentManager fragmentManager;
     boolean firstFrag = false;
     Bundle bundle = new Bundle();
-
+    String dateDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +38,7 @@ public class AssessmentActivity extends BaseActivity  {
 
         String title = getIntent().getStringExtra("title");
         String data = getIntent().getStringExtra("data");
+          dateDate = getIntent().getStringExtra("date");
 
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(GTrackApplication.getInstance()).create(AssessmentActViewModel.class);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_assessment);
@@ -83,6 +84,7 @@ public class AssessmentActivity extends BaseActivity  {
 
     private void SetFrag(Class fragmentClass) {
         bundle.putString("From", "FROM");
+        bundle.putString("date", dateDate);
         Fragment fragment = null;
         try {
             fragment = (Fragment) fragmentClass.newInstance();

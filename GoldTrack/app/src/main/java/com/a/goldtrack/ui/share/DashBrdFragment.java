@@ -78,6 +78,7 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
                 Intent i = new Intent(context, AssessmentActivity.class);
                 i.putExtra("title", "Transactions");
                 i.putExtra("data", "trans");
+                i.putExtra("date", selectedDate);
                 startActivity(i);
             }
         });
@@ -123,6 +124,7 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
         } else {
             reqClsour.userID = Sessions.getUserString(context, Constants.userId);
         }
+        selectedDate = reqClsour.date;
         viewModel.getDailyClosures(reqClsour);
     }
 

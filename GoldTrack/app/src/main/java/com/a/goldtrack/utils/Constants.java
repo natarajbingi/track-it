@@ -104,7 +104,7 @@ public class Constants {
     public static final int info = 2;
     public static final int warning = 3;
     public static final int custom = 4;
-    public static final String versionView = "SMG_version1.0.31";
+    public static final String versionView = "SMG_version1.0.32";
     private static ProgressDialog pd;
     public static Map<String, String> branchesArr = null, usersArr = null;
 

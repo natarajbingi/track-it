@@ -57,7 +57,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
@@ -90,6 +89,8 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         context = getContext();
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
 
+
+        String dateDate = getArguments().getString("date");
 
         loader = new LoaderDecorator(context);
         String str = Sessions.getUserString(context, Constants.roles);
@@ -133,7 +134,7 @@ public class HomeFragment extends Fragment implements RecycleItemClicked, IHomeU
         req.branchID = "0";
         req.customerID = "0";
         req.commodity = "";
-        req.transactionDate = /*Constants.getDateNowyyyymmmdd();*/"";
+        req.transactionDate = dateDate != null ? dateDate :/*Constants.getDateNowyyyymmmdd();*/"";
         loader.start();
         viewModel.getTransactions(req);
 
