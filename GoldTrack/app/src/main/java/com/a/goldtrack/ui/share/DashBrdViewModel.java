@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompany;
+import com.a.goldtrack.Model.GetTransactionReq;
 import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.Model.GetUserDailyClosureReq;
 import com.a.goldtrack.Model.GetUserDailyClosureRes;
@@ -22,7 +23,7 @@ import com.a.goldtrack.ui.home.IHomeUiView;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
-public class DashBrdViewModel extends AndroidViewModel implements IHomeFragCallbacks,IDropdownDataCallBacks, IDailyClosureDashCallBacks {
+public class DashBrdViewModel extends AndroidViewModel implements IHomeFragCallbacks, IDropdownDataCallBacks, IDailyClosureDashCallBacks {
 
     private MutableLiveData<String> mText;
     IHomeUiView view;
@@ -47,11 +48,15 @@ public class DashBrdViewModel extends AndroidViewModel implements IHomeFragCallb
     }
 
     public void getDropdown(GetCompany req) {
-        RestFullServices.getDropdownDataForCompanyHome(req,  this);
+        RestFullServices.getDropdownDataForCompanyHome(req, this);
     }
 
     public void getDailyClosures(GetUserDailyClosureReq req) {
         RestFullServices.getDailyClosures(req, this);
+    }
+
+    public void getDateTransactions(GetTransactionReq req) {
+        RestFullServices.getTransaction(req, null, this, null);
     }
 
 
@@ -61,7 +66,7 @@ public class DashBrdViewModel extends AndroidViewModel implements IHomeFragCallb
 
     @Override
     public void onGetTransSuccess(GetTransactionRes res) {
-
+        view.onGetTransSuccess(res);
     }
 
     @Override

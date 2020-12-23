@@ -21,6 +21,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.a.goldtrack.GTrackApplication;
 import com.a.goldtrack.Model.DropdownDataForCompanyRes;
 import com.a.goldtrack.Model.GetCompany;
+import com.a.goldtrack.Model.GetTransactionReq;
 import com.a.goldtrack.Model.GetTransactionRes;
 import com.a.goldtrack.Model.GetUserDailyClosureReq;
 import com.a.goldtrack.Model.GetUserDailyClosureRes;
@@ -38,7 +39,8 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 
-public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDateSetListener, IHomeUiView,IDailyClosureDashCallBacks {
+public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDateSetListener, IHomeUiView,
+        IDailyClosureDashCallBacks {
 
     private DashBrdViewModel viewModel;
     private DashboardFragBinding binding;
@@ -48,6 +50,8 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
     private GetCompany reqDrop;
     private boolean role;
     private GetUserDailyClosureReq reqClsour;
+    private GetTransactionReq reqTrans;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         context = getContext();
@@ -59,7 +63,7 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
         binding = DataBindingUtil.inflate(inflater, R.layout.dashboard_frag, container, false);
         binding.setDashModel(viewModel);
         binding.currentDate.setText(Constants.getDateMMM(""));
-        viewModel.onViewAvailable(this,this);
+        viewModel.onViewAvailable(this, this);
 
         String str = Sessions.getUserString(context, Constants.roles);
         role = str.equals("ADMIN") || str.equals("SUPER_ADMIN");
@@ -104,7 +108,7 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
         return binding.getRoot();
     }
 
-    private void callFirstLaodData(){
+    private void callFirstLaodData() {
         loader.start();
         GetUserForCompany req1 = new GetUserForCompany();
         req1.companyId = Sessions.getUserString(context, Constants.companyId);
@@ -116,16 +120,34 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
         viewModel.getDropdown(reqDrop);
 
 
-        reqClsour = new GetUserDailyClosureReq();
-        reqClsour.companyID = Sessions.getUserString(context, Constants.companyId);
-        reqClsour.date = Constants.getDateNowyyyymmmdd();
+//        if (false) {
+//            reqClsour = new GetUserDailyClosureReq();
+//            reqClsour.companyID = Sessions.getUserString(context, Constants.companyId);
+//            reqClsour.date = Constants.getDateNowyyyymmmdd();
+//            if (role) {
+//                reqClsour.userID = "0";
+//            } else {
+//                reqClsour.userID = Sessions.getUserString(context, Constants.userId);
+//            }
+//            selectedDate = reqClsour.date;
+//            viewModel.getDailyClosures(reqClsour);
+//        } else {
+        reqTrans = new GetTransactionReq();
+        reqTrans.companyID = Sessions.getUserString(context, Constants.companyId);
+
         if (role) {
-            reqClsour.userID = "0";
-        } else {
-            reqClsour.userID = Sessions.getUserString(context, Constants.userId);
-        }
-        selectedDate = reqClsour.date;
-        viewModel.getDailyClosures(reqClsour);
+            reqTrans.employeeID = "0";
+        } else
+            reqTrans.employeeID = Sessions.getUserString(context, Constants.userId);
+        reqTrans.branchID = "0";
+        reqTrans.customerID = "0";
+        reqTrans.commodity = "";
+        reqTrans.transactionDate = Constants.getDateNowyyyymmmdd();
+        selectedDate = reqTrans.transactionDate;
+        loader.start();
+
+        viewModel.getDateTransactions(reqTrans);
+//        }
     }
 
     @Override
@@ -136,8 +158,10 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
         binding.currentDate.setText(Constants.getDateMMM(date));
 
         loader.start();
-        reqClsour.date = selectedDate;
-        viewModel.getDailyClosures(reqClsour);
+//        reqClsour.date = selectedDate;
+        reqTrans.transactionDate = selectedDate;
+//        viewModel.getDailyClosures(reqClsour);
+        viewModel.getDateTransactions(reqTrans);
     }
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
@@ -151,10 +175,9 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
                 //  reqDrop.companyId = Sessions.getUserString(context, Constants.companyId);
                 //  viewModel.getDropdown(reqDrop);
 
-
-
                 callFirstLaodData();
-                binding.currentDate.setText(Constants.getDateMMM(reqClsour.date));
+                //binding.currentDate.setText(Constants.getDateMMM(reqClsour.date));
+                binding.currentDate.setText(Constants.getDateMMM(reqTrans.transactionDate));
             }
             String message = intent.getStringExtra("message");
             Log.d("receiver", "Got message: " + message);
@@ -173,6 +196,16 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
     @Override
     public void onGetTransSuccess(GetTransactionRes res) {
         loader.stop();
+        double totAmt = 0.0, cashInHand = 0.0, expenses = 0.0;
+        int TotTrans = 0;
+        for (int i = 0; i <res.dataList.size(); i++) {
+            totAmt+=Double.parseDouble(res.dataList.get(i).nettAmount);
+        }
+        TotTrans = res.dataList.size();
+        binding.totalTrans.setText(TotTrans + "");
+        binding.totExpenses.setText(Constants.getFormattedNumber(expenses));
+        binding.totExpensesLayout.setVisibility(View.GONE);
+        binding.totAmt.setText(Constants.priceToString(totAmt+""));
     }
 
     @Override
@@ -189,7 +222,7 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
                         Constants.branchesArr.put(dropdownRes.branchesList.get(i).branchName.toUpperCase()
                                 + "-" + dropdownRes.branchesList.get(i).id, dropdownRes.branchesList.get(i).id);
                     }
-                   // setSpinners(binding.selectBranchFilter, Constants.branchesArr.keySet().toArray(new String[0]));
+                    // setSpinners(binding.selectBranchFilter, Constants.branchesArr.keySet().toArray(new String[0]));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -216,7 +249,7 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
                         Constants.usersArr.put(res.resList.get(i).firstName.toUpperCase()
                                 + "-" + res.resList.get(i).lastName, res.resList.get(i).id);
                     }
-                   // setSpinners(binding.selectEmployeeFilter, Constants.usersArr.keySet().toArray(new String[0]));
+                    // setSpinners(binding.selectEmployeeFilter, Constants.usersArr.keySet().toArray(new String[0]));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -232,7 +265,8 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
     public void onGetDailyClosureSuccess(GetUserDailyClosureRes res) {
         // call it
         loader.stop();
-        double totAmt = 0.0, cashInHand = 0.0, expenses = 0.0;int TotTrans = 0;
+        double totAmt = 0.0, cashInHand = 0.0, expenses = 0.0;
+        int TotTrans = 0;
         for (int i = 0; i < res.dataList.size(); i++) {
             // fundReceived += Double.parseDouble(res.dataList.get(i).fundRecieved);
             expenses += Double.parseDouble(res.dataList.get(i).expenses);
