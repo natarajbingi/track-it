@@ -42,6 +42,7 @@ import com.a.goldtrack.Model.UpdateCustomerRes;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityCustomerBinding;
 import com.a.goldtrack.utils.BaseActivity;
+import com.a.goldtrack.utils.BitmapUtils;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.ImageClickLIstener;
 import com.a.goldtrack.utils.LoaderDecorator;
@@ -81,7 +82,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     File ImgDataProf;
     int CAM_REQ_Code_Test = 0, CAM_REQ_Code_Profile = 1001,
             CAM_REQ_Code_Aadhar = 1002, CAM_REQ_Code_Dl = 1003,
-            CAM_REQ_Code_Pan = 1004;
+            CAM_REQ_Code_Pan = 1004, CAM_REQ_Code_Voter = 1005;
     int currentNoImgAttach = 0;
 
     @Override
@@ -305,7 +306,9 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                         .inflate(R.layout.img_layout, binding.imgHolderInLastSetTrans, false);
                 ImageView imgNewScroll = (ImageView) newView1.findViewById(R.id.selectedImgOne);
                 TextView attachmentCount = (TextView) newView1.findViewById(R.id.attachmentCount);
-                attachmentCount.setText(imgFinalList.get(i).imageType + " " + (i + 1));
+                attachmentCount.setText(imgFinalList.get(i).imageType.equals(Constants.imageTypeANYTHING)
+                        ? "OTHERS" + " " + (i + 1) :
+                        imgFinalList.get(i).imageType + " " + (i + 1));
                 // imgNewScroll.setImageBitmap(Constants.stringToBitmap(imgFinalList.get(i).imageData));
                 // imgNewScroll.setOnClickListener(new ImageClickLIstener(context, Constants.stringToBitmap(imgFinalList.get(i).imageData)));
 
@@ -331,7 +334,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                         .inflate(R.layout.img_layout, binding.imgHolderInLastSetCustUp, false);
                 ImageView imgNewScroll = (ImageView) newView1.findViewById(R.id.selectedImgOne);
                 TextView attachmentCount = (TextView) newView1.findViewById(R.id.attachmentCount);
-                attachmentCount.setText(uploadedImages.get(i).imageType + " " + (i + 1));
+                attachmentCount.setText(//uploadedImages.get(i).imageType + " " + (i + 1)
+                        uploadedImages.get(i).imageType.equals(Constants.imageTypeANYTHING)
+                                ? "OTHERS" + " " + (i + 1) :
+                                uploadedImages.get(i).imageType + " " + (i + 1));
                 Picasso.get()
                         .load(uploadedImages.get(i).imagePath)
                         .placeholder(R.drawable.loader)
@@ -425,8 +431,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         List<DropdownDataForCompanyRes.CustomerList> temp = new ArrayList<>();
         if (mDataset != null && mDataset.size() > 0) {
             for (DropdownDataForCompanyRes.CustomerList d : mDataset) {
-
-                if (d.firstName.toLowerCase().contains(s.toLowerCase())) {
+                if (d.firstName.toLowerCase().contains(s.toLowerCase()) || d.mobileNum.contains(s.toLowerCase())) {
                     temp.add(d);
                 }
             }
@@ -496,7 +501,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
                 CAM_REQ_Code_Test = 0;
                 String strSpnr = binding.kycSpnner.getSelectedItem().toString();
-                if (strSpnr.equalsIgnoreCase("AADHAR CARD")) {
+                if (strSpnr.equalsIgnoreCase("AADHAAR CARD")) {
                     CAM_REQ_Code_Test = CAM_REQ_Code_Aadhar;
 
                 } else if (strSpnr.equalsIgnoreCase("PAN")) {
@@ -504,6 +509,9 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
                 } else if (strSpnr.equalsIgnoreCase("DRIVING LICENCE")) {
                     CAM_REQ_Code_Test = CAM_REQ_Code_Dl;
+
+                } else if (strSpnr.equalsIgnoreCase("VOTER CARD")) {
+                    CAM_REQ_Code_Test = CAM_REQ_Code_Voter;
 
                 }
                 if (CAM_REQ_Code_Test == 0) {
@@ -639,8 +647,21 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                     if (CAM_REQ_Code_Test == CAM_REQ_Code_Profile) {
                         ImgDataProf = imageFiles[0].getFile();
                         // ImgDataProf = Constants.fileToStringOfBitmap(imageFiles[0].getFile());
+//                        Picasso.get()
+//                                .load(imageFiles[0].getFile())
+                        // .fit()
+                        // .centerCrop()
+//                                .into(binding.selectedImg);
+//                        Log.e(TAG, "onMediaFilesPicked: Start" );
+//                        int file_size = Integer.parseInt(String.valueOf(ImgDataProf.length()/1024));
+//                        Log.e(TAG, "onMediaFilesPicked:Before "+file_size );
+//                        Bitmap bitmap = BitmapFactory.decodeFile(ImgDataProf.getPath());
+                        ImgDataProf = BitmapUtils.decodeFile(ImgDataProf, context);
+//                        Log.e(TAG, "onMediaFilesPicked:after "+( b.getRowBytes() * b.getHeight()) );
+//                        Log.e(TAG, "onMediaFilesPicked: END" );
+//                        binding.selectedImg.setImageBitmap(b);
                         Picasso.get()
-                                .load(imageFiles[0].getFile())
+                                .load(BitmapUtils.decodeFile(ImgDataProf, context))
                                 // .fit()
                                 // .centerCrop()
                                 .into(binding.selectedImg);
@@ -650,7 +671,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                                 break;
                             }
                             AddRemoveCommonImage req = new AddRemoveCommonImage();
-                            req.imageData = (imageFile.getFile());
+                            // req.imageData = (imageFile.getFile());
+                            req.imageData = (BitmapUtils.decodeFile(imageFile.getFile(), context));
                             req.imageType = Constants.imageTypeAADHAR;
                             req.imageTable = Constants.imageTableCUSTOMER_IMAGE;
                             req.actionType = Constants.actionTypeADD;
@@ -667,7 +689,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                                 break;
                             }
                             AddRemoveCommonImage req = new AddRemoveCommonImage();
-                            req.imageData = (imageFile.getFile());
+                            // req.imageData = (imageFile.getFile());
+                            req.imageData = (BitmapUtils.decodeFile(imageFile.getFile(), context));
                             req.imageType = Constants.imageTypeDL;
                             req.imageTable = Constants.imageTableCUSTOMER_IMAGE;
                             req.actionType = Constants.actionTypeADD;
@@ -677,13 +700,14 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                             imgFinalList.add(req);
                             i++;
                         }
-                    } else if (CAM_REQ_Code_Test == CAM_REQ_Code_Pan) {
+                    } else if ((CAM_REQ_Code_Test == CAM_REQ_Code_Pan) || (CAM_REQ_Code_Test == CAM_REQ_Code_Voter)) {
                         for (MediaFile imageFile : imageFiles) {
                             if (i == 3) {
                                 break;
                             }
                             AddRemoveCommonImage req = new AddRemoveCommonImage();
-                            req.imageData = (imageFile.getFile());
+                            // req.imageData = (imageFile.getFile());
+                            req.imageData = (BitmapUtils.decodeFile(imageFile.getFile(), context));
                             req.imageType = Constants.imageTypeANYTHING;
                             req.imageTable = Constants.imageTableCUSTOMER_IMAGE;
                             req.actionType = Constants.actionTypeADD;

@@ -27,6 +27,7 @@ import com.a.goldtrack.Model.UpdateCompanyDetails;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityCompanyBinding;
 import com.a.goldtrack.utils.BaseActivity;
+import com.a.goldtrack.utils.BitmapUtils;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.LoaderDecorator;
 import com.a.goldtrack.utils.Sessions;
@@ -436,6 +437,7 @@ public class CompanyActivity extends BaseActivity implements View.OnClickListene
     private String uploadedVidUrl;
 
     private void uploadFile(File file, String filename1) {
+        file = (BitmapUtils.decodeFile(file, context));
 
         String datemade = Constants.todayDate() + "/";
         util = new UtilAimgWs();

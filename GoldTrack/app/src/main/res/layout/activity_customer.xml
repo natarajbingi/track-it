@@ -86,7 +86,7 @@
                         android:background="@drawable/ediittext_selector"
                         android:drawablePadding="10dp"
                         android:drawableTint="@color/grey"
-                        android:hint="Search..."
+                        android:hint="Search by mobile no..."
                         android:inputType="text"
                         android:padding="10dp" />
 

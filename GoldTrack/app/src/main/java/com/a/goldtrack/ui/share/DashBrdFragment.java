@@ -202,10 +202,10 @@ public class DashBrdFragment extends Fragment implements DatePickerDialog.OnDate
             totAmt+=Double.parseDouble(res.dataList.get(i).nettAmount);
         }
         TotTrans = res.dataList.size();
-        binding.totalTrans.setText(TotTrans + "");
+        binding.totalTrans.setText(":  " + TotTrans);
         binding.totExpenses.setText(Constants.getFormattedNumber(expenses));
         binding.totExpensesLayout.setVisibility(View.GONE);
-        binding.totAmt.setText(Constants.priceToString(totAmt+""));
+        binding.totAmt.setText(":  " + Constants.priceToString("" + totAmt));
     }
 
     @Override

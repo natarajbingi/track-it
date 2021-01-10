@@ -29,6 +29,7 @@ import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityUserForCompanyBinding;
 import com.a.goldtrack.utils.BaseActivity;
 import com.a.goldtrack.utils.BitmapTransform;
+import com.a.goldtrack.utils.BitmapUtils;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.LoaderDecorator;
 import com.a.goldtrack.utils.Sessions;
@@ -169,7 +170,7 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
         if (mDataset != null && mDataset.size() > 0) {
             for (GetUserForCompanyRes.ResList d : mDataset) {
 
-                if (d.firstName.toLowerCase().contains(s.toLowerCase()) || d.lastName.toLowerCase().contains(s.toLowerCase())) {
+                if (d.firstName.toLowerCase().contains(s.toLowerCase()) || d.lastName.toLowerCase().contains(s.toLowerCase()) || d.mobileNo.contains(s.toLowerCase())) {
                     temp.add(d);
                 }
             }
@@ -461,11 +462,10 @@ public class UserForCompanyActivity extends BaseActivity implements View.OnClick
     private String uploadedImgUrl;
 
     private void uploadFile(File file, String filename1) {
-
+        file = (BitmapUtils.decodeFile(file, context));
         String datemade = Constants.todayDate() + "/";
         util = new UtilAimgWs();
         transferUtility = util.getTransferUtility(context);
-
         TransferObserver observer = transferUtility.upload(
                 UtilAimgWs.AMAZON_S3_USER_FILES_BUCKET_GTRACK + datemade + filename1,//
                 file, CannedAccessControlList.PublicRead

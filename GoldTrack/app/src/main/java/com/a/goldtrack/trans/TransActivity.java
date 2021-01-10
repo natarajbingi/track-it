@@ -47,6 +47,7 @@ import com.a.goldtrack.Model.ItemsTrans;
 import com.a.goldtrack.R;
 import com.a.goldtrack.databinding.ActivityTransBinding;
 import com.a.goldtrack.utils.BaseActivity;
+import com.a.goldtrack.utils.BitmapUtils;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.ImageClickLIstener;
 import com.a.goldtrack.utils.LoaderDecorator;
@@ -308,9 +309,10 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
                 if (imageFiles.length != 0) {
                     int i = 0;
                     if (CAM_REQ_Code_Test == CAM_REQ_Code_One) {
-                        addTransactionReq.referencePicData = Constants.fileToStringOfBitmap(imageFiles[0].getFile());
+                        File ff = BitmapUtils.decodeFile(imageFiles[0].getFile(), context);
+                        addTransactionReq.referencePicData = Constants.fileToStringOfBitmap(ff);
                         Picasso.get()
-                                .load(imageFiles[0].getFile())
+                                .load(ff)
                                 // .fit()
                                 // .centerCrop()
                                 .into(binding.finalLayoutParent.selectedImg);
@@ -322,7 +324,7 @@ public class TransActivity extends BaseActivity implements View.OnClickListener,
                                 break;
                             }
                             // imgDataList.add(Constants.fileToStringOfBitmap(imageFile.getFile()));
-                            imgFileList.add(imageFile.getFile());
+                            imgFileList.add(BitmapUtils.decodeFile(imageFile.getFile(), context));
                             i++;
                         }
                         addImgs();

@@ -43,7 +43,8 @@
     </string-array>
     <string-array name="kycArray">
         <item>Select</item>
-        <item>AADHAR CARD</item>
+        <item>AADHAAR CARD</item>
+        <item>VOTER CARD</item>
         <item>DRIVING LICENCE</item>
         <item>PAN</item>
     </string-array>
