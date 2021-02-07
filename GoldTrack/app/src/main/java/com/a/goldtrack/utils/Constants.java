@@ -104,7 +104,7 @@ public class Constants {
     public static final int info = 2;
     public static final int warning = 3;
     public static final int custom = 4;
-    public static final String versionView = "SMG_version1.0.35";
+    public static final String versionView = "SMG_version1.0.36";
     private static ProgressDialog pd;
     public static Map<String, String> branchesArr = null, usersArr = null;
 
@@ -317,9 +317,11 @@ public class Constants {
             grossAmount += Double.parseDouble(transactionsForday.get(i).grossAmount);
             nettAmount += Double.parseDouble(transactionsForday.get(i).nettAmount);
         }
-        return getFormattedNumber(totalNettWeight) + "_" + getFormattedNumber(totalStoneOtherWastage)
+        return getFormattedNumber(totalNettWeight)
+                + "_" + getFormattedNumber(totalStoneOtherWastage)
                 + "_" + getFormattedNumber(totalNetWastage)
-                + "_" + getFormattedNumber(grossAmount) + "_" + getFormattedNumber(nettAmount);
+                + "_" + getFormattedNumber(grossAmount)
+                + "_" + getFormattedNumber(nettAmount);
     }
 
     public static String getFormattedNumber(double val) {

@@ -94,9 +94,10 @@ public class CustomDailyReportAdapter extends RecyclerView.Adapter<CustomDailyRe
             viewHolder.grossWt.setText(Constants.priceToString(strAmts[0]));   // totalNettWeight
             viewHolder.Wstg.setText(Constants.priceToString(strAmts[1]));      // totalStoneOtherWastage
             viewHolder.netWt.setText(Constants.priceToString(strAmts[2]));     // totalNetWastage
-            viewHolder.TotalBill.setText(Constants.priceToString(strAmts[3])); // grossAmount
+            //viewHolder.TotalBill.setText(Constants.priceToString(strAmts[3])); // grossAmount
+            viewHolder.TotalBill.setText(Constants.priceToString(strAmts[4])); // netAmount
             double clBal = Double.parseDouble(mDataSet.get(position).fundRecieved) -
-                    (Double.parseDouble(mDataSet.get(position).expenses) + Double.parseDouble(strAmts[3])) ;
+                    (Double.parseDouble(mDataSet.get(position).expenses) + Double.parseDouble(strAmts[4])) ;
 
             viewHolder.ClBal.setText(Constants.priceToString(clBal+""));     // nettAmount
         } else {
@@ -104,10 +105,10 @@ public class CustomDailyReportAdapter extends RecyclerView.Adapter<CustomDailyRe
             viewHolder.grossWt.setText("0");     // totalNettWeight
             viewHolder.Wstg.setText("0");        // totalStoneOtherWastage
             viewHolder.netWt.setText("0");       // totalNetWastage
-            viewHolder.TotalBill.setText("0");   // grossAmount
+            viewHolder.TotalBill.setText("0");   // NetAmount
             double clBal = Double.parseDouble(mDataSet.get(position).fundRecieved) -
                     (Double.parseDouble(mDataSet.get(position).expenses));
-            viewHolder.ClBal.setText(Constants.priceToString(clBal+""));       // nettAmount
+            viewHolder.ClBal.setText(Constants.priceToString(clBal+""));       // ClBal
         }
     }
 
