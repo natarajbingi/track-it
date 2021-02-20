@@ -188,8 +188,10 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
 
 
         viewModel.getDailyClosures(req);
-        Constants.setSpinners(binding.selectBranchFilter, branchesArr.keySet().toArray(new String[0]));
-        Constants.setSpinners(binding.selectEmployeeFilter, Constants.usersArr.keySet().toArray(new String[0]));
+        if (Constants.usersArr != null)
+            Constants.setSpinners(binding.selectEmployeeFilter, Constants.usersArr.keySet().toArray(new String[0]));
+        if (branchesArr != null)
+            Constants.setSpinners(binding.selectBranchFilter, branchesArr.keySet().toArray(new String[0]));
 
     }
 
@@ -250,15 +252,21 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
             binding.recyclerDailyClosures.setVisibility(View.VISIBLE);
         }
 
-        double fundRecieved = 0.0, cashInHand = 0.0, expenses = 0.0;
+        double fundRecieved = 0.0, cashInHand = 0.0, expenses = 0.0, clBal = 0.0;
         for (int i = 0; i < mDataset.size(); i++) {
+            String[] strAmts = Constants.getTotalGross(mDataset.get(i).transactionsForday).split("_");
             fundRecieved += Double.parseDouble(mDataset.get(i).fundRecieved);
             expenses += Double.parseDouble(mDataset.get(i).expenses);
             cashInHand += Double.parseDouble(mDataset.get(i).cashInHand);
+
+            clBal += Double.parseDouble(mDataset.get(i).fundRecieved) -
+                    (Double.parseDouble(mDataset.get(i).expenses) + Double.parseDouble(strAmts[4]));
+
         }
-        binding.runningAdminPaid.setText("Fund Received \nfrom Admin: " + Constants.priceToString(Constants.getFormattedNumber(fundRecieved)));
-        binding.runningExpense.setText("Expenses: " + Constants.priceToString(Constants.getFormattedNumber(expenses)));
-        binding.runningBalance.setText("Balance: " + Constants.priceToString(Constants.getFormattedNumber(cashInHand)));
+        binding.runningAdminPaid.setText("Fund Received \nfrom Admin:\n" + Constants.priceToString(Constants.getFormattedNumber(fundRecieved)));
+        binding.runningExpense.setText("Expenses:\n" + Constants.priceToString(Constants.getFormattedNumber(expenses)));
+        binding.runningBalance.setText("Cash in Hand:\n" + Constants.priceToString(Constants.getFormattedNumber(cashInHand)));
+        binding.runningBalance.setText("Cl Bal:\n" + Constants.priceToString(Constants.getFormattedNumber(clBal)));
     }
 
     @Override

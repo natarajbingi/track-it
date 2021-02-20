@@ -242,11 +242,11 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
 
 
         viewModel.getDailyClosures(req);
-        setSpinners(binding.selectBranch, branchesArr.keySet().toArray(new String[0]));
-        setSpinners(binding.selectBranchFilter, branchesArr.keySet().toArray(new String[0]));
-        setSpinners(binding.selectUser, Constants.usersArr.keySet().toArray(new String[0]));
 
         try {
+            Constants.setSpinners(binding.selectBranch, branchesArr.keySet().toArray(new String[0]));
+            Constants.setSpinners(binding.selectBranchFilter, branchesArr.keySet().toArray(new String[0]));
+            Constants.setSpinners(binding.selectUser, Constants.usersArr.keySet().toArray(new String[0]));
             binding.search.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
         } catch (Exception e) {
             e.printStackTrace();
@@ -319,7 +319,7 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
         }
     }
 
-    private void setSpinners(Spinner spr, String[] array) {
+   /* private void setSpinners(Spinner spr, String[] array) {
         // -----------------------------------------------
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(context,
                 R.layout.custom_spinner,
@@ -327,7 +327,7 @@ public class UserDailyClosureActivity extends BaseActivity implements View.OnCli
         spinnerArrayAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
         // The drop down view
         spr.setAdapter(spinnerArrayAdapter);
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

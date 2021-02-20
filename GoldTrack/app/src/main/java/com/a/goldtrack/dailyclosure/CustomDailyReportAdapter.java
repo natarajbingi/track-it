@@ -97,7 +97,7 @@ public class CustomDailyReportAdapter extends RecyclerView.Adapter<CustomDailyRe
             //viewHolder.TotalBill.setText(Constants.priceToString(strAmts[3])); // grossAmount
             viewHolder.TotalBill.setText(Constants.priceToString(strAmts[4])); // netAmount
             double clBal = Double.parseDouble(mDataSet.get(position).fundRecieved) -
-                    (Double.parseDouble(mDataSet.get(position).expenses) + Double.parseDouble(strAmts[4])) ;
+                    (Double.parseDouble(mDataSet.get(position).expenses) + Double.parseDouble(strAmts[4]));
 
             viewHolder.ClBal.setText(Constants.priceToString(clBal+""));     // nettAmount
         } else {

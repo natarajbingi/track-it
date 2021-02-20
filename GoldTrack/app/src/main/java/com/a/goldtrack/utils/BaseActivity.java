@@ -128,6 +128,7 @@ public class BaseActivity extends AppCompatActivity implements ConnectivityRecei
 
     public void setRecyclerViewLayoutManager(Context context, LayoutManagerType layoutManagerType, RecyclerView recyclerView) {
         int scrollPosition = 0;
+        mLayoutManager = new LinearLayoutManager(this);
 
         // If a layout manager has already been set, get current scroll position.
         if (recyclerView.getLayoutManager() != null) {

@@ -70,6 +70,10 @@ public class Constants {
     public static final String appVersion = "1.0.1";
     private static final String IMAGE_DIRECTORY = "/GTrackImage";
 
+    public static final int cacheSize = 5 * 1024 * 1024; // 5 MB size
+    public static final String HEADER_CACHE_CONTROL = "Cache-Control";
+    public static final String HEADER_PRAGMA = "Pragma";
+
     public static final String companyId = "companyId";
     public static final String userLogin = "userLogin";
     public static final String userName = "userName";
@@ -104,7 +108,7 @@ public class Constants {
     public static final int info = 2;
     public static final int warning = 3;
     public static final int custom = 4;
-    public static final String versionView = "SMG_version1.0.36";
+    public static final String versionView = "SMG_version1.0.37";
     private static ProgressDialog pd;
     public static Map<String, String> branchesArr = null, usersArr = null;
 
@@ -210,13 +214,15 @@ public class Constants {
     }
 
     public static void setSpinners(Spinner spr, String[] array) {
-        // -----------------------------------------------
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(GTrackApplication.getInstance().getApplicationContext(),
-                R.layout.custom_spinner,
-                array);
-        spinnerArrayAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
-        // The drop down view
-        spr.setAdapter(spinnerArrayAdapter);
+        if (array != null && spr != null) {
+            // -----------------------------------------------
+            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(GTrackApplication.getInstance().getApplicationContext(),
+                    R.layout.custom_spinner,
+                    array);
+            spinnerArrayAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
+            // The drop down view
+            spr.setAdapter(spinnerArrayAdapter);
+        }
     }
 
     public static void setAutoComplete(Context context, AutoCompleteTextView auto, String[] array) {
@@ -313,7 +319,7 @@ public class Constants {
                     + Double.parseDouble(transactionsForday.get(i).totalOtherWastage));
             totalNetWastage += (Double.parseDouble(transactionsForday.get(i).totalNettWeight) -
                     (Double.parseDouble(transactionsForday.get(i).totalStoneWastage)
-                    + Double.parseDouble(transactionsForday.get(i).totalOtherWastage)));
+                            + Double.parseDouble(transactionsForday.get(i).totalOtherWastage)));
             grossAmount += Double.parseDouble(transactionsForday.get(i).grossAmount);
             nettAmount += Double.parseDouble(transactionsForday.get(i).nettAmount);
         }

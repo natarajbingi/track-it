@@ -191,7 +191,18 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="left"
-                        android:text="Balance : "
+                        android:text="Cash in Hand : "
+                        android:textSize="17sp" />
+
+                    <TextView
+                        android:id="@+id/runningClBal"
+                        style="@style/TextViewHeader"
+                        android:layout_width="0dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="Cl Bal : "
                         android:textSize="17sp" />
 
                     <TextView

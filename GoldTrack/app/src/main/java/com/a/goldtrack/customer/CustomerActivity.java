@@ -350,7 +350,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void setmRecyclerView() {
-        mLayoutManager = new LinearLayoutManager(this);
         mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         setRecyclerViewLayoutManager(context, mCurrentLayoutManagerType, binding.recyclerCustomer);
         if (mAdapter == null) {

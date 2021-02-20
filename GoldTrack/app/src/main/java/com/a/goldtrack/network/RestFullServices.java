@@ -1,5 +1,8 @@
 package com.a.goldtrack.network;
 
+import android.content.Context;
+import android.util.Log;
+
 import com.a.goldtrack.GTrackApplication;
 import com.a.goldtrack.Model.AddCompany;
 import com.a.goldtrack.Model.AddCompanyBranchesReq;
@@ -61,9 +64,16 @@ import com.a.goldtrack.users.IUserCallBacks;
 import com.a.goldtrack.utils.Constants;
 import com.a.goldtrack.utils.Sessions;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
+import okhttp3.CacheControl;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -75,8 +85,12 @@ public class RestFullServices {
     public static APIService getClient() {
         OkHttpClient clientWith60sTimeout = new OkHttpClient()
                 .newBuilder()
+                .cache(cache(GTrackApplication.getInstance().getApplicationContext()))
+                .addInterceptor(httpLoggingInterceptor())
                 .readTimeout(60, TimeUnit.SECONDS)
                 .connectTimeout(60, TimeUnit.SECONDS)
+                .addInterceptor(offlineInterceptor())
+                .addNetworkInterceptor(networkInterceptor())
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BaseUrl)
@@ -84,6 +98,67 @@ public class RestFullServices {
                 .client(clientWith60sTimeout)
                 .build();
         return retrofit.create(APIService.class);
+    }
+
+    private static Cache cache(Context context) {
+        return new Cache(new File(context.getCacheDir(), "retroCache"), Constants.cacheSize);
+    }
+
+    private static Interceptor offlineInterceptor() {
+        return new Interceptor() {
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
+                Log.d("TAG", "offline interceptor: called.");
+                Request request = chain.request();
+
+                if (!Constants.isConnection()) {
+                    CacheControl cacheControl = new CacheControl.Builder()
+                            .maxStale(7, TimeUnit.DAYS)
+                            .build();
+
+                    request = request.newBuilder()
+                            .removeHeader(Constants.HEADER_PRAGMA)
+                            .removeHeader(Constants.HEADER_CACHE_CONTROL)
+                            .cacheControl(cacheControl)
+                            .build();
+                }
+
+                return chain.proceed(request);
+            }
+        };
+    }
+
+    private static Interceptor networkInterceptor() {
+        return new Interceptor() {
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
+                Log.d("TAG", "network interceptor: called.");
+
+                okhttp3.Response response = chain.proceed(chain.request());
+
+                CacheControl cacheControl = new CacheControl.Builder()
+                        .maxAge(5, TimeUnit.SECONDS)
+                        .build();
+
+                return response.newBuilder()
+                        .removeHeader(Constants.HEADER_PRAGMA)
+                        .removeHeader(Constants.HEADER_CACHE_CONTROL)
+                        .header(Constants.HEADER_CACHE_CONTROL, cacheControl.toString())
+                        .build();
+            }
+        };
+    }
+
+    private static HttpLoggingInterceptor httpLoggingInterceptor() {
+        HttpLoggingInterceptor httpLoggingInterceptor =
+                new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                    @Override
+                    public void log(String message) {
+                        Log.d("TAG", "log: http log: " + message);
+                    }
+                });
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        return httpLoggingInterceptor;
     }
 
 
@@ -471,6 +546,7 @@ public class RestFullServices {
         });
 
     }
+
     /*
      * Customer Reg*/
     public static void getPTOCustomer(CustomerWithOTPReq req, ICustomerCallBacs callBacks) {
