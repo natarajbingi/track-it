@@ -5,4 +5,5 @@ public class GetUserDailyClosureReq {
     public String userID;
     public String branchID;
     public String date;
+    public boolean downloadReport;
 }

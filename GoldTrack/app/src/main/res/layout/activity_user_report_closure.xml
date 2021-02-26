@@ -180,6 +180,7 @@
                         android:layout_weight="1"
                         android:layout_gravity="center_vertical"
                         android:gravity="left"
+                        android:maxLines="2"
                         android:text="Expenses : "
                         android:textSize="17sp" />
 
@@ -191,6 +192,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="left"
+                        android:visibility="gone"
                         android:text="Cash in Hand : "
                         android:textSize="17sp" />
 
@@ -202,7 +204,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="left"
-                        android:text="Cl Bal : "
+                        android:maxLines="2"
+                        android:text="Total Cl Bal : "
                         android:textSize="17sp" />
 
                     <TextView

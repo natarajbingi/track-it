@@ -1,12 +1,16 @@
 package com.a.goldtrack.dailyclosure;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.databinding.DataBindingUtil;
@@ -47,6 +51,7 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
     int whichDate = 0, filterDate = 1, closureDate = 2;
 
     protected List<GetUserDailyClosureRes.DataList> mDataset;
+    protected String reportPath;
 
 
     @Override
@@ -62,7 +67,7 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
     }
 
     Map<String, String> branchesArr = null;
-    boolean holderFilter = true;
+    boolean holderFilter = true, holderDownload = false;
 
     void init() {
         String str = Sessions.getUserString(context, Constants.roles);
@@ -123,6 +128,7 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
                 req.branchID = "0";
                 req.userID = "0";
                 req.date = Constants.getDateNowyyyymmmdd();
+                req.downloadReport = false;
                 viewModel.getDailyClosures(req);
             }
         });
@@ -141,6 +147,7 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
                 // req.companyID = Sessions.getUserString(context, Constants.companyId);
                 req.branchID = strBrnc == null ? "0" : strBrnc;
                 req.date = dateFilr;
+                req.downloadReport = false;
                 if (role) {
                     //req.userID = "0";
                     String struser = binding.selectEmployeeFilter.getSelectedItem().toString();
@@ -161,6 +168,7 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
             @Override
             public void onChanged(GetUserDailyClosureRes getUserDailyClosureRes) {
                 mDataset = getUserDailyClosureRes.dataList;
+                //reportPath = getUserDailyClosureRes.reportPath;
                 setmRecyclerView();
             }
         });
@@ -185,7 +193,7 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
         req.branchID = "0";//Sessions.getUserString(context, Constants.companyId);
         req.date = Constants.getDateNowyyyymmmdd();
         req.userID = role ? "0" : Sessions.getUserString(context, Constants.userId);
-
+        req.downloadReport = false;
 
         viewModel.getDailyClosures(req);
         if (Constants.usersArr != null)
@@ -230,9 +238,22 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
                 }
                 holderFilter = !holderFilter;
                 break;
+            case R.id.action_downloader:
+                //
+                if (mDataset.size() != 0 && !holderDownload) {
+                    //reportPath = "";
+                    holderDownload = true;
+                    req.downloadReport = true;
+                    viewModel.getDailyClosures(req);
+                } else {
+                    Constants.Toasty(context, "No report list available to generate XLS sheet.", Constants.error);
+                }
+                break;
         }
         return true;
     }
+
+    private static final String TAG = "UserDailyReportActivity";
 
     void setmRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this);
@@ -263,10 +284,12 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
                     (Double.parseDouble(mDataset.get(i).expenses) + Double.parseDouble(strAmts[4]));
 
         }
-        binding.runningAdminPaid.setText("Fund Received \nfrom Admin:\n" + Constants.priceToString(Constants.getFormattedNumber(fundRecieved)));
+        binding.runningAdminPaid.setText("Fund Received \nfrom Admin:" + Constants.priceToString(Constants.getFormattedNumber(fundRecieved)));
         binding.runningExpense.setText("Expenses:\n" + Constants.priceToString(Constants.getFormattedNumber(expenses)));
-        binding.runningBalance.setText("Cash in Hand:\n" + Constants.priceToString(Constants.getFormattedNumber(cashInHand)));
-        binding.runningBalance.setText("Cl Bal:\n" + Constants.priceToString(Constants.getFormattedNumber(clBal)));
+        // binding.runningBalance.setText("Cash in Hand:\n" + Constants.priceToString(Constants.getFormattedNumber(cashInHand)));
+        binding.runningClBal.setText("Total Cl Bal:\n" + Constants.priceToString(Constants.getFormattedNumber(clBal)));
+
+        // Log.e(TAG, "setmRecyclerView: fundRecieved:"+fundRecieved+", expenses:"+expenses+", clBal:"+clBal );
     }
 
     @Override
@@ -299,6 +322,13 @@ public class UserDailyReportActivity extends BaseActivity implements View.OnClic
         binding.filterHolder.setVisibility(View.GONE);
         holderFilter = true;
         binding.runningDate.setText("Date: YYYY-MM-DD\n" + req.date);
+
+        if (res.reportPath != null && !res.reportPath.isEmpty() && holderDownload) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.parse(res.reportPath), "text/html");
+            startActivity(intent);
+            holderDownload = false;
+        }
     }
 
     @Override

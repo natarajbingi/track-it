@@ -5,6 +5,7 @@ import java.util.List;
 public class GetUserDailyClosureRes {
     public String response;
     public boolean success;
+    public String reportPath;
     public List<DataList> dataList;
 
     public static class DataList {

@@ -3,6 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_downloader"
+        android:icon="@drawable/ic_download"
+        android:orderInCategory="100"
+        android:iconTint="@color/white"
+        android:title="Filter"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_filter"
         android:icon="@drawable/ic_filter"
         android:orderInCategory="100"
